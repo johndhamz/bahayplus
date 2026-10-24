@@ -18,7 +18,9 @@ export default defineConfig({
   expect: { timeout: 10_000 },
   timeout: 60_000,
   forbidOnly: !!process.env.CI,
-  retries: process.env.CI ? 1 : 0,
+  // One retry everywhere: local Supabase on a shared Docker host occasionally returns gateway timeouts.
+  // Tests that need it are reported as "flaky", never silently passed.
+  retries: 1,
   reporter: process.env.CI ? [["github"], ["html", { open: "never" }]] : [["list"]],
   use: {
     baseURL,

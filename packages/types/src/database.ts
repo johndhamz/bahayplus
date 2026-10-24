@@ -49,6 +49,68 @@ export type Database = {
         };
         Relationships: [];
       };
+      household_activity: {
+        Row: {
+          actor_id: string | null;
+          created_at: string;
+          household_id: string;
+          id: string;
+          kind: string;
+          metadata: NonNullable<Json>;
+          occurred_at: string;
+          property_id: string | null;
+          required_permission: string;
+          updated_at: string;
+        };
+        ComputedFields: never;
+        Insert: {
+          actor_id?: string | null;
+          created_at?: string;
+          household_id: string;
+          id?: string;
+          kind: string;
+          metadata?: NonNullable<Json>;
+          occurred_at?: string;
+          property_id?: string | null;
+          required_permission: string;
+          updated_at?: string;
+        };
+        Update: {
+          actor_id?: string | null;
+          created_at?: string;
+          household_id?: string;
+          id?: string;
+          kind?: string;
+          metadata?: NonNullable<Json>;
+          occurred_at?: string;
+          property_id?: string | null;
+          required_permission?: string;
+          updated_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "household_activity_household_id_fkey";
+            columns: ["household_id"];
+            isOneToOne: false;
+            referencedRelation: "households";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "household_activity_property_id_fkey";
+            columns: ["property_id"];
+            isOneToOne: false;
+            referencedRelation: "properties";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "household_activity_required_permission_fkey";
+            columns: ["required_permission"];
+            isOneToOne: false;
+            referencedRelation: "permissions";
+            referencedColumns: ["key"];
+          },
+        ];
+      };
       household_invitations: {
         Row: {
           accepted_at: string | null;
@@ -176,6 +238,7 @@ export type Database = {
           archived_at: string | null;
           created_at: string;
           created_by: string | null;
+          default_property_id: string | null;
           id: string;
           name: string;
           updated_at: string;
@@ -185,6 +248,7 @@ export type Database = {
           archived_at?: string | null;
           created_at?: string;
           created_by?: string | null;
+          default_property_id?: string | null;
           id?: string;
           name: string;
           updated_at?: string;
@@ -193,11 +257,20 @@ export type Database = {
           archived_at?: string | null;
           created_at?: string;
           created_by?: string | null;
+          default_property_id?: string | null;
           id?: string;
           name?: string;
           updated_at?: string;
         };
-        Relationships: [];
+        Relationships: [
+          {
+            foreignKeyName: "households_default_property_fk";
+            columns: ["default_property_id", "id"];
+            isOneToOne: false;
+            referencedRelation: "properties";
+            referencedColumns: ["id", "household_id"];
+          },
+        ];
       };
       organization_invitations: {
         Row: {

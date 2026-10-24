@@ -25,6 +25,7 @@ const STATUS_TONE: Record<string, StatusTone> = {
   accepted: "success",
   delivered: "success",
   pending: "warning",
+  suspended: "warning",
   unpaid: "warning",
   partially_paid: "warning",
   submitted: "info",

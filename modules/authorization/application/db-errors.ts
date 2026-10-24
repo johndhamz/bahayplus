@@ -16,6 +16,7 @@ const CONFLICT = new Set([
   "email_unverified",
   "slug_taken",
   "limit_reached",
+  "property_archived",
 ]);
 
 /**
