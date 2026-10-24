@@ -2,19 +2,19 @@
 
 ## Authentication
 
-| Item | Decision |
-|------|----------|
-| Provider | Supabase Auth via `@supabase/ssr` (cookie sessions for web) |
+| Item                | Decision                                                                                                                                             |
+| ------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Provider            | Supabase Auth via `@supabase/ssr` (cookie sessions for web)                                                                                          |
 | Methods (Phase 1–2) | Email + password, email OTP / magic link. **Phone OTP** and Google sign-in planned — needs SMS provider decision ([09](./09-risks-and-decisions.md)) |
-| Session refresh | `src/proxy.ts` (Next.js proxy, formerly middleware) refreshes the session cookie and gates portal routes |
-| Server identity | Always `supabase.auth.getUser()` / `getClaims()` (verified), never `getSession()` alone on the server |
-| Mobile (future) | Supabase Auth in the app; calls `/api/v1/*` with `Authorization: Bearer <access_token>` |
-| Profile | `profiles` row created by an `after insert on auth.users` trigger |
-| Hardening | Rate-limit auth endpoints, leaked-password protection, email confirmation required, MFA (TOTP) required for platform admins |
+| Session refresh     | `src/proxy.ts` (Next.js proxy, formerly middleware) refreshes the session cookie and gates portal routes                                             |
+| Server identity     | Always `supabase.auth.getUser()` / `getClaims()` (verified), never `getSession()` alone on the server                                                |
+| Mobile (future)     | Supabase Auth in the app; calls `/api/v1/*` with `Authorization: Bearer <access_token>`                                                              |
+| Profile             | `profiles` row created by an `after insert on auth.users` trigger                                                                                    |
+| Hardening           | Rate-limit auth endpoints, leaked-password protection, email confirmation required, MFA (TOTP) required for platform admins                          |
 
 ## Authorization model
 
-Authorization is **contextual**: a permission is evaluated against a *context* (one household or one organization), never globally — except for platform admins.
+Authorization is **contextual**: a permission is evaluated against a _context_ (one household or one organization), never globally — except for platform admins.
 
 ```
 User ──< household_members (role)      >── Household
@@ -28,26 +28,26 @@ Roles and permissions live in tables — `roles(scope, key)`, `permissions(key, 
 
 ### Household roles
 
-| Role key | Intent | Default permissions (summary) |
-|----------|--------|-------------------------------|
-| `owner` | Household head(s); at least one must always exist | everything, incl. delete household, manage owners |
-| `manager` | Spouse / trusted adult | manage non-owner members & invitations, properties, all household data |
-| `member` | Family member | view household, edit household records |
+| Role key  | Intent                                                                    | Default permissions (summary)                                                       |
+| --------- | ------------------------------------------------------------------------- | ----------------------------------------------------------------------------------- |
+| `owner`   | Household head(s); at least one must always exist                         | everything, incl. delete household, manage owners                                   |
+| `manager` | Spouse / trusted adult                                                    | manage non-owner members & invitations, properties, all household data              |
+| `member`  | Family member                                                             | view household, edit household records                                              |
 | `limited` | Tenant, kasambahay, driver, caregiver — "limited member where applicable" | view household basics and items shared with them; no finances, no member management |
-| `guest` | Temporary / read-only (e.g. relative abroad) | view household basics only |
+| `guest`   | Temporary / read-only (e.g. relative abroad)                              | view household basics only                                                          |
 
 ### Organization roles
 
-| Role key | Provider / supplier portal | Worker portal |
-|----------|---------------------------|---------------|
-| `owner` | full, incl. ownership transfer, delete org | — |
-| `manager` | manage members (non-owner), operations | — |
-| `staff` | view, day-to-day edits | — |
-| `worker` | — | only assigned work orders |
+| Role key  | Provider / supplier portal                 | Worker portal             |
+| --------- | ------------------------------------------ | ------------------------- |
+| `owner`   | full, incl. ownership transfer, delete org | —                         |
+| `manager` | manage members (non-owner), operations     | —                         |
+| `staff`   | view, day-to-day edits                     | —                         |
+| `worker`  | —                                          | only assigned work orders |
 
 A field worker is an `organization_member` with role `worker`; the `/worker` portal lists work across every org where they hold that role.
 
-### Privilege rules (enforced in SQL *and* services)
+### Privilege rules (enforced in SQL _and_ services)
 
 - Nobody can grant a role higher than their own; only owners grant/revoke `owner`.
 - Members cannot update their own `role` (only `manage_members` holders can, subject to the rule above).
@@ -61,13 +61,13 @@ A field worker is an `organization_member` with role `worker`; the `/worker` por
 
 ## Enforcement layers (defence in depth)
 
-| Layer | Responsibility | Fails how |
-|-------|----------------|-----------|
-| 1. `proxy.ts` | Is there a session? Coarse portal gate (redirect to `/login?next=…`) | Redirect |
-| 2. Portal layout (server) | Resolve user's memberships; 404 if the URL context isn't theirs; 403 page if no role for the portal | `notFound()` / forbidden page |
-| 3. Application service | `authorize(ctx, 'bills.write')` before every command; business rules (e.g. last owner can't leave) | `Result.err(Forbidden)` |
-| 4. Postgres RLS | Tenant isolation backstop on every `public` table, **including** reads | Row invisible / write rejected |
-| 5. Storage RLS | Bucket path prefix must match a context the user can access | 403 |
+| Layer                     | Responsibility                                                                                      | Fails how                      |
+| ------------------------- | --------------------------------------------------------------------------------------------------- | ------------------------------ |
+| 1. `proxy.ts`             | Is there a session? Coarse portal gate (redirect to `/login?next=…`)                                | Redirect                       |
+| 2. Portal layout (server) | Resolve user's memberships; 404 if the URL context isn't theirs; 403 page if no role for the portal | `notFound()` / forbidden page  |
+| 3. Application service    | `authorize(ctx, 'bills.write')` before every command; business rules (e.g. last owner can't leave)  | `Result.err(Forbidden)`        |
+| 4. Postgres RLS           | Tenant isolation backstop on every `public` table, **including** reads                              | Row invisible / write rejected |
+| 5. Storage RLS            | Bucket path prefix must match a context the user can access                                         | 403                            |
 
 Layer 3 gives good error messages; layer 4 guarantees that a bug in layer 3 cannot leak another tenant's data. Neither replaces the other.
 
@@ -103,10 +103,10 @@ type RequestContext = {
   requestId: string;
   actor: { userId: string; isPlatformAdmin: boolean };
   tenant:
-    | { kind: 'household'; householdId: string; permissions: ReadonlySet<Permission> }
-    | { kind: 'organization'; organizationId: string; orgKind: 'service_provider' | 'supplier'; role: OrgRole }
-    | { kind: 'platform' }
-    | { kind: 'none' };
+    | { kind: "household"; householdId: string; permissions: ReadonlySet<Permission> }
+    | { kind: "organization"; organizationId: string; orgKind: "service_provider" | "supplier"; role: OrgRole }
+    | { kind: "platform" }
+    | { kind: "none" };
   db: SupabaseClient<Database>; // user-scoped (RLS applies)
 };
 ```

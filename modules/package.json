@@ -1,0 +1,16 @@
+{
+  "name": "@bahayplus/modules",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "sideEffects": false,
+  "exports": {
+    "./*": "./*/index.ts"
+  },
+  "dependencies": {
+    "@bahayplus/types": "*",
+    "@bahayplus/validation": "*",
+    "@supabase/supabase-js": "^2.118.0",
+    "zod": "^4.6.7"
+  }
+}

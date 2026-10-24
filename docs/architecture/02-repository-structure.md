@@ -1,87 +1,92 @@
 # 02 · Repository Structure
 
-## Decision: single package now, extractable contracts later
+## Decision: npm-workspaces monorepo (D-01, revised)
 
-The repository starts as **one Next.js package** (npm), not a pnpm/Turbo monorepo. Typed contracts live in `src/contracts/`, have **no** dependency other than Zod and the shared kernel, and are linted to stay that way. When the React Native app starts, `src/contracts` and `src/shared` move to `packages/contracts` and `packages/shared` with no code changes. (Rationale and alternative in [09 › D-01](./09-risks-and-decisions.md#decision-log).)
+The repository follows the product owner's recommended layout: one Next.js app under `apps/web`, framework-independent domain modules under `modules/`, and shared packages under `packages/`. npm workspaces link them; Turbopack compiles workspace packages from source, so there is no separate build step. The `packages/validation` and `packages/types` packages are dependency-light so a future React Native app can consume them unchanged.
 
 ## Layout
 
 ```
 bahayplus/
-├── docs/                         # Architecture, ADRs, runbooks
-├── e2e/                          # Playwright specs (by portal) + fixtures
+├── apps/
+│   └── web/                         # @bahayplus/web — Next.js App Router (presentation + adapters)
+│       ├── app/
+│       │   ├── (public)/            # /
+│       │   ├── (auth)/              # /login, /signup, password reset, auth callbacks
+│       │   ├── app/                 # Customer portal   /app
+│       │   ├── provider/            # Provider portal   /provider
+│       │   ├── supplier/            # Supplier portal   /supplier
+│       │   ├── worker/              # Field worker      /worker
+│       │   ├── admin/               # Super admin       /admin
+│       │   ├── preview/             # Design previews with labelled SAMPLE data (not served in prod by default)
+│       │   └── api/                 # v1 REST (mobile/integrations) + internal job endpoints
+│       ├── components/              # App-specific components (layout shell, portal widgets)
+│       ├── hooks/
+│       ├── lib/
+│       │   ├── actions/             # Server Actions (thin adapters → modules)
+│       │   ├── auth/                # session + request context resolution
+│       │   ├── config/              # routes, navigation, site, service catalog
+│       │   ├── env/                 # validated environment (public / server)
+│       │   ├── supabase/            # server / browser / admin / proxy clients
+│       │   └── preview/             # sample data — importable only by app/preview (lint-enforced)
+│       └── proxy.ts                 # session refresh + coarse portal gate
+├── modules/                         # @bahayplus/modules — domain modules, no Next.js/React
+│   └── <module>/
+│       ├── domain/                  # entities, value objects, pure rules
+│       ├── application/             # use cases, authorization policies
+│       ├── infrastructure/          # Supabase repositories, provider adapters
+│       └── index.ts                 # public API (import as @bahayplus/modules/<module>)
+├── packages/
+│   ├── ui/                          # @bahayplus/ui — design tokens, shadcn/ui primitives, shared components
+│   ├── types/                       # @bahayplus/types — shared kernel (Money, dates, Result) + generated DB types
+│   └── validation/                  # @bahayplus/validation — Zod contracts shared by web, API and mobile
 ├── supabase/
-│   ├── config.toml
-│   ├── migrations/               # Timestamped SQL migrations (source of truth)
-│   ├── tests/                    # pgTAP RLS / constraint tests (`supabase test db`)
-│   └── seed.sql                  # Local-only reference data (categories, billers) — no fake users
-├── public/
-├── src/
-│   ├── app/                      # Next.js routes ONLY (thin)
-│   │   ├── (public)/             # /, marketing pages
-│   │   ├── (auth)/               # /login, /signup, /auth/callback
-│   │   ├── app/                  # Customer portal  (/app)
-│   │   ├── provider/             # Provider portal  (/provider)
-│   │   ├── supplier/             # Supplier portal  (/supplier)
-│   │   ├── worker/               # Field worker     (/worker)
-│   │   ├── admin/                # Super admin      (/admin)
-│   │   └── api/
-│   │       ├── v1/               # Public typed REST for mobile/integrations
-│   │       └── internal/jobs/    # Job runner endpoints (secret-protected)
-│   ├── components/
-│   │   ├── ui/                   # shadcn/ui primitives (generated, lightly themed)
-│   │   ├── layout/               # AppShell, Sidebar, Header, MobileBottomNavigation, Breadcrumbs
-│   │   ├── data/                 # DataTable, FilterPanel, SearchInput, StatCard
-│   │   ├── feedback/             # EmptyState, ErrorState, LoadingSkeleton, ConfirmationDialog, StatusBadge
-│   │   ├── forms/                # FormField and RHF helpers
-│   │   └── domain/               # Presentational domain cards: ServiceCard, ProviderCard …
-│   ├── contracts/                # Zod schemas + inferred types per module (shared with mobile)
-│   │   └── <module>/…
-│   ├── modules/                  # Domain modules (see 03)
-│   │   └── <module>/
-│   │       ├── domain/           # Entities, value objects, pure rules (no I/O)
-│   │       ├── application/      # Use cases / services, authorization policies
-│   │       ├── infrastructure/   # Supabase repositories, adapters
-│   │       ├── actions.ts        # Server Actions (thin adapters)
-│   │       └── index.ts          # Module public API — the only import surface
-│   ├── platform/                 # Cross-cutting technical services
-│   │   ├── supabase/             # client/server/admin clients, generated types
-│   │   ├── auth/                 # session, current-user, context resolution, guards
-│   │   ├── audit/
-│   │   ├── jobs/                 # queue, outbox, runner
-│   │   ├── notifications/        # ports + adapters
-│   │   ├── payments/             # PaymentGateway port, manual adapter
-│   │   ├── storage/
-│   │   ├── idempotency/
-│   │   └── env/                  # validated environment
-│   ├── shared/                   # Shared kernel: Money, dates (Asia/Manila), Result, ids, errors
-│   ├── config/                   # Navigation definitions, feature flags, site config
-│   ├── preview/                  # Sample data for isolated visual previews ONLY (labelled)
-│   └── styles/                   # globals.css, design tokens
-├── tests/                        # Vitest setup, test utils, integration test helpers
-├── .env.example
-├── eslint.config.mjs · prettier.config.mjs · vitest.config.ts · playwright.config.ts
-└── package.json
+│   ├── migrations/                  # timestamped SQL (source of truth)
+│   ├── seed.sql                     # local reference data + local-only demo accounts
+│   └── tests/                       # pgTAP database / RLS tests
+├── tests/
+│   ├── unit/                        # Vitest: shared kernel, domain logic, components (jsdom)
+│   ├── integration/                 # Vitest against local Supabase: services, repositories
+│   ├── security/                    # Vitest against local Supabase: tenant isolation, privilege escalation
+│   ├── e2e/                         # Playwright journeys (5 viewports)
+│   └── performance/                 # Load / query-plan checks
+├── docs/
+└── .github/workflows/               # CI
 ```
 
-## Import rules
+## Module names
 
-Enforced with ESLint (`no-restricted-imports` / boundaries rules):
+| Module                       | Owns                                                                                                                 |
+| ---------------------------- | -------------------------------------------------------------------------------------------------------------------- |
+| `identity`                   | profiles, auth flows, account settings                                                                               |
+| `authorization`              | roles, permissions, role_permissions, policy checks, tenant context                                                  |
+| `households`                 | households, household members, invitations                                                                           |
+| `properties`                 | properties, PH addresses, property activity                                                                          |
+| `assets`, `pets`, `vehicles` | household registries                                                                                                 |
+| `bills`, `budgets`           | bills & utilities, budgeting & expenses                                                                              |
+| `scheduling`                 | unified calendar, reminders engine                                                                                   |
+| `notifications`              | notification channels, preferences, delivery records                                                                 |
+| `providers`                  | provider organizations, profiles, trust & verification, reviews                                                      |
+| `marketplace`                | categories, offerings, search, service areas, urgent discovery                                                       |
+| `bookings`                   | bookings, quotations, appointments, work orders                                                                      |
+| `projects`                   | renovation & custom projects                                                                                         |
+| `suppliers`, `inventory`     | supplier catalog, stock, purchase orders, deliveries                                                                 |
+| `payments`                   | payment interfaces, intents, settlements, reconciliation                                                             |
+| `organizations`, `audit`     | shared organization membership; audit trail _(added to the recommended list because several modules depend on them)_ |
 
-| From | May import | Must not import |
-|------|------------|-----------------|
-| `shared/` | nothing internal | everything else |
-| `contracts/` | `shared/`, `zod` | modules, platform, React, Next |
-| `modules/*/domain` | `shared/`, own `domain/` | Next, React, Supabase, other modules |
-| `modules/*/application` | own `domain/`, `contracts/`, `shared/`, platform **ports**, other modules' `index.ts` | Next, React, another module's internals |
-| `modules/*/infrastructure` | Supabase, platform adapters | Next presentation code |
-| `app/`, `components/` | modules' `index.ts`, `contracts/`, `components/` | module internals, `platform/supabase/admin` |
-| `preview/` | anything | — but nothing outside Storybook-style preview routes may import it |
-| `platform/supabase/admin` | — | Must start with `import 'server-only'` |
+## Import rules (ESLint-enforced)
+
+| From                                                        | May import                                    | Must not import                                                                                   |
+| ----------------------------------------------------------- | --------------------------------------------- | ------------------------------------------------------------------------------------------------- |
+| `packages/types`, `packages/validation`, `modules/*/domain` | each other, `zod`                             | Next.js, React, Supabase, `@bahayplus/ui`, `apps/web`                                             |
+| `modules/*/application`, `modules/*/infrastructure`         | domain, packages, Supabase types              | Next.js, React, `@bahayplus/ui`, `apps/web`                                                       |
+| `packages/ui`                                               | React, Next.js primitives, `@bahayplus/types` | Supabase, `apps/web`                                                                              |
+| `apps/web`                                                  | everything above                              | `@/lib/preview/*` (except `app/preview`), `@/lib/supabase/admin` (except jobs/admin/internal API) |
+
+The service-role client (`apps/web/lib/supabase/admin.ts`) starts with `import "server-only"`.
 
 ## Naming
 
-- Files: `kebab-case.ts`; React components `PascalCase` exports.
-- DB: `snake_case`, plural table names, `id uuid` PKs (`gen_random_uuid()`), FK `<entity>_id`.
-- API/TS: `camelCase`. Mapping happens in repositories, never in components.
-- Migrations: `YYYYMMDDHHMMSS_<module>_<change>.sql`.
+- Files `kebab-case`; React components export `PascalCase`.
+- DB `snake_case`, plural tables, `uuid` keys; API/TS `camelCase`; mapping happens in repositories.
+- Migrations `YYYYMMDDHHMMSS_<module>_<change>.sql`.

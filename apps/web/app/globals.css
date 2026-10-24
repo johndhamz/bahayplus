@@ -1,0 +1,8 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
+
+@import "@bahayplus/ui/styles/tokens.css";
+
+/* Scan the shared UI package for class names (it lives outside this app). */
+@source "../../../packages/ui/src";
