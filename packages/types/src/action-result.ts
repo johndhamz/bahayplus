@@ -4,7 +4,10 @@ import type { AppError, AppErrorCode, Result } from "@bahayplus/types/result";
 /** Serializable result returned by every Server Action. */
 export type ActionResult<T = undefined> =
   | { ok: true; data: T; message?: string }
-  | { ok: false; error: { code: AppErrorCode; message: string; fieldErrors?: Record<string, string> } };
+  | {
+      ok: false;
+      error: { code: AppErrorCode; message: string; reason?: string; fieldErrors?: Record<string, string> };
+    };
 
 export function zodFieldErrors(error: z.ZodError): Record<string, string> {
   const out: Record<string, string> = {};
@@ -31,7 +34,7 @@ export function fromAppError(error: AppError): ActionResult<never> {
     error.code === "VALIDATION_FAILED"
       ? Object.fromEntries(error.issues.map((i) => [i.path.join(".") || "_form", i.message]))
       : undefined;
-  return { ok: false, error: { code: error.code, message: error.message, fieldErrors } };
+  return { ok: false, error: { code: error.code, message: error.message, reason: error.reason, fieldErrors } };
 }
 
 export function fromResult<T>(result: Result<T>, message?: string): ActionResult<T> {

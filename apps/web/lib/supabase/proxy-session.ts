@@ -1,6 +1,6 @@
 import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
-import { isProtectedPath, loginRedirectPath } from "@/lib/config/routes";
+import { contextFromPath, isProtectedPath, loginRedirectPath } from "@/lib/config/routes";
 import type { Database } from "@bahayplus/types/database";
 
 /**
@@ -44,6 +44,23 @@ export async function updateSession(request: NextRequest): Promise<NextResponse>
     return redirect;
   }
 
-  if (protectedPath) response.headers.set("Cache-Control", "private, no-store");
+  if (protectedPath) {
+    response.headers.set("Cache-Control", "private, no-store");
+    const context = contextFromPath(request.nextUrl.pathname);
+    // Prefetches (e.g. of other households in the switcher) must not change the remembered context.
+    const isPrefetch =
+      request.headers.get("next-router-prefetch") === "1" ||
+      request.headers.get("purpose") === "prefetch" ||
+      (request.headers.get("sec-purpose") ?? "").includes("prefetch");
+    if (context && !isPrefetch) {
+      response.cookies.set(context.cookie, context.id, {
+        httpOnly: true,
+        sameSite: "lax",
+        secure: request.nextUrl.protocol === "https:",
+        path: "/",
+        maxAge: 60 * 60 * 24 * 180,
+      });
+    }
+  }
   return response;
 }

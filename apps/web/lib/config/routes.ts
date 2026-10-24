@@ -24,8 +24,28 @@ export function portalOf(pathname: string): Portal | null {
   return (PORTALS as readonly string[]).includes(first) ? (first as Portal) : null;
 }
 
+const PROTECTED_PREFIXES = ["/account", "/invite"];
+
 export function isProtectedPath(pathname: string): boolean {
-  return portalOf(pathname) !== null || pathname === "/account" || pathname.startsWith("/account/");
+  return portalOf(pathname) !== null || PROTECTED_PREFIXES.some((p) => pathname === p || pathname.startsWith(`${p}/`));
+}
+
+/** Cookies remembering the last context opened per portal (a convenience only — always re-authorized). */
+export const LAST_CONTEXT_COOKIE = {
+  app: "bp_last_household",
+  provider: "bp_last_provider",
+  supplier: "bp_last_supplier",
+} as const;
+
+const CONTEXT_PATH =
+  /^\/(app\/h|provider\/o|supplier\/o)\/([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})(?:\/|$)/i;
+
+/** Extracts the context id from a tenant-scoped path, e.g. /app/h/{id}/bills → { cookie, id }. */
+export function contextFromPath(pathname: string): { cookie: string; id: string } | null {
+  const match = CONTEXT_PATH.exec(pathname);
+  if (!match) return null;
+  const portal = match[1] === "app/h" ? "app" : match[1] === "provider/o" ? "provider" : "supplier";
+  return { cookie: LAST_CONTEXT_COOKIE[portal], id: match[2]!.toLowerCase() };
 }
 
 /** Only allow same-origin relative redirects (prevents open redirects via ?next=). */

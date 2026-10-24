@@ -16,11 +16,11 @@
     "test:db": "supabase test db",
     "test:e2e": "playwright test",
     "check": "npm run lint && npm run typecheck && npm run test",
-    "db:start": "supabase start",
+    "db:start": "supabase start -x edge-runtime,studio,logflare,vector,imgproxy,supavisor,realtime,postgres-meta",
     "db:stop": "supabase stop",
     "db:status": "supabase status",
     "db:reset": "supabase db reset",
-    "db:types": "supabase gen types typescript --local --schema public > packages/types/src/database.ts",
+    "db:types": "supabase gen types typescript --local --schema public > packages/types/src/database.ts && prettier --write --ignore-path /dev/null packages/types/src/database.ts",
     "db:lint": "supabase db lint --level warning"
   },
   "devDependencies": {

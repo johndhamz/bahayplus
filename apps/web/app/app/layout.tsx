@@ -1,5 +1,7 @@
-import { PortalLayout } from "@/components/layout/portal-layout";
+import { requireUser } from "@/lib/auth/session";
 
-export default function Layout({ children }: LayoutProps<"/app">) {
-  return <PortalLayout portal="app">{children}</PortalLayout>;
+/** Customer portal: authentication gate only. The shell is rendered per household under /app/h/[householdId]. */
+export default async function Layout({ children }: LayoutProps<"/app">) {
+  await requireUser("/app");
+  return children;
 }

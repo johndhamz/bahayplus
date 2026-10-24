@@ -1,5 +1,9 @@
-import { PortalLayout } from "@/components/layout/portal-layout";
+import { PortalShell } from "@/components/layout/portal-shell";
 
 export default function Layout({ children }: LayoutProps<"/worker">) {
-  return <PortalLayout portal="worker">{children}</PortalLayout>;
+  return (
+    <PortalShell portal="worker" basePath="/worker">
+      {children}
+    </PortalShell>
+  );
 }

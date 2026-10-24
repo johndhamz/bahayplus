@@ -1,5 +1,6 @@
-import { PortalLayout } from "@/components/layout/portal-layout";
+import { requireUser } from "@/lib/auth/session";
 
-export default function Layout({ children }: LayoutProps<"/supplier">) {
-  return <PortalLayout portal="supplier">{children}</PortalLayout>;
+export default async function Layout({ children }: LayoutProps<"/supplier">) {
+  await requireUser("/supplier");
+  return children;
 }

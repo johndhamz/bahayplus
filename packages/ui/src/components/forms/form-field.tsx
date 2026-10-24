@@ -62,8 +62,9 @@ export type FieldControlProps = {
   "aria-required"?: boolean;
 };
 
-type FormFieldProps<T extends FieldValues, N extends FieldPath<T>> = {
-  control: Control<T>;
+type FormFieldProps<T extends FieldValues, N extends FieldPath<T>, TOutput = T> = {
+  /** Input values type T may differ from the parsed output (e.g. "" → null); both are supported. */
+  control: Control<T, unknown, TOutput>;
   name: N;
   label: string;
   description?: ReactNode;
@@ -76,7 +77,7 @@ type FormFieldProps<T extends FieldValues, N extends FieldPath<T>> = {
  * React Hook Form field with accessible wiring: label ↔ input, description and error via
  * aria-describedby, aria-invalid on error. Validation rules come from the shared Zod contract.
  */
-export function FormField<T extends FieldValues, N extends FieldPath<T>>({
+export function FormField<T extends FieldValues, N extends FieldPath<T>, TOutput = T>({
   control,
   name,
   label,
@@ -84,9 +85,9 @@ export function FormField<T extends FieldValues, N extends FieldPath<T>>({
   required,
   className,
   children,
-}: FormFieldProps<T, N>) {
+}: FormFieldProps<T, N, TOutput>) {
   const id = useId();
-  const { field, fieldState } = useController({ control, name });
+  const { field, fieldState } = useController<T, N, TOutput>({ control, name });
   const error = fieldState.error?.message;
   const { descriptionId, errorId } = fieldIds(id);
   const describedBy = error ? errorId : description ? descriptionId : undefined;

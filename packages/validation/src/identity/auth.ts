@@ -1,6 +1,7 @@
 import { z } from "zod";
+import { Email } from "../common/primitives";
 
-export const Email = z.email({ message: "Enter a valid email address." }).trim().toLowerCase().max(254);
+export { Email };
 
 /** Password policy: length over complexity (NIST 800-63B), with a sane upper bound. */
 export const Password = z.string().min(10, "Use at least 10 characters.").max(128, "Use 128 characters or fewer.");
@@ -33,3 +34,17 @@ export const ResetPasswordInput = z
   .object({ password: Password, confirmPassword: z.string() })
   .refine((v) => v.password === v.confirmPassword, { path: ["confirmPassword"], message: "Passwords don't match." });
 export type ResetPasswordInput = z.infer<typeof ResetPasswordInput>;
+
+export const UpdateProfileInput = z.object({
+  fullName: z.string().trim().min(2, "Enter your name.").max(120),
+  phone: z
+    .string()
+    .trim()
+    .max(20)
+    .regex(/^$|^\+?[0-9 ()-]{7,20}$/, "Enter a valid phone number, e.g. +63 917 123 4567.")
+    .transform((v) => (v === "" ? null : v)),
+  locale: z.enum(["en-PH", "fil-PH"]),
+});
+export type UpdateProfileInput = z.input<typeof UpdateProfileInput>;
+
+export const ChangePasswordInput = ResetPasswordInput;

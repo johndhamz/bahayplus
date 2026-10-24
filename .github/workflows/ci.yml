@@ -11,7 +11,7 @@ concurrency:
 
 jobs:
   static:
-    name: Lint, typecheck, unit tests
+    name: Format, lint, typecheck, unit tests
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -29,8 +29,8 @@ jobs:
         env:
           TZ: Asia/Manila
 
-  e2e:
-    name: Build + Playwright
+  database:
+    name: Migrations, pgTAP, integration & security, E2E
     runs-on: ubuntu-latest
     needs: static
     steps:
@@ -40,6 +40,21 @@ jobs:
           node-version: 24
           cache: npm
       - run: npm ci
+      - name: Start local Supabase (applies migrations + seed)
+        run: npm run db:start
+      - name: Export Supabase env for the app and tests
+        run: |
+          npx supabase status -o env \
+            | sed -n -e 's/^API_URL=/NEXT_PUBLIC_SUPABASE_URL=/p' \
+                     -e 's/^PUBLISHABLE_KEY=/NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=/p' \
+                     -e 's/^SECRET_KEY=/SUPABASE_SECRET_KEY=/p' \
+            | tr -d '"' > apps/web/.env.local
+          echo "NEXT_PUBLIC_SITE_URL=http://localhost:3100" >> apps/web/.env.local
+          echo "JOB_RUNNER_SECRET=ci-job-runner-secret-0123456789abcdef0123" >> apps/web/.env.local
+          echo "APP_ENV=test" >> apps/web/.env.local
+      - run: npm run db:lint
+      - run: npm run test:db
+      - run: npm run test:integration
       - run: npx playwright install --with-deps chromium
       - run: npm run test:e2e
         env:

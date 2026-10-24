@@ -23,8 +23,21 @@ export async function loginAction(input: unknown): Promise<ActionResult> {
         error: { code: "FORBIDDEN", message: "Please verify your email first. Check your inbox for the link we sent." },
       };
     }
-    // Same message for unknown email and wrong password (no account enumeration).
-    return { ok: false, error: { code: "UNAUTHENTICATED", message: "Email or password is incorrect." } };
+    if (error.code === "invalid_credentials") {
+      // Same message for unknown email and wrong password (no account enumeration).
+      return { ok: false, error: { code: "UNAUTHENTICATED", message: "Email or password is incorrect." } };
+    }
+    if (error.status === 429 || error.code === "over_request_rate_limit") {
+      return {
+        ok: false,
+        error: { code: "RATE_LIMITED", message: "Too many attempts. Please wait a minute and try again." },
+      };
+    }
+    console.error("[auth] sign-in failed", { code: error.code, status: error.status });
+    return {
+      ok: false,
+      error: { code: "DEPENDENCY_FAILED", message: "We couldn't sign you in right now. Please try again." },
+    };
   }
   redirect(safeNextPath(parsed.data.next, "/app"));
 }

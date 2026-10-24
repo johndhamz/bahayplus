@@ -122,3 +122,18 @@ Always audited: sign-in anomalies, role changes, member invite/remove, ownership
 - Collect minimum data; explicit consent screens for sensitive personal information (government IDs for verification).
 - Data subject rights: export and deletion flows (Phase "business ops").
 - Supabase project in `ap-southeast-1` (Singapore) — cross-border transfer disclosed in privacy notice; confirm with counsel ([09](./09-risks-and-decisions.md)).
+
+## Implementation notes (Phase 2)
+
+| Concern | Where |
+|---------|-------|
+| Schema & RLS | `supabase/migrations/20261025000100…000400_*.sql` |
+| Membership writes | Only through `SECURITY DEFINER` functions (`create_household`, `invite_household_member`, `accept_household_invitation`, `change_household_member_role`, `set_household_member_status`, `remove_household_member`, and the `*_organization_*` equivalents). Membership/invitation tables have **no** INSERT/UPDATE/DELETE policies. |
+| Direct updates | Column-level grants: users may update only `households.name`, `organizations.name`, display fields on `profiles`, and property fields. Status, ownership and audit columns are not writable. |
+| Escalation rules | `private.assert_*_role_change`, mirrored for UI in `modules/authorization/domain/policy.ts` |
+| Last owner | `BEFORE UPDATE OR DELETE` triggers — enforced for every writer, including the service role |
+| Invitations | 32-byte random token returned once; only its SHA-256 hash is stored (and not selectable via the API); single use; 7-day expiry; bound to the invited email and requires a verified email |
+| Platform admins | `platform_admins` rows are inserted server-side only (SQL / service role); no API write path exists; grants and revocations are audited |
+| Audit | `public.audit_logs` is append-only (triggers block UPDATE/DELETE/TRUNCATE, including for the service role); readable only with `platform.audit.view` |
+| Context resolution | `apps/web/lib/auth/context.ts` → `requireHouseholdAccess` / `requireOrganizationAccess` / `requirePlatformAccess`; failures render 404 |
+| Email links | Token-hash templates in `supabase/templates/*` → `/auth/confirm` (works across devices). Hosted projects must use the same templates. |
