@@ -848,6 +848,45 @@ export type Database = {
           },
         ];
       };
+      commission_rates: {
+        Row: {
+          created_at: string;
+          created_by: string | null;
+          effective_from: string;
+          id: string;
+          note: string;
+          organization_id: string | null;
+          rate_bps: number;
+        };
+        ComputedFields: never;
+        Insert: {
+          created_at?: string;
+          created_by?: string | null;
+          effective_from?: string;
+          id?: string;
+          note?: string;
+          organization_id?: string | null;
+          rate_bps: number;
+        };
+        Update: {
+          created_at?: string;
+          created_by?: string | null;
+          effective_from?: string;
+          id?: string;
+          note?: string;
+          organization_id?: string | null;
+          rate_bps?: number;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "commission_rates_organization_id_fkey";
+            columns: ["organization_id"];
+            isOneToOne: false;
+            referencedRelation: "organizations";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
       deliveries: {
         Row: {
           attempts: number;
@@ -1762,6 +1801,162 @@ export type Database = {
           updated_at?: string;
         };
         Relationships: [];
+      };
+      payment_events: {
+        Row: {
+          actor_id: string | null;
+          amount_centavos: number | null;
+          created_at: string;
+          detail: NonNullable<Json>;
+          event_type: string;
+          from_status: string | null;
+          id: number;
+          payment_intent_id: string;
+          provider_event_id: string | null;
+          refund_id: string | null;
+          source: string;
+          to_status: string | null;
+        };
+        ComputedFields: never;
+        Insert: {
+          actor_id?: string | null;
+          amount_centavos?: number | null;
+          created_at?: string;
+          detail?: NonNullable<Json>;
+          event_type: string;
+          from_status?: string | null;
+          id?: never;
+          payment_intent_id: string;
+          provider_event_id?: string | null;
+          refund_id?: string | null;
+          source: string;
+          to_status?: string | null;
+        };
+        Update: {
+          actor_id?: string | null;
+          amount_centavos?: number | null;
+          created_at?: string;
+          detail?: NonNullable<Json>;
+          event_type?: string;
+          from_status?: string | null;
+          id?: never;
+          payment_intent_id?: string;
+          provider_event_id?: string | null;
+          refund_id?: string | null;
+          source?: string;
+          to_status?: string | null;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "payment_events_payment_intent_id_fkey";
+            columns: ["payment_intent_id"];
+            isOneToOne: false;
+            referencedRelation: "payment_intents";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "payment_events_refund_id_fkey";
+            columns: ["refund_id"];
+            isOneToOne: false;
+            referencedRelation: "refunds";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
+      payment_intents: {
+        Row: {
+          amount_centavos: number;
+          amount_refunded_centavos: number;
+          booking_id: string | null;
+          checkout_url: string | null;
+          commission_bps: number | null;
+          commission_centavos: number | null;
+          created_at: string;
+          created_by: string | null;
+          currency: string;
+          description: string;
+          external_reference: string | null;
+          failure_code: string | null;
+          failure_message: string | null;
+          household_id: string;
+          id: string;
+          idempotency_key: string;
+          organization_id: string;
+          provider: string;
+          status: string;
+          succeeded_at: string | null;
+          updated_at: string;
+        };
+        ComputedFields: never;
+        Insert: {
+          amount_centavos: number;
+          amount_refunded_centavos?: number;
+          booking_id?: string | null;
+          checkout_url?: string | null;
+          commission_bps?: number | null;
+          commission_centavos?: number | null;
+          created_at?: string;
+          created_by?: string | null;
+          currency?: string;
+          description: string;
+          external_reference?: string | null;
+          failure_code?: string | null;
+          failure_message?: string | null;
+          household_id: string;
+          id?: string;
+          idempotency_key: string;
+          organization_id: string;
+          provider: string;
+          status?: string;
+          succeeded_at?: string | null;
+          updated_at?: string;
+        };
+        Update: {
+          amount_centavos?: number;
+          amount_refunded_centavos?: number;
+          booking_id?: string | null;
+          checkout_url?: string | null;
+          commission_bps?: number | null;
+          commission_centavos?: number | null;
+          created_at?: string;
+          created_by?: string | null;
+          currency?: string;
+          description?: string;
+          external_reference?: string | null;
+          failure_code?: string | null;
+          failure_message?: string | null;
+          household_id?: string;
+          id?: string;
+          idempotency_key?: string;
+          organization_id?: string;
+          provider?: string;
+          status?: string;
+          succeeded_at?: string | null;
+          updated_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "payment_intents_booking_id_fkey";
+            columns: ["booking_id"];
+            isOneToOne: false;
+            referencedRelation: "bookings";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "payment_intents_household_id_fkey";
+            columns: ["household_id"];
+            isOneToOne: false;
+            referencedRelation: "households";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "payment_intents_organization_id_fkey";
+            columns: ["organization_id"];
+            isOneToOne: false;
+            referencedRelation: "organizations";
+            referencedColumns: ["id"];
+          },
+        ];
       };
       permissions: {
         Row: {
@@ -2847,6 +3042,166 @@ export type Database = {
           },
         ];
       };
+      reconciliation_items: {
+        Row: {
+          external_reference: string;
+          id: string;
+          ledger_amount_centavos: number | null;
+          ledger_status: string | null;
+          payment_intent_id: string | null;
+          provider_amount_centavos: number | null;
+          provider_status: string | null;
+          result: string;
+          run_id: string;
+        };
+        ComputedFields: never;
+        Insert: {
+          external_reference: string;
+          id?: string;
+          ledger_amount_centavos?: number | null;
+          ledger_status?: string | null;
+          payment_intent_id?: string | null;
+          provider_amount_centavos?: number | null;
+          provider_status?: string | null;
+          result: string;
+          run_id: string;
+        };
+        Update: {
+          external_reference?: string;
+          id?: string;
+          ledger_amount_centavos?: number | null;
+          ledger_status?: string | null;
+          payment_intent_id?: string | null;
+          provider_amount_centavos?: number | null;
+          provider_status?: string | null;
+          result?: string;
+          run_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "reconciliation_items_payment_intent_id_fkey";
+            columns: ["payment_intent_id"];
+            isOneToOne: false;
+            referencedRelation: "payment_intents";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "reconciliation_items_run_id_fkey";
+            columns: ["run_id"];
+            isOneToOne: false;
+            referencedRelation: "reconciliation_runs";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
+      reconciliation_runs: {
+        Row: {
+          created_at: string;
+          created_by: string | null;
+          id: string;
+          matched: number;
+          mismatched: number;
+          period_from: string;
+          period_to: string;
+          provider: string;
+        };
+        ComputedFields: never;
+        Insert: {
+          created_at?: string;
+          created_by?: string | null;
+          id?: string;
+          matched?: number;
+          mismatched?: number;
+          period_from: string;
+          period_to: string;
+          provider: string;
+        };
+        Update: {
+          created_at?: string;
+          created_by?: string | null;
+          id?: string;
+          matched?: number;
+          mismatched?: number;
+          period_from?: string;
+          period_to?: string;
+          provider?: string;
+        };
+        Relationships: [];
+      };
+      refunds: {
+        Row: {
+          amount_centavos: number;
+          created_at: string;
+          external_reference: string | null;
+          failure_message: string | null;
+          household_id: string;
+          id: string;
+          idempotency_key: string;
+          organization_id: string;
+          payment_intent_id: string;
+          provider: string;
+          reason: string;
+          requested_by: string | null;
+          status: string;
+          updated_at: string;
+        };
+        ComputedFields: never;
+        Insert: {
+          amount_centavos: number;
+          created_at?: string;
+          external_reference?: string | null;
+          failure_message?: string | null;
+          household_id: string;
+          id?: string;
+          idempotency_key: string;
+          organization_id: string;
+          payment_intent_id: string;
+          provider: string;
+          reason: string;
+          requested_by?: string | null;
+          status?: string;
+          updated_at?: string;
+        };
+        Update: {
+          amount_centavos?: number;
+          created_at?: string;
+          external_reference?: string | null;
+          failure_message?: string | null;
+          household_id?: string;
+          id?: string;
+          idempotency_key?: string;
+          organization_id?: string;
+          payment_intent_id?: string;
+          provider?: string;
+          reason?: string;
+          requested_by?: string | null;
+          status?: string;
+          updated_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "refunds_household_id_fkey";
+            columns: ["household_id"];
+            isOneToOne: false;
+            referencedRelation: "households";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "refunds_organization_id_fkey";
+            columns: ["organization_id"];
+            isOneToOne: false;
+            referencedRelation: "organizations";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "refunds_payment_intent_id_fkey";
+            columns: ["payment_intent_id"];
+            isOneToOne: false;
+            referencedRelation: "payment_intents";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
       reminders: {
         Row: {
           attempts: number;
@@ -3277,6 +3632,125 @@ export type Database = {
             isOneToOne: false;
             referencedRelation: "vehicles";
             referencedColumns: ["id", "household_id"];
+          },
+        ];
+      };
+      settlement_items: {
+        Row: {
+          commission_centavos: number;
+          gross_centavos: number;
+          id: string;
+          kind: string;
+          net_centavos: number;
+          payment_intent_id: string;
+          refund_id: string | null;
+          refunds_centavos: number;
+          settlement_id: string;
+        };
+        ComputedFields: never;
+        Insert: {
+          commission_centavos: number;
+          gross_centavos: number;
+          id?: string;
+          kind: string;
+          net_centavos: number;
+          payment_intent_id: string;
+          refund_id?: string | null;
+          refunds_centavos: number;
+          settlement_id: string;
+        };
+        Update: {
+          commission_centavos?: number;
+          gross_centavos?: number;
+          id?: string;
+          kind?: string;
+          net_centavos?: number;
+          payment_intent_id?: string;
+          refund_id?: string | null;
+          refunds_centavos?: number;
+          settlement_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "settlement_items_payment_intent_id_fkey";
+            columns: ["payment_intent_id"];
+            isOneToOne: false;
+            referencedRelation: "payment_intents";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "settlement_items_refund_id_fkey";
+            columns: ["refund_id"];
+            isOneToOne: false;
+            referencedRelation: "refunds";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "settlement_items_settlement_id_fkey";
+            columns: ["settlement_id"];
+            isOneToOne: false;
+            referencedRelation: "settlements";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
+      settlements: {
+        Row: {
+          approved_by: string | null;
+          commission_centavos: number;
+          created_at: string;
+          created_by: string | null;
+          gross_centavos: number;
+          id: string;
+          item_count: number;
+          net_centavos: number;
+          organization_id: string;
+          payout_reference: string | null;
+          period_end: string;
+          refunds_centavos: number;
+          status: string;
+          updated_at: string;
+        };
+        ComputedFields: never;
+        Insert: {
+          approved_by?: string | null;
+          commission_centavos: number;
+          created_at?: string;
+          created_by?: string | null;
+          gross_centavos: number;
+          id?: string;
+          item_count: number;
+          net_centavos: number;
+          organization_id: string;
+          payout_reference?: string | null;
+          period_end: string;
+          refunds_centavos: number;
+          status?: string;
+          updated_at?: string;
+        };
+        Update: {
+          approved_by?: string | null;
+          commission_centavos?: number;
+          created_at?: string;
+          created_by?: string | null;
+          gross_centavos?: number;
+          id?: string;
+          item_count?: number;
+          net_centavos?: number;
+          organization_id?: string;
+          payout_reference?: string | null;
+          period_end?: string;
+          refunds_centavos?: number;
+          status?: string;
+          updated_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "settlements_organization_id_fkey";
+            columns: ["organization_id"];
+            isOneToOne: false;
+            referencedRelation: "organizations";
+            referencedColumns: ["id"];
           },
         ];
       };
@@ -3958,8 +4432,26 @@ export type Database = {
         Returns: undefined;
       };
       admin_update_setting: { Args: { p_key: string; p_value: Json }; Returns: undefined };
+      apply_payment_event: {
+        Args: {
+          p_amount_centavos: number;
+          p_currency: string;
+          p_event_id: string;
+          p_event_type: string;
+          p_external_reference: string;
+          p_payload: Json;
+          p_provider: string;
+          p_signed_at: string;
+        };
+        Returns: string;
+      };
       assign_calendar_item: { Args: { p_household: string; p_item_key: string; p_user: string }; Returns: undefined };
       assign_work_order: { Args: { p_work_order: string; p_worker: string }; Returns: undefined };
+      attach_payment_reference: {
+        Args: { p_checkout_url: string; p_external_reference: string; p_intent: string };
+        Returns: undefined;
+      };
+      attach_refund_reference: { Args: { p_external_reference: string; p_refund: string }; Returns: undefined };
       booking_location: {
         Args: { p_booking: string };
         Returns: {
@@ -3984,6 +4476,7 @@ export type Database = {
           spent_centavos: number;
         }[];
       };
+      cancel_payment_intent: { Args: { p_intent: string }; Returns: undefined };
       cancel_purchase_order: { Args: { p_po: string; p_reason: string }; Returns: undefined };
       change_household_member_role: { Args: { p_member: string; p_role: string }; Returns: undefined };
       change_organization_member_role: { Args: { p_member: string; p_role: string }; Returns: undefined };
@@ -4015,10 +4508,15 @@ export type Database = {
       create_bill_account: { Args: { p_payload: Json }; Returns: string };
       create_household: { Args: { p_name: string }; Returns: string };
       create_organization: { Args: { p_kind: string; p_name: string; p_slug: string }; Returns: string };
+      create_payment_intent: {
+        Args: { p_booking: string; p_idempotency_key: string; p_provider: string };
+        Returns: string;
+      };
       create_project_request: { Args: { p_payload: Json }; Returns: string };
       create_purchase_order: { Args: { p_payload: Json }; Returns: string };
       create_quotation_draft: { Args: { p_request: string }; Returns: string };
       create_service_request: { Args: { p_payload: Json }; Returns: string };
+      create_settlement: { Args: { p_org: string; p_period_end: string }; Returns: string };
       create_work_order: { Args: { p_payload: Json }; Returns: string };
       decide_change_order: {
         Args: { p_change_order: string; p_decision: string; p_note?: string };
@@ -4180,11 +4678,19 @@ export type Database = {
         };
         Returns: string;
       };
+      request_refund: {
+        Args: { p_amount: number; p_idempotency_key: string; p_intent: string; p_reason: string };
+        Returns: string;
+      };
       reschedule_booking: { Args: { p_booking: string; p_reason: string; p_start: string }; Returns: undefined };
       revoke_household_invitation: { Args: { p_invitation: string }; Returns: undefined };
       revoke_organization_invitation: { Args: { p_invitation: string }; Returns: undefined };
       revoke_verification: { Args: { p_reason: string; p_request: string }; Returns: undefined };
       run_daily_bill_jobs: { Args: { p_today?: string }; Returns: Json };
+      run_reconciliation: {
+        Args: { p_from: string; p_provider: string; p_report: Json; p_to: string };
+        Returns: string;
+      };
       run_reminder_worker: { Args: Record<PropertyKey, never>; Returns: Json };
       search_providers: {
         Args: {
@@ -4231,6 +4737,10 @@ export type Database = {
         }[];
       };
       send_quotation: { Args: { p_quotation: string; p_valid_until: string }; Returns: undefined };
+      set_commission_rate: {
+        Args: { p_effective_from: string; p_note: string; p_org: string; p_rate_bps: number };
+        Returns: undefined;
+      };
       set_household_member_status: { Args: { p_member: string; p_status: string }; Returns: undefined };
       set_organization_member_status: { Args: { p_member: string; p_status: string }; Returns: undefined };
       ship_purchase_order: {
@@ -4268,6 +4778,10 @@ export type Database = {
       transition_booking: { Args: { p_action: string; p_booking: string; p_reason?: string }; Returns: undefined };
       update_delivery: { Args: { p_detail?: string; p_po: string; p_status: string }; Returns: undefined };
       update_project: { Args: { p_payload: Json; p_project: string }; Returns: undefined };
+      update_settlement_status: {
+        Args: { p_payout_reference?: string; p_settlement: string; p_status: string };
+        Returns: undefined;
+      };
       update_work_order_status: {
         Args: { p_notes?: string; p_status: string; p_work_order: string };
         Returns: undefined;

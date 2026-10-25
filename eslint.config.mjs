@@ -31,7 +31,15 @@ const eslintConfig = defineConfig([
     rules: { "no-restricted-imports": ["error", { patterns: appRestricted }] },
   },
   {
-    files: ["apps/web/app/preview/**", "apps/web/lib/jobs/**", "apps/web/app/api/internal/**", "apps/web/lib/admin/**"],
+    files: [
+      "apps/web/app/preview/**",
+      "apps/web/lib/jobs/**",
+      "apps/web/app/api/internal/**",
+      "apps/web/lib/admin/**",
+      // Payments: provider references and verified webhook events are written with the service role only.
+      "apps/web/lib/payments/**",
+      "apps/web/app/api/webhooks/payments/**",
+    ],
     rules: { "no-restricted-imports": "off" },
   },
   {

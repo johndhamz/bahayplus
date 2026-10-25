@@ -72,6 +72,7 @@ export const ORGANIZATION_PERMISSIONS = [
   "orders.manage",
   "purchasing.manage",
   "finance.view",
+  "payments.refund",
 ] as const;
 export type OrganizationPermission = (typeof ORGANIZATION_PERMISSIONS)[number];
 
@@ -86,6 +87,7 @@ export const PLATFORM_PERMISSIONS = [
   "platform.users.manage",
   "platform.categories.manage",
   "platform.disputes.manage",
+  "platform.finance.manage",
 ] as const;
 export type PlatformPermission = (typeof PLATFORM_PERMISSIONS)[number];
 
@@ -153,6 +155,7 @@ export const ROLE_PERMISSIONS: {
       "orders.manage",
       "purchasing.manage",
       "finance.view",
+      "payments.refund",
     ],
     staff: [
       "organization.view",
@@ -177,6 +180,7 @@ export const ROLE_PERMISSIONS: {
       "platform.audit.view",
       "platform.categories.manage",
       "platform.disputes.manage",
+      "platform.finance.manage",
     ],
     support: ["platform.access", "platform.users.view"],
   },

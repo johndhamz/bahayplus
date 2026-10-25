@@ -6,6 +6,7 @@ import {
   CalendarDays,
   Car,
   ClipboardList,
+  CreditCard,
   FileText,
   Gauge,
   Hammer,
@@ -103,6 +104,7 @@ export const PORTAL_NAV: Record<Portal, NavSection[]> = {
       label: "Business",
       items: [
         { path: "staff", label: "Staff", icon: Users },
+        { path: "payments", label: "Payments", icon: CreditCard },
         { path: "finance", label: "Financial summary", icon: Wallet },
         { path: "settings", label: "Settings", icon: Settings },
       ],
@@ -145,6 +147,7 @@ export const PORTAL_NAV: Record<Portal, NavSection[]> = {
         { path: "users", label: "Users", icon: Users },
         { path: "categories", label: "Service categories", icon: Tags },
         { path: "disputes", label: "Disputes", icon: ScrollText },
+        { path: "payments", label: "Payments", icon: CreditCard },
         { path: "audit", label: "Audit log", icon: Activity },
         { path: "settings", label: "Platform settings", icon: Settings },
       ],

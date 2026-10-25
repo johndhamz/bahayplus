@@ -7,6 +7,7 @@ import { formatManilaDateTime } from "@bahayplus/types/dates";
 import { formatPeso } from "@bahayplus/types/money";
 import { PageHeader } from "@/components/layout/page-header";
 import { ReviewForm } from "@/components/marketplace/review-form";
+import { BookingPaymentPanel } from "@/components/payments/booking-payment";
 import { BookingActions, ConfirmCompletion } from "@/components/transactions/booking-forms";
 import { BookingStatusBadge, BookingTimeline, manilaNowLocal } from "@/components/transactions/display";
 import { requireHouseholdAccess, requireServiceContext } from "@/lib/auth/context";
@@ -113,6 +114,7 @@ export default async function BookingPage({ params }: PageProps<"/app/h/[househo
               <BookingActions bookingId={b.id} status={b.status} side="customer" minStart={manilaNowLocal()} />
             </SectionCard>
           )}
+          <BookingPaymentPanel ctx={ctx} booking={b} canPay={canAct} returnPath={`${base}/bookings/${b.id}`} />
           {canAct && b.status === "completed" && !b.customerConfirmation && (
             <SectionCard title="Was the job completed?" id="confirm">
               <p className="mb-3 text-sm text-muted-foreground">

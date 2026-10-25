@@ -18,6 +18,10 @@ export const serverEnvSchema = z.object({
   RESEND_API_KEY: z.string().min(10).optional(),
   /** Local/test only: the Supabase CLI's Mailpit, e.g. http://127.0.0.1:54724. Ignored in staging/production. */
   MAILPIT_URL: z.url().optional(),
+  /** Payment provider id. Unset = online payments disabled. Only "sandbox" exists today (local/test only). */
+  PAYMENTS_PROVIDER: z.enum(["sandbox"]).optional(),
+  /** Webhook signing secret for the active payment provider (min 32 chars). */
+  PAYMENTS_WEBHOOK_SECRET: z.string().min(32).optional(),
 });
 
 export type PublicEnv = z.infer<typeof publicEnvSchema>;

@@ -13,7 +13,7 @@ Every phase follows the same loop: inspect repo → plan → implement → migra
 | 7     | Bookings, quotations, projects, work orders                                             | done     |
 | 8     | Unified calendar, reminder engine & notifications, urgent provider discovery            | done     |
 | 9     | Provider, supplier, worker & admin portals                                              | done     |
-| 10    | Payment architecture & future wallet design (no stored value)                           | approved |
+| 10    | Payment architecture & future wallet design (no stored value)                           | done     |
 | 11    | Production readiness: PWA, performance, accessibility, QA, security, deployment, CI     | approved |
 
 ## Phase 7 implementation notes
@@ -60,6 +60,17 @@ Every phase follows the same loop: inspect repo → plan → implement → migra
   - Support sees masked emails and nothing inside households or businesses. Platform staff can read a booking only while it is under dispute.
   - Settings `maintenance_banner` (shown in every portal) and `urgent_stale_hours` (used by urgent discovery) are live.
 - **Disputes** open automatically when a customer reports a problem with a completed job. Operations take a dispute and resolve or dismiss it, and both sides are notified.
+
+## Phase 10 implementation notes
+
+See [10 · Payments architecture and future PHP wallet](./10-payments-and-wallet.md).
+
+- **Migration `…001200`:** commission rates, payment intents, refunds, an append-only `payment_events` log, a `private.webhook_events` replay ledger, settlements and settlement items, and reconciliation runs and items.
+- **Success only from verified events:** `apply_payment_event` (service role only) runs after the webhook signature check (HMAC-SHA256 over `t.body`, ±5 min). Event ids are unique per provider, intent rows are locked, and amount and currency are checked. A late failure never downgrades a success.
+- **Provider abstraction** (`PaymentProvider`): only an explicitly labelled **local sandbox** adapter exists, and it is refused unless `APP_ENV` is local or test. Its checkout page delivers outcomes as signed webhooks through the same verified path. In production, `PAYMENTS_PROVIDER` is unset, so the pay buttons stay hidden.
+- **Refunds** are partial and capped under a row lock (`overrefund`), idempotent per key, and confirmed only by provider events. Owners and managers (`payments.refund`) or platform finance can request them.
+- **Commission** uses exact integer bps, frozen at success, with per-organization overrides that can't be backdated. **Settlements** charge commission on the net; refunds after settlement become negative adjustments, and each payment or refund is settled once. **Reconciliation** classifies provider report lines against the ledger.
+- **Pages:** a customer payment panel on bookings, the sandbox checkout, provider Payments (with refunds and settlements), and admin Payments (settlements, commission, reconciliation).
 
 ## Phase details
 

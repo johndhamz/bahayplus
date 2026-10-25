@@ -38,6 +38,7 @@ const CONFLICT = new Set([
   "insufficient_stock",
   "evidence_required",
   "conflict",
+  "overrefund",
 ]);
 
 /**

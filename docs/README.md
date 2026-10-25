@@ -3,17 +3,18 @@
 > **Bahay+** — _Everything home. One app._
 > A Philippines-first Household Operating System and Service Marketplace.
 
-| #   | Document                                                            | What it answers                                                  |
-| --- | ------------------------------------------------------------------- | ---------------------------------------------------------------- |
-| 01  | [Architecture overview](./architecture/01-overview.md)              | System shape, runtime topology, cross-cutting concerns           |
-| 02  | [Repository structure](./architecture/02-repository-structure.md)   | Where code lives and the import rules between layers             |
-| 03  | [Domain modules](./architecture/03-domain-modules.md)               | The 16 approved domains, their boundaries and dependencies       |
-| 04  | [Data model](./architecture/04-data-model.md)                       | Core entities, relationships, conventions for money/time/tenancy |
-| 05  | [Authentication & authorization](./architecture/05-auth.md)         | Identity, contexts, roles, permissions, RLS strategy             |
-| 06  | [API conventions](./architecture/06-api-conventions.md)             | Server Actions, REST `/api/v1`, errors, pagination, idempotency  |
-| 07  | [Testing strategy](./architecture/07-testing-strategy.md)           | Unit, integration, RLS, E2E, accessibility, CI gates             |
-| 08  | [Implementation phases](./architecture/08-implementation-phases.md) | Phase plan with scope and exit criteria                          |
-| 09  | [Risks & open decisions](./architecture/09-risks-and-decisions.md)  | Technical risks, mitigations, decisions needing an owner         |
+| #   | Document                                                             | What it answers                                                  |
+| --- | -------------------------------------------------------------------- | ---------------------------------------------------------------- |
+| 01  | [Architecture overview](./architecture/01-overview.md)               | System shape, runtime topology, cross-cutting concerns           |
+| 02  | [Repository structure](./architecture/02-repository-structure.md)    | Where code lives and the import rules between layers             |
+| 03  | [Domain modules](./architecture/03-domain-modules.md)                | The 16 approved domains, their boundaries and dependencies       |
+| 04  | [Data model](./architecture/04-data-model.md)                        | Core entities, relationships, conventions for money/time/tenancy |
+| 05  | [Authentication & authorization](./architecture/05-auth.md)          | Identity, contexts, roles, permissions, RLS strategy             |
+| 06  | [API conventions](./architecture/06-api-conventions.md)              | Server Actions, REST `/api/v1`, errors, pagination, idempotency  |
+| 07  | [Testing strategy](./architecture/07-testing-strategy.md)            | Unit, integration, RLS, E2E, accessibility, CI gates             |
+| 08  | [Implementation phases](./architecture/08-implementation-phases.md)  | Phase plan with scope and exit criteria                          |
+| 09  | [Risks & open decisions](./architecture/09-risks-and-decisions.md)   | Technical risks, mitigations, decisions needing an owner         |
+| 10  | [Payments & future wallet](./architecture/10-payments-and-wallet.md) | Payment flow, refunds, settlements, wallet design, BSP decisions |
 
 ## Scope guardrails
 
