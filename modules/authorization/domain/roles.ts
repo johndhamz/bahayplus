@@ -61,6 +61,11 @@ export const ORGANIZATION_PERMISSIONS = [
   "organization.members.manage",
   "organization.owners.manage",
   "organization.invitations.manage",
+  "bookings.view",
+  "bookings.manage",
+  "work_orders.manage",
+  "work_orders.perform",
+  "projects.manage",
 ] as const;
 export type OrganizationPermission = (typeof ORGANIZATION_PERMISSIONS)[number];
 
@@ -127,9 +132,21 @@ export const ROLE_PERMISSIONS: {
       "organization.members.view",
       "organization.members.manage",
       "organization.invitations.manage",
+      "bookings.view",
+      "bookings.manage",
+      "work_orders.manage",
+      "work_orders.perform",
+      "projects.manage",
     ],
-    staff: ["organization.view", "organization.members.view"],
-    worker: ["organization.view"],
+    staff: [
+      "organization.view",
+      "organization.members.view",
+      "bookings.view",
+      "bookings.manage",
+      "work_orders.manage",
+      "work_orders.perform",
+    ],
+    worker: ["organization.view", "work_orders.perform"],
   },
   platform: {
     super_admin: PLATFORM_PERMISSIONS,

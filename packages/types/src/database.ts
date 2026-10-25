@@ -58,6 +58,13 @@ export type Database = {
             referencedRelation: "assets";
             referencedColumns: ["id", "household_id"];
           },
+          {
+            foreignKeyName: "asset_service_records_booking_fk";
+            columns: ["booking_id"];
+            isOneToOne: false;
+            referencedRelation: "bookings";
+            referencedColumns: ["id"];
+          },
         ];
       };
       assets: {
@@ -454,42 +461,154 @@ export type Database = {
           },
         ];
       };
-      bookings: {
+      booking_events: {
         Row: {
-          completed_at: string | null;
+          actor_id: string | null;
+          actor_side: string;
+          booking_id: string;
           created_at: string;
-          created_by: string | null;
+          from_status: string | null;
           household_id: string;
           id: string;
+          kind: string;
           organization_id: string;
-          provider_service_id: string | null;
-          status: string;
-          updated_at: string;
+          payload: NonNullable<Json>;
+          to_status: string | null;
         };
         ComputedFields: never;
         Insert: {
-          completed_at?: string | null;
+          actor_id?: string | null;
+          actor_side: string;
+          booking_id: string;
           created_at?: string;
-          created_by?: string | null;
+          from_status?: string | null;
           household_id: string;
           id?: string;
+          kind: string;
           organization_id: string;
-          provider_service_id?: string | null;
-          status?: string;
-          updated_at?: string;
+          payload?: NonNullable<Json>;
+          to_status?: string | null;
         };
         Update: {
+          actor_id?: string | null;
+          actor_side?: string;
+          booking_id?: string;
+          created_at?: string;
+          from_status?: string | null;
+          household_id?: string;
+          id?: string;
+          kind?: string;
+          organization_id?: string;
+          payload?: NonNullable<Json>;
+          to_status?: string | null;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "booking_events_booking_id_fkey";
+            columns: ["booking_id"];
+            isOneToOne: false;
+            referencedRelation: "bookings";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
+      bookings: {
+        Row: {
+          agreed_amount_centavos: number | null;
+          asset_id: string | null;
+          cancellation_reason: string | null;
+          cancelled_by: string | null;
+          completed_at: string | null;
+          created_at: string;
+          created_by: string | null;
+          currency: string;
+          customer_confirmation: string | null;
+          customer_confirmed_at: string | null;
+          customer_notes: string;
+          household_id: string;
+          id: string;
+          idempotency_key: string | null;
+          organization_id: string;
+          pet_id: string | null;
+          pricing_note: string;
+          property_id: string | null;
+          provider_service_id: string | null;
+          quotation_id: string | null;
+          scheduled_end: string | null;
+          scheduled_start: string | null;
+          service_request_id: string | null;
+          status: string;
+          title: string;
+          updated_at: string;
+          vehicle_id: string | null;
+        };
+        ComputedFields: never;
+        Insert: {
+          agreed_amount_centavos?: number | null;
+          asset_id?: string | null;
+          cancellation_reason?: string | null;
+          cancelled_by?: string | null;
           completed_at?: string | null;
           created_at?: string;
           created_by?: string | null;
+          currency?: string;
+          customer_confirmation?: string | null;
+          customer_confirmed_at?: string | null;
+          customer_notes?: string;
+          household_id: string;
+          id?: string;
+          idempotency_key?: string | null;
+          organization_id: string;
+          pet_id?: string | null;
+          pricing_note?: string;
+          property_id?: string | null;
+          provider_service_id?: string | null;
+          quotation_id?: string | null;
+          scheduled_end?: string | null;
+          scheduled_start?: string | null;
+          service_request_id?: string | null;
+          status?: string;
+          title?: string;
+          updated_at?: string;
+          vehicle_id?: string | null;
+        };
+        Update: {
+          agreed_amount_centavos?: number | null;
+          asset_id?: string | null;
+          cancellation_reason?: string | null;
+          cancelled_by?: string | null;
+          completed_at?: string | null;
+          created_at?: string;
+          created_by?: string | null;
+          currency?: string;
+          customer_confirmation?: string | null;
+          customer_confirmed_at?: string | null;
+          customer_notes?: string;
           household_id?: string;
           id?: string;
+          idempotency_key?: string | null;
           organization_id?: string;
+          pet_id?: string | null;
+          pricing_note?: string;
+          property_id?: string | null;
           provider_service_id?: string | null;
+          quotation_id?: string | null;
+          scheduled_end?: string | null;
+          scheduled_start?: string | null;
+          service_request_id?: string | null;
           status?: string;
+          title?: string;
           updated_at?: string;
+          vehicle_id?: string | null;
         };
         Relationships: [
+          {
+            foreignKeyName: "bookings_asset_fk";
+            columns: ["asset_id", "household_id"];
+            isOneToOne: false;
+            referencedRelation: "assets";
+            referencedColumns: ["id", "household_id"];
+          },
           {
             foreignKeyName: "bookings_household_id_fkey";
             columns: ["household_id"];
@@ -505,11 +624,46 @@ export type Database = {
             referencedColumns: ["id"];
           },
           {
+            foreignKeyName: "bookings_pet_fk";
+            columns: ["pet_id", "household_id"];
+            isOneToOne: false;
+            referencedRelation: "pets";
+            referencedColumns: ["id", "household_id"];
+          },
+          {
+            foreignKeyName: "bookings_property_fk";
+            columns: ["property_id", "household_id"];
+            isOneToOne: false;
+            referencedRelation: "properties";
+            referencedColumns: ["id", "household_id"];
+          },
+          {
             foreignKeyName: "bookings_provider_service_id_fkey";
             columns: ["provider_service_id"];
             isOneToOne: false;
             referencedRelation: "provider_services";
             referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "bookings_quotation_id_fkey";
+            columns: ["quotation_id"];
+            isOneToOne: false;
+            referencedRelation: "quotations";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "bookings_service_request_id_fkey";
+            columns: ["service_request_id"];
+            isOneToOne: false;
+            referencedRelation: "service_requests";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "bookings_vehicle_fk";
+            columns: ["vehicle_id", "household_id"];
+            isOneToOne: false;
+            referencedRelation: "vehicles";
+            referencedColumns: ["id", "household_id"];
           },
         ];
       };
@@ -594,6 +748,66 @@ export type Database = {
             columns: ["household_id"];
             isOneToOne: false;
             referencedRelation: "households";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
+      change_orders: {
+        Row: {
+          amount_delta_centavos: number;
+          created_at: string;
+          decided_at: string | null;
+          decided_by: string | null;
+          decision_note: string | null;
+          description: string;
+          id: string;
+          number: number;
+          project_id: string;
+          proposed_by: string | null;
+          schedule_delta_days: number;
+          status: string;
+          title: string;
+          updated_at: string;
+        };
+        ComputedFields: never;
+        Insert: {
+          amount_delta_centavos: number;
+          created_at?: string;
+          decided_at?: string | null;
+          decided_by?: string | null;
+          decision_note?: string | null;
+          description?: string;
+          id?: string;
+          number: number;
+          project_id: string;
+          proposed_by?: string | null;
+          schedule_delta_days?: number;
+          status?: string;
+          title: string;
+          updated_at?: string;
+        };
+        Update: {
+          amount_delta_centavos?: number;
+          created_at?: string;
+          decided_at?: string | null;
+          decided_by?: string | null;
+          decision_note?: string | null;
+          description?: string;
+          id?: string;
+          number?: number;
+          project_id?: string;
+          proposed_by?: string | null;
+          schedule_delta_days?: number;
+          status?: string;
+          title?: string;
+          updated_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "change_orders_project_id_fkey";
+            columns: ["project_id"];
+            isOneToOne: false;
+            referencedRelation: "projects";
             referencedColumns: ["id"];
           },
         ];
@@ -1341,6 +1555,13 @@ export type Database = {
         };
         Relationships: [
           {
+            foreignKeyName: "pet_health_records_booking_fk";
+            columns: ["booking_id"];
+            isOneToOne: false;
+            referencedRelation: "bookings";
+            referencedColumns: ["id"];
+          },
+          {
             foreignKeyName: "pet_health_records_pet_id_household_id_fkey";
             columns: ["pet_id", "household_id"];
             isOneToOne: false;
@@ -1541,6 +1762,205 @@ export type Database = {
         };
         Relationships: [];
       };
+      project_milestones: {
+        Row: {
+          amount_centavos: number | null;
+          completed_at: string | null;
+          created_at: string;
+          due_on: string | null;
+          id: string;
+          position: number;
+          project_id: string;
+          status: string;
+          title: string;
+          updated_at: string;
+        };
+        ComputedFields: never;
+        Insert: {
+          amount_centavos?: number | null;
+          completed_at?: string | null;
+          created_at?: string;
+          due_on?: string | null;
+          id?: string;
+          position?: number;
+          project_id: string;
+          status?: string;
+          title: string;
+          updated_at?: string;
+        };
+        Update: {
+          amount_centavos?: number | null;
+          completed_at?: string | null;
+          created_at?: string;
+          due_on?: string | null;
+          id?: string;
+          position?: number;
+          project_id?: string;
+          status?: string;
+          title?: string;
+          updated_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "project_milestones_project_id_fkey";
+            columns: ["project_id"];
+            isOneToOne: false;
+            referencedRelation: "projects";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
+      project_updates: {
+        Row: {
+          author_id: string | null;
+          author_side: string;
+          body: string;
+          created_at: string;
+          id: string;
+          percent_complete: number | null;
+          project_id: string;
+        };
+        ComputedFields: never;
+        Insert: {
+          author_id?: string | null;
+          author_side: string;
+          body: string;
+          created_at?: string;
+          id?: string;
+          percent_complete?: number | null;
+          project_id: string;
+        };
+        Update: {
+          author_id?: string | null;
+          author_side?: string;
+          body?: string;
+          created_at?: string;
+          id?: string;
+          percent_complete?: number | null;
+          project_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "project_updates_project_id_fkey";
+            columns: ["project_id"];
+            isOneToOne: false;
+            referencedRelation: "projects";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
+      projects: {
+        Row: {
+          approved_changes_centavos: number;
+          completed_at: string | null;
+          contract_amount_centavos: number | null;
+          contract_quotation_id: string | null;
+          created_at: string;
+          created_by: string | null;
+          currency: string;
+          description: string;
+          household_id: string;
+          id: string;
+          kind: string;
+          organization_id: string;
+          property_id: string;
+          service_request_id: string | null;
+          site_visit_at: string | null;
+          start_date: string | null;
+          status: string;
+          target_end_date: string | null;
+          title: string;
+          updated_at: string;
+          warranty_terms: string;
+          warranty_until: string | null;
+        };
+        ComputedFields: never;
+        Insert: {
+          approved_changes_centavos?: number;
+          completed_at?: string | null;
+          contract_amount_centavos?: number | null;
+          contract_quotation_id?: string | null;
+          created_at?: string;
+          created_by?: string | null;
+          currency?: string;
+          description?: string;
+          household_id: string;
+          id?: string;
+          kind: string;
+          organization_id: string;
+          property_id: string;
+          service_request_id?: string | null;
+          site_visit_at?: string | null;
+          start_date?: string | null;
+          status?: string;
+          target_end_date?: string | null;
+          title: string;
+          updated_at?: string;
+          warranty_terms?: string;
+          warranty_until?: string | null;
+        };
+        Update: {
+          approved_changes_centavos?: number;
+          completed_at?: string | null;
+          contract_amount_centavos?: number | null;
+          contract_quotation_id?: string | null;
+          created_at?: string;
+          created_by?: string | null;
+          currency?: string;
+          description?: string;
+          household_id?: string;
+          id?: string;
+          kind?: string;
+          organization_id?: string;
+          property_id?: string;
+          service_request_id?: string | null;
+          site_visit_at?: string | null;
+          start_date?: string | null;
+          status?: string;
+          target_end_date?: string | null;
+          title?: string;
+          updated_at?: string;
+          warranty_terms?: string;
+          warranty_until?: string | null;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "projects_contract_quotation_id_fkey";
+            columns: ["contract_quotation_id"];
+            isOneToOne: false;
+            referencedRelation: "quotations";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "projects_household_id_fkey";
+            columns: ["household_id"];
+            isOneToOne: false;
+            referencedRelation: "households";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "projects_organization_id_fkey";
+            columns: ["organization_id"];
+            isOneToOne: false;
+            referencedRelation: "organizations";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "projects_property_id_household_id_fkey";
+            columns: ["property_id", "household_id"];
+            isOneToOne: false;
+            referencedRelation: "properties";
+            referencedColumns: ["id", "household_id"];
+          },
+          {
+            foreignKeyName: "projects_service_request_id_fkey";
+            columns: ["service_request_id"];
+            isOneToOne: false;
+            referencedRelation: "service_requests";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
       properties: {
         Row: {
           address_line: string;
@@ -1618,6 +2038,7 @@ export type Database = {
           availability_status: string;
           availability_updated_at: string | null;
           business_hours: NonNullable<Json>;
+          concurrent_capacity: number;
           created_at: string;
           description: string;
           email: string;
@@ -1641,6 +2062,7 @@ export type Database = {
           availability_status?: string;
           availability_updated_at?: string | null;
           business_hours?: NonNullable<Json>;
+          concurrent_capacity?: number;
           created_at?: string;
           description?: string;
           email?: string;
@@ -1663,6 +2085,7 @@ export type Database = {
           availability_status?: string;
           availability_updated_at?: string | null;
           business_hours?: NonNullable<Json>;
+          concurrent_capacity?: number;
           created_at?: string;
           description?: string;
           email?: string;
@@ -1754,6 +2177,134 @@ export type Database = {
             columns: ["organization_id"];
             isOneToOne: false;
             referencedRelation: "organizations";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
+      quotation_lines: {
+        Row: {
+          created_at: string;
+          description: string;
+          id: string;
+          line_total_centavos: number | null;
+          position: number;
+          quantity: number;
+          quotation_id: string;
+          unit_label: string;
+          unit_price_centavos: number;
+          updated_at: string;
+        };
+        ComputedFields: never;
+        Insert: {
+          created_at?: string;
+          description: string;
+          id?: string;
+          line_total_centavos?: never;
+          position?: number;
+          quantity: number;
+          quotation_id: string;
+          unit_label?: string;
+          unit_price_centavos: number;
+          updated_at?: string;
+        };
+        Update: {
+          created_at?: string;
+          description?: string;
+          id?: string;
+          line_total_centavos?: never;
+          position?: number;
+          quantity?: number;
+          quotation_id?: string;
+          unit_label?: string;
+          unit_price_centavos?: number;
+          updated_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "quotation_lines_quotation_id_fkey";
+            columns: ["quotation_id"];
+            isOneToOne: false;
+            referencedRelation: "quotations";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
+      quotations: {
+        Row: {
+          created_at: string;
+          created_by: string | null;
+          currency: string;
+          decided_at: string | null;
+          decided_by: string | null;
+          household_id: string;
+          id: string;
+          notes: string;
+          organization_id: string;
+          sent_at: string | null;
+          service_request_id: string;
+          status: string;
+          total_centavos: number;
+          updated_at: string;
+          valid_until: string | null;
+          version: number;
+        };
+        ComputedFields: never;
+        Insert: {
+          created_at?: string;
+          created_by?: string | null;
+          currency?: string;
+          decided_at?: string | null;
+          decided_by?: string | null;
+          household_id: string;
+          id?: string;
+          notes?: string;
+          organization_id: string;
+          sent_at?: string | null;
+          service_request_id: string;
+          status?: string;
+          total_centavos?: number;
+          updated_at?: string;
+          valid_until?: string | null;
+          version: number;
+        };
+        Update: {
+          created_at?: string;
+          created_by?: string | null;
+          currency?: string;
+          decided_at?: string | null;
+          decided_by?: string | null;
+          household_id?: string;
+          id?: string;
+          notes?: string;
+          organization_id?: string;
+          sent_at?: string | null;
+          service_request_id?: string;
+          status?: string;
+          total_centavos?: number;
+          updated_at?: string;
+          valid_until?: string | null;
+          version?: number;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "quotations_household_id_fkey";
+            columns: ["household_id"];
+            isOneToOne: false;
+            referencedRelation: "households";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "quotations_organization_id_fkey";
+            columns: ["organization_id"];
+            isOneToOne: false;
+            referencedRelation: "organizations";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "quotations_service_request_id_fkey";
+            columns: ["service_request_id"];
+            isOneToOne: false;
+            referencedRelation: "service_requests";
             referencedColumns: ["id"];
           },
         ];
@@ -1982,6 +2533,124 @@ export type Database = {
         };
         Relationships: [];
       };
+      service_requests: {
+        Row: {
+          asset_id: string | null;
+          category_id: string | null;
+          created_at: string;
+          created_by: string | null;
+          description: string;
+          household_id: string;
+          id: string;
+          idempotency_key: string;
+          organization_id: string;
+          pet_id: string | null;
+          preferred_date: string | null;
+          property_id: string;
+          provider_service_id: string | null;
+          status: string;
+          title: string;
+          updated_at: string;
+          vehicle_id: string | null;
+        };
+        ComputedFields: never;
+        Insert: {
+          asset_id?: string | null;
+          category_id?: string | null;
+          created_at?: string;
+          created_by?: string | null;
+          description?: string;
+          household_id: string;
+          id?: string;
+          idempotency_key: string;
+          organization_id: string;
+          pet_id?: string | null;
+          preferred_date?: string | null;
+          property_id: string;
+          provider_service_id?: string | null;
+          status?: string;
+          title: string;
+          updated_at?: string;
+          vehicle_id?: string | null;
+        };
+        Update: {
+          asset_id?: string | null;
+          category_id?: string | null;
+          created_at?: string;
+          created_by?: string | null;
+          description?: string;
+          household_id?: string;
+          id?: string;
+          idempotency_key?: string;
+          organization_id?: string;
+          pet_id?: string | null;
+          preferred_date?: string | null;
+          property_id?: string;
+          provider_service_id?: string | null;
+          status?: string;
+          title?: string;
+          updated_at?: string;
+          vehicle_id?: string | null;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "service_requests_asset_id_household_id_fkey";
+            columns: ["asset_id", "household_id"];
+            isOneToOne: false;
+            referencedRelation: "assets";
+            referencedColumns: ["id", "household_id"];
+          },
+          {
+            foreignKeyName: "service_requests_category_id_fkey";
+            columns: ["category_id"];
+            isOneToOne: false;
+            referencedRelation: "service_categories";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "service_requests_household_id_fkey";
+            columns: ["household_id"];
+            isOneToOne: false;
+            referencedRelation: "households";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "service_requests_organization_id_fkey";
+            columns: ["organization_id"];
+            isOneToOne: false;
+            referencedRelation: "organizations";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "service_requests_pet_id_household_id_fkey";
+            columns: ["pet_id", "household_id"];
+            isOneToOne: false;
+            referencedRelation: "pets";
+            referencedColumns: ["id", "household_id"];
+          },
+          {
+            foreignKeyName: "service_requests_property_id_household_id_fkey";
+            columns: ["property_id", "household_id"];
+            isOneToOne: false;
+            referencedRelation: "properties";
+            referencedColumns: ["id", "household_id"];
+          },
+          {
+            foreignKeyName: "service_requests_provider_service_id_fkey";
+            columns: ["provider_service_id"];
+            isOneToOne: false;
+            referencedRelation: "provider_services";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "service_requests_vehicle_id_household_id_fkey";
+            columns: ["vehicle_id", "household_id"];
+            isOneToOne: false;
+            referencedRelation: "vehicles";
+            referencedColumns: ["id", "household_id"];
+          },
+        ];
+      };
       vehicle_service_records: {
         Row: {
           booking_id: string | null;
@@ -2033,6 +2702,13 @@ export type Database = {
           vehicle_id?: string;
         };
         Relationships: [
+          {
+            foreignKeyName: "vehicle_service_records_booking_fk";
+            columns: ["booking_id"];
+            isOneToOne: false;
+            referencedRelation: "bookings";
+            referencedColumns: ["id"];
+          },
           {
             foreignKeyName: "vehicle_service_records_vehicle_id_household_id_fkey";
             columns: ["vehicle_id", "household_id"];
@@ -2238,6 +2914,190 @@ export type Database = {
           },
         ];
       };
+      work_order_assignments: {
+        Row: {
+          active: boolean;
+          assigned_by: string | null;
+          created_at: string;
+          id: string;
+          organization_id: string;
+          time_window: unknown;
+          unassigned_at: string | null;
+          updated_at: string;
+          work_order_id: string;
+          worker_id: string;
+        };
+        ComputedFields: never;
+        Insert: {
+          active?: boolean;
+          assigned_by?: string | null;
+          created_at?: string;
+          id?: string;
+          organization_id: string;
+          time_window: unknown;
+          unassigned_at?: string | null;
+          updated_at?: string;
+          work_order_id: string;
+          worker_id: string;
+        };
+        Update: {
+          active?: boolean;
+          assigned_by?: string | null;
+          created_at?: string;
+          id?: string;
+          organization_id?: string;
+          time_window?: unknown;
+          unassigned_at?: string | null;
+          updated_at?: string;
+          work_order_id?: string;
+          worker_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "work_order_assignments_organization_id_fkey";
+            columns: ["organization_id"];
+            isOneToOne: false;
+            referencedRelation: "organizations";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "work_order_assignments_work_order_id_fkey";
+            columns: ["work_order_id"];
+            isOneToOne: false;
+            referencedRelation: "work_orders";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
+      work_order_checklist_items: {
+        Row: {
+          created_at: string;
+          done_at: string | null;
+          done_by: string | null;
+          id: string;
+          is_done: boolean;
+          label: string;
+          position: number;
+          updated_at: string;
+          work_order_id: string;
+        };
+        ComputedFields: never;
+        Insert: {
+          created_at?: string;
+          done_at?: string | null;
+          done_by?: string | null;
+          id?: string;
+          is_done?: boolean;
+          label: string;
+          position?: number;
+          updated_at?: string;
+          work_order_id: string;
+        };
+        Update: {
+          created_at?: string;
+          done_at?: string | null;
+          done_by?: string | null;
+          id?: string;
+          is_done?: boolean;
+          label?: string;
+          position?: number;
+          updated_at?: string;
+          work_order_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "work_order_checklist_items_work_order_id_fkey";
+            columns: ["work_order_id"];
+            isOneToOne: false;
+            referencedRelation: "work_orders";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
+      work_orders: {
+        Row: {
+          booking_id: string | null;
+          completed_at: string | null;
+          completion_notes: string;
+          created_at: string;
+          created_by: string | null;
+          household_id: string;
+          id: string;
+          instructions: string;
+          organization_id: string;
+          project_id: string | null;
+          scheduled_end: string;
+          scheduled_start: string;
+          status: string;
+          title: string;
+          updated_at: string;
+        };
+        ComputedFields: never;
+        Insert: {
+          booking_id?: string | null;
+          completed_at?: string | null;
+          completion_notes?: string;
+          created_at?: string;
+          created_by?: string | null;
+          household_id: string;
+          id?: string;
+          instructions?: string;
+          organization_id: string;
+          project_id?: string | null;
+          scheduled_end: string;
+          scheduled_start: string;
+          status?: string;
+          title: string;
+          updated_at?: string;
+        };
+        Update: {
+          booking_id?: string | null;
+          completed_at?: string | null;
+          completion_notes?: string;
+          created_at?: string;
+          created_by?: string | null;
+          household_id?: string;
+          id?: string;
+          instructions?: string;
+          organization_id?: string;
+          project_id?: string | null;
+          scheduled_end?: string;
+          scheduled_start?: string;
+          status?: string;
+          title?: string;
+          updated_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "work_orders_booking_id_fkey";
+            columns: ["booking_id"];
+            isOneToOne: false;
+            referencedRelation: "bookings";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "work_orders_household_id_fkey";
+            columns: ["household_id"];
+            isOneToOne: false;
+            referencedRelation: "households";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "work_orders_organization_id_fkey";
+            columns: ["organization_id"];
+            isOneToOne: false;
+            referencedRelation: "organizations";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "work_orders_project_id_fkey";
+            columns: ["project_id"];
+            isOneToOne: false;
+            referencedRelation: "projects";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
     };
     Views: {
       registry_due_items: {
@@ -2256,6 +3116,22 @@ export type Database = {
     Functions: {
       accept_household_invitation: { Args: { p_token: string }; Returns: string };
       accept_organization_invitation: { Args: { p_token: string }; Returns: string };
+      accept_project_quotation: { Args: { p_project: string; p_quotation: string }; Returns: undefined };
+      assign_work_order: { Args: { p_work_order: string; p_worker: string }; Returns: undefined };
+      booking_location: {
+        Args: { p_booking: string };
+        Returns: {
+          address_line: string;
+          barangay: string;
+          city_municipality: string;
+          latitude: number;
+          longitude: number;
+          notes: string;
+          postal_code: string;
+          property_name: string;
+          province: string;
+        }[];
+      };
       budget_vs_actual: {
         Args: { p_household: string; p_month: string; p_property?: string };
         Returns: {
@@ -2268,6 +3144,10 @@ export type Database = {
       };
       change_household_member_role: { Args: { p_member: string; p_role: string }; Returns: undefined };
       change_organization_member_role: { Args: { p_member: string; p_role: string }; Returns: undefined };
+      confirm_booking_completion: {
+        Args: { p_booking: string; p_note?: string; p_outcome: string };
+        Returns: undefined;
+      };
       create_bill: {
         Args: { p_account: string; p_amount_centavos: number; p_due_on: string; p_notes: string };
         Returns: string;
@@ -2275,6 +3155,15 @@ export type Database = {
       create_bill_account: { Args: { p_payload: Json }; Returns: string };
       create_household: { Args: { p_name: string }; Returns: string };
       create_organization: { Args: { p_kind: string; p_name: string; p_slug: string }; Returns: string };
+      create_project_request: { Args: { p_payload: Json }; Returns: string };
+      create_quotation_draft: { Args: { p_request: string }; Returns: string };
+      create_service_request: { Args: { p_payload: Json }; Returns: string };
+      create_work_order: { Args: { p_payload: Json }; Returns: string };
+      decide_change_order: {
+        Args: { p_change_order: string; p_decision: string; p_note?: string };
+        Returns: undefined;
+      };
+      decide_quotation: { Args: { p_decision: string; p_quotation: string; p_start?: string }; Returns: string };
       decide_verification: {
         Args: {
           p_decision: string;
@@ -2342,6 +3231,17 @@ export type Database = {
         }[];
       };
       normalize_locality: { Args: { p_value: string }; Returns: string };
+      post_project_update: { Args: { p_body: string; p_percent?: number; p_project: string }; Returns: string };
+      propose_change_order: {
+        Args: {
+          p_amount_delta: number;
+          p_description: string;
+          p_project: string;
+          p_schedule_delta: number;
+          p_title: string;
+        };
+        Returns: string;
+      };
       provider_serves: {
         Args: { p_barangay: string; p_city: string; p_org: string; p_province: string };
         Returns: boolean;
@@ -2368,6 +3268,21 @@ export type Database = {
       remove_household_member: { Args: { p_member: string }; Returns: undefined };
       remove_organization_member: { Args: { p_member: string }; Returns: undefined };
       reply_to_review: { Args: { p_reply: string; p_review: string }; Returns: undefined };
+      request_booking: {
+        Args: {
+          p_asset?: string;
+          p_household: string;
+          p_idempotency_key: string;
+          p_notes: string;
+          p_pet?: string;
+          p_property: string;
+          p_service: string;
+          p_start: string;
+          p_vehicle?: string;
+        };
+        Returns: string;
+      };
+      reschedule_booking: { Args: { p_booking: string; p_reason: string; p_start: string }; Returns: undefined };
       revoke_household_invitation: { Args: { p_invitation: string }; Returns: undefined };
       revoke_organization_invitation: { Args: { p_invitation: string }; Returns: undefined };
       revoke_verification: { Args: { p_reason: string; p_request: string }; Returns: undefined };
@@ -2399,12 +3314,22 @@ export type Database = {
           verified_items: string[];
         }[];
       };
+      send_quotation: { Args: { p_quotation: string; p_valid_until: string }; Returns: undefined };
       set_household_member_status: { Args: { p_member: string; p_status: string }; Returns: undefined };
       set_organization_member_status: { Args: { p_member: string; p_status: string }; Returns: undefined };
+      start_project_quotation: { Args: { p_project: string }; Returns: string };
       start_verification_review: { Args: { p_request: string }; Returns: undefined };
       submit_review: { Args: { p_booking: string; p_comment: string; p_rating: number }; Returns: string };
       submit_verification_request: { Args: { p_items: Json; p_org: string }; Returns: string };
+      toggle_checklist_item: { Args: { p_done: boolean; p_item: string }; Returns: undefined };
+      transition_booking: { Args: { p_action: string; p_booking: string; p_reason?: string }; Returns: undefined };
+      update_project: { Args: { p_payload: Json; p_project: string }; Returns: undefined };
+      update_work_order_status: {
+        Args: { p_notes?: string; p_status: string; p_work_order: string };
+        Returns: undefined;
+      };
       void_bill_payment: { Args: { p_payment: string; p_reason: string }; Returns: undefined };
+      withdraw_quotation: { Args: { p_quotation: string }; Returns: undefined };
     };
     Enums: {
       [_ in never]: never;

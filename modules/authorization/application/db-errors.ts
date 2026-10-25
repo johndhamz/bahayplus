@@ -26,6 +26,15 @@ const CONFLICT = new Set([
   "review_not_eligible",
   "duplicate_review",
   "review_locked",
+  "slot_unavailable",
+  "quotation_locked",
+  "quotation_not_open",
+  "quotation_expired",
+  "draft_exists",
+  "contract_required",
+  "change_order_pending",
+  "worker_unavailable",
+  "checklist_incomplete",
 ]);
 
 /**

@@ -75,6 +75,18 @@ export default async function ProviderProfilePage({
           { label: "Services", href: `${base}/services` },
           { label: provider.value.name },
         ]}
+        actions={
+          canBook && p.acceptsQuoteRequests ? (
+            <>
+              <Button asChild variant="outline">
+                <Link href={`${base}/bookings?provider=${slug}&mode=quote`}>Request a quote</Link>
+              </Button>
+              <Button asChild variant="outline">
+                <Link href={`${base}/projects?provider=${slug}`}>Start a project</Link>
+              </Button>
+            </>
+          ) : undefined
+        }
       />
       <div className="mb-4 flex flex-wrap gap-2">
         <StatusBadge

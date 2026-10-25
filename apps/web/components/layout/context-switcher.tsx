@@ -39,11 +39,9 @@ export function ContextSwitcher({ kind, current, options, create, className }: C
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button
-          variant="ghost"
-          className={cn("h-11 max-w-full justify-start gap-2 px-2 text-left", className)}
-          aria-label={`Current: ${current.name}. Switch ${kind === "household" ? "household" : "business"}`}
-        >
+        <Button variant="ghost" className={cn("h-11 max-w-full justify-start gap-2 px-2 text-left", className)}>
+          {/* The accessible name contains the visible text (WCAG 2.5.3), framed by screen-reader-only context. */}
+          <span className="sr-only">Current: </span>
           <span className="grid size-8 shrink-0 place-items-center rounded-lg bg-sage text-brand">
             <Icon aria-hidden="true" className="size-4" />
           </span>
@@ -51,6 +49,7 @@ export function ContextSwitcher({ kind, current, options, create, className }: C
             <span className="truncate text-sm font-semibold">{current.name}</span>
             <span className="truncate text-xs font-normal text-muted-foreground">{current.roleLabel}</span>
           </span>
+          <span className="sr-only">. Switch {kind === "household" ? "household" : "business"}</span>
           <ChevronsUpDown aria-hidden="true" className="ml-1 size-4 shrink-0 text-muted-foreground" />
         </Button>
       </DropdownMenuTrigger>

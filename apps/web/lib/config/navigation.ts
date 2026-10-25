@@ -8,6 +8,7 @@ import {
   ClipboardList,
   FileText,
   Gauge,
+  Hammer,
   HardHat,
   House,
   Images,
@@ -68,6 +69,7 @@ export const PORTAL_NAV: Record<Portal, NavSection[]> = {
         { path: "vehicles", label: "Vehicles", icon: Car },
         { path: "budget", label: "Budget", icon: Wallet },
         { path: "bookings", label: "Bookings", icon: ClipboardList },
+        { path: "projects", label: "Projects", icon: Hammer },
         { path: "settings", label: "Settings", icon: Settings },
       ],
     },
@@ -79,6 +81,7 @@ export const PORTAL_NAV: Record<Portal, NavSection[]> = {
         { path: "bookings", label: "Bookings", icon: ClipboardList },
         { path: "quotations", label: "Quotations", icon: FileText },
         { path: "work-orders", label: "Work orders", icon: HardHat },
+        { path: "projects", label: "Projects", icon: Hammer },
       ],
     },
     {

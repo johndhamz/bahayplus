@@ -9,12 +9,21 @@ Every phase follows the same loop: inspect repo → plan → implement → migra
 | 3     | Household management (households, members, invitations, properties, dashboard)          | done     |
 | 4     | Asset registry, pets, vehicles (+ private attachments, due items)                       | done     |
 | 5     | Bills & utilities, household budgeting (+ daily bill job, reminders)                    | done     |
-| 6     | Provider marketplace & trust (registration, offerings, coverage, verification, reviews) | approved |
-| 7     | Bookings, quotations, projects, work orders                                             | approved |
+| 6     | Provider marketplace & trust (registration, offerings, coverage, verification, reviews) | done     |
+| 7     | Bookings, quotations, projects, work orders                                             | done     |
 | 8     | Unified calendar, reminder engine & notifications, urgent provider discovery            | approved |
 | 9     | Provider, supplier, worker & admin portals                                              | approved |
 | 10    | Payment architecture & future wallet design (no stored value)                           | approved |
 | 11    | Production readiness: PWA, performance, accessibility, QA, security, deployment, CI     | approved |
+
+## Phase 7 implementation notes
+
+- **Bookings** (`modules/bookings`, migration `…000900`): Book Now confirms instantly when the service and provider allow it **and** capacity remains (`provider_profiles.concurrent_capacity`, checked under a row lock on the provider). Otherwise the booking is `requested` and the provider confirms or declines. The state machine lives in `transition_booking`, mirrored for the UI by `allowedBookingActions`. Every change writes `booking_events` (append-only). Bookings are idempotent per household via `idempotency_key`. The exact address is released to the provider only after confirmation (`booking_location`).
+- **Quotations:** versioned per service request. A draft is editable only by the provider. A sent quotation is immutable (DB guard). A new version supersedes the old one. Customers never see drafts. Acceptance is allowed only while `valid_until ≥ Manila today` and locks the price into the resulting booking.
+- **Projects:** request → (site visit) → quotation → contract accepted (`quoted` + `contract_quotation_id`) → `active` → `completed` with warranty. Change orders must be approved by the customer before `approved_changes_centavos` moves. There is at most one pending change order per project.
+- **Work orders:** created from a confirmed booking or an active project. A worker is assigned only if that worker holds `work_orders.perform`. Overlapping assignments for one worker are rejected by a `tstzrange` exclusion constraint. Checklists must be complete before a work order is completed. Completing a booking's last work order completes the booking.
+- **UI:** the customer portal has `/bookings` (list, plus new booking/quote via `?provider=&service=&mode=`), `/bookings/[id]`, `/bookings/requests/[id]` and `/projects`. The provider portal has `/bookings`, `/quotations`, `/work-orders` and `/projects`. The worker portal UI is Phase 9.
+- **Sign-out is per device** (`scope: "local"`, D-11).
 
 ## Phase details
 

@@ -112,14 +112,12 @@ test("customers can review a completed booking once", async ({ page }) => {
   await expect(page).toHaveURL(/\/app\/h\//, { timeout: 30_000 });
   const householdId = new URL(page.url()).pathname.split("/")[3]!;
   loadLocalEnv();
-  const { error } = await adminClient()
-    .from("bookings")
-    .insert({
-      household_id: householdId,
-      organization_id: DEMO_IDS.mabuhayProvider,
-      status: "completed",
-      completed_at: new Date().toISOString(),
-    });
+  const { error } = await adminClient().from("bookings").insert({
+    household_id: householdId,
+    organization_id: DEMO_IDS.mabuhayProvider,
+    status: "completed",
+    completed_at: new Date().toISOString(),
+  });
   expect(error).toBeNull();
 
   await page.goto(`/app/h/${householdId}/services`);
