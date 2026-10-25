@@ -37,15 +37,13 @@ import {
   createPurchaseOrder,
   decidePurchaseOrder,
   getPurchaseOrder,
-  listInventory,
   listProducts,
   listPurchaseOrders,
-  listStockMovements,
-  recordStockMovement,
   shipPurchaseOrder,
   updateDelivery,
   updateSupplierProfile,
 } from "@bahayplus/modules/suppliers";
+import { listInventory, listStockMovements, recordStockMovement } from "@bahayplus/modules/inventory";
 import { withDb } from "../support/db";
 import { createListedProvider, futureSlot, toManilaLocal } from "../support/marketplace";
 import { adminClient, anonClient, cleanupTestUsers, createTestUser, type TestUser } from "../support/supabase";

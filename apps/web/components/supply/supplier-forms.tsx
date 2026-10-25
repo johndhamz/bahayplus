@@ -3,7 +3,8 @@
 import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
 import { toast } from "sonner";
-import type { InventoryRow, ProductView, SupplierProfileView } from "@bahayplus/modules/suppliers";
+import type { ProductView, SupplierProfileView } from "@bahayplus/modules/suppliers";
+import type { InventoryRow } from "@bahayplus/modules/inventory";
 import { FormAlert } from "@bahayplus/ui/components/forms/form-alert";
 import { SubmitButton } from "@bahayplus/ui/components/forms/submit-button";
 import { Button } from "@bahayplus/ui/components/ui/button";

@@ -1,5 +1,5 @@
 import { Boxes } from "lucide-react";
-import { listInventory } from "@bahayplus/modules/suppliers";
+import { listInventory } from "@bahayplus/modules/inventory";
 import { SectionCard } from "@bahayplus/ui/components/data/section-card";
 import { EmptyState } from "@bahayplus/ui/components/feedback/empty-state";
 import { ErrorState } from "@bahayplus/ui/components/feedback/error-state";

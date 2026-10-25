@@ -1,5 +1,6 @@
 import { notFound } from "next/navigation";
-import { getProduct, listInventory, listStockMovements, stockState } from "@bahayplus/modules/suppliers";
+import { getProduct } from "@bahayplus/modules/suppliers";
+import { listInventory, listStockMovements, stockState } from "@bahayplus/modules/inventory";
 import { SectionCard } from "@bahayplus/ui/components/data/section-card";
 import { StatCard } from "@bahayplus/ui/components/data/stat-card";
 import { formatManilaDateTime } from "@bahayplus/types/dates";

@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
-import { allowedOrderActions, formatPoNumber, stockState } from "@bahayplus/modules/suppliers";
+import { allowedOrderActions, formatPoNumber } from "@bahayplus/modules/suppliers";
+import { stockState } from "@bahayplus/modules/inventory";
 import { SaveCategoryInput, SetUserSuspensionInput, UpdateSettingInput } from "@bahayplus/validation/admin/admin";
 import { CreatePurchaseOrderInput, RecordStockInput } from "@bahayplus/validation/supply/supply";
 

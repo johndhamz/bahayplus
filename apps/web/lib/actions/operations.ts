@@ -2,6 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import * as admin from "@bahayplus/modules/admin";
+import * as inventory from "@bahayplus/modules/inventory";
 import * as suppliers from "@bahayplus/modules/suppliers";
 import { setCapacity } from "@bahayplus/modules/providers";
 import type { ServiceContext } from "@bahayplus/modules/authorization";
@@ -34,7 +35,7 @@ export const createProductAction = async (i: unknown) =>
 export const updateProductAction = async (i: unknown) =>
   run((c) => suppliers.updateProduct(c, i), "Product saved.", SUPPLIER);
 export const recordStockAction = async (i: unknown) =>
-  run((c) => suppliers.recordStockMovement(c, i), "Stock updated.", SUPPLIER);
+  run((c) => inventory.recordStockMovement(c, i), "Stock updated.", SUPPLIER);
 
 // Purchase orders (both sides)
 export const createPurchaseOrderAction = async (i: unknown) =>

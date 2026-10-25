@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { stockState, type InventoryRow } from "@bahayplus/modules/suppliers";
+import { stockState, type InventoryRow } from "@bahayplus/modules/inventory";
 import { StatusBadge } from "@bahayplus/ui/components/feedback/status-badge";
 
 const fmt = (n: number) => new Intl.NumberFormat("en-PH", { maximumFractionDigits: 3 }).format(n);

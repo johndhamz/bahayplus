@@ -1,6 +1,7 @@
 import { Boxes, PackageCheck, ShoppingCart, Truck } from "lucide-react";
 import Link from "next/link";
-import { listInventory, listPurchaseOrders, stockState } from "@bahayplus/modules/suppliers";
+import { listPurchaseOrders } from "@bahayplus/modules/suppliers";
+import { listInventory, stockState } from "@bahayplus/modules/inventory";
 import { SectionCard } from "@bahayplus/ui/components/data/section-card";
 import { StatCard } from "@bahayplus/ui/components/data/stat-card";
 import { EmptyState } from "@bahayplus/ui/components/feedback/empty-state";
