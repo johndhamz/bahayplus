@@ -12,6 +12,12 @@ export const serverEnvSchema = z.object({
   SUPABASE_SECRET_KEY: z.string().min(20, "SUPABASE_SECRET_KEY is required on the server"),
   JOB_RUNNER_SECRET: z.string().min(32, "JOB_RUNNER_SECRET must be at least 32 characters").optional(),
   APP_ENV: z.enum(["local", "test", "staging", "production"]).default("local"),
+  /** Sender for notification email, e.g. "Bahay+ <notifications@example.com>". Email is off without it. */
+  EMAIL_FROM: z.string().min(3).optional(),
+  /** Production email provider. */
+  RESEND_API_KEY: z.string().min(10).optional(),
+  /** Local/test only: the Supabase CLI's Mailpit, e.g. http://127.0.0.1:54724. Ignored in staging/production. */
+  MAILPIT_URL: z.url().optional(),
 });
 
 export type PublicEnv = z.infer<typeof publicEnvSchema>;

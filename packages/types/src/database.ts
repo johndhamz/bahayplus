@@ -752,6 +752,42 @@ export type Database = {
           },
         ];
       };
+      calendar_assignments: {
+        Row: {
+          assigned_by: string | null;
+          created_at: string;
+          household_id: string;
+          item_key: string;
+          updated_at: string;
+          user_id: string;
+        };
+        ComputedFields: never;
+        Insert: {
+          assigned_by?: string | null;
+          created_at?: string;
+          household_id: string;
+          item_key: string;
+          updated_at?: string;
+          user_id: string;
+        };
+        Update: {
+          assigned_by?: string | null;
+          created_at?: string;
+          household_id?: string;
+          item_key?: string;
+          updated_at?: string;
+          user_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "calendar_assignments_household_id_fkey";
+            columns: ["household_id"];
+            isOneToOne: false;
+            referencedRelation: "households";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
       change_orders: {
         Row: {
           amount_delta_centavos: number;
@@ -1211,44 +1247,147 @@ export type Database = {
           },
         ];
       };
+      notification_deliveries: {
+        Row: {
+          attempts: number;
+          channel: string;
+          created_at: string;
+          id: string;
+          last_error: string | null;
+          max_attempts: number;
+          next_attempt_at: string | null;
+          notification_id: string;
+          provider: string | null;
+          provider_message_id: string | null;
+          recipient_id: string;
+          sent_at: string | null;
+          skip_reason: string | null;
+          status: string;
+          updated_at: string;
+        };
+        ComputedFields: never;
+        Insert: {
+          attempts?: number;
+          channel: string;
+          created_at?: string;
+          id?: string;
+          last_error?: string | null;
+          max_attempts?: number;
+          next_attempt_at?: string | null;
+          notification_id: string;
+          provider?: string | null;
+          provider_message_id?: string | null;
+          recipient_id: string;
+          sent_at?: string | null;
+          skip_reason?: string | null;
+          status: string;
+          updated_at?: string;
+        };
+        Update: {
+          attempts?: number;
+          channel?: string;
+          created_at?: string;
+          id?: string;
+          last_error?: string | null;
+          max_attempts?: number;
+          next_attempt_at?: string | null;
+          notification_id?: string;
+          provider?: string | null;
+          provider_message_id?: string | null;
+          recipient_id?: string;
+          sent_at?: string | null;
+          skip_reason?: string | null;
+          status?: string;
+          updated_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "notification_deliveries_notification_id_fkey";
+            columns: ["notification_id"];
+            isOneToOne: false;
+            referencedRelation: "notifications";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
+      notification_preferences: {
+        Row: {
+          category: string;
+          channel: string;
+          enabled: boolean;
+          updated_at: string;
+          user_id: string;
+        };
+        ComputedFields: never;
+        Insert: {
+          category: string;
+          channel: string;
+          enabled: boolean;
+          updated_at?: string;
+          user_id?: string;
+        };
+        Update: {
+          category?: string;
+          channel?: string;
+          enabled?: boolean;
+          updated_at?: string;
+          user_id?: string;
+        };
+        Relationships: [];
+      };
       notifications: {
         Row: {
           body: string;
+          category: string;
           created_at: string;
           dedupe_key: string;
           household_id: string | null;
           id: string;
           kind: string;
           link: string | null;
+          organization_id: string | null;
           read_at: string | null;
           recipient_id: string;
+          reminder_id: string | null;
+          required_permission: string | null;
+          show_in_inbox: boolean;
           title: string;
           updated_at: string;
         };
         ComputedFields: never;
         Insert: {
           body?: string;
+          category?: string;
           created_at?: string;
           dedupe_key: string;
           household_id?: string | null;
           id?: string;
           kind: string;
           link?: string | null;
+          organization_id?: string | null;
           read_at?: string | null;
           recipient_id: string;
+          reminder_id?: string | null;
+          required_permission?: string | null;
+          show_in_inbox?: boolean;
           title: string;
           updated_at?: string;
         };
         Update: {
           body?: string;
+          category?: string;
           created_at?: string;
           dedupe_key?: string;
           household_id?: string | null;
           id?: string;
           kind?: string;
           link?: string | null;
+          organization_id?: string | null;
           read_at?: string | null;
           recipient_id?: string;
+          reminder_id?: string | null;
+          required_permission?: string | null;
+          show_in_inbox?: boolean;
           title?: string;
           updated_at?: string;
         };
@@ -1259,6 +1398,27 @@ export type Database = {
             isOneToOne: false;
             referencedRelation: "households";
             referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "notifications_organization_id_fkey";
+            columns: ["organization_id"];
+            isOneToOne: false;
+            referencedRelation: "organizations";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "notifications_reminder_fk";
+            columns: ["reminder_id"];
+            isOneToOne: false;
+            referencedRelation: "reminders";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "notifications_required_permission_fkey";
+            columns: ["required_permission"];
+            isOneToOne: false;
+            referencedRelation: "permissions";
+            referencedColumns: ["key"];
           },
         ];
       };
@@ -2035,6 +2195,7 @@ export type Database = {
           accepts_book_now: boolean;
           accepts_contact: boolean;
           accepts_quote_requests: boolean;
+          accepts_urgent: boolean;
           availability_status: string;
           availability_updated_at: string | null;
           business_hours: NonNullable<Json>;
@@ -2059,6 +2220,7 @@ export type Database = {
           accepts_book_now?: boolean;
           accepts_contact?: boolean;
           accepts_quote_requests?: boolean;
+          accepts_urgent?: boolean;
           availability_status?: string;
           availability_updated_at?: string | null;
           business_hours?: NonNullable<Json>;
@@ -2082,6 +2244,7 @@ export type Database = {
           accepts_book_now?: boolean;
           accepts_contact?: boolean;
           accepts_quote_requests?: boolean;
+          accepts_urgent?: boolean;
           availability_status?: string;
           availability_updated_at?: string | null;
           business_hours?: NonNullable<Json>;
@@ -2305,6 +2468,97 @@ export type Database = {
             columns: ["service_request_id"];
             isOneToOne: false;
             referencedRelation: "service_requests";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
+      reminders: {
+        Row: {
+          attempts: number;
+          audience_permission: string;
+          body: string;
+          cancel_reason: string | null;
+          category: string;
+          created_at: string;
+          dedupe_key: string;
+          due_at: string | null;
+          due_on: string | null;
+          household_id: string;
+          id: string;
+          kind: string;
+          last_error: string | null;
+          link: string | null;
+          processed_at: string | null;
+          recipients: number | null;
+          remind_at: string;
+          source_id: string;
+          source_type: string;
+          status: string;
+          title: string;
+          updated_at: string;
+        };
+        ComputedFields: never;
+        Insert: {
+          attempts?: number;
+          audience_permission: string;
+          body?: string;
+          cancel_reason?: string | null;
+          category: string;
+          created_at?: string;
+          dedupe_key: string;
+          due_at?: string | null;
+          due_on?: string | null;
+          household_id: string;
+          id?: string;
+          kind: string;
+          last_error?: string | null;
+          link?: string | null;
+          processed_at?: string | null;
+          recipients?: number | null;
+          remind_at: string;
+          source_id: string;
+          source_type: string;
+          status?: string;
+          title: string;
+          updated_at?: string;
+        };
+        Update: {
+          attempts?: number;
+          audience_permission?: string;
+          body?: string;
+          cancel_reason?: string | null;
+          category?: string;
+          created_at?: string;
+          dedupe_key?: string;
+          due_at?: string | null;
+          due_on?: string | null;
+          household_id?: string;
+          id?: string;
+          kind?: string;
+          last_error?: string | null;
+          link?: string | null;
+          processed_at?: string | null;
+          recipients?: number | null;
+          remind_at?: string;
+          source_id?: string;
+          source_type?: string;
+          status?: string;
+          title?: string;
+          updated_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "reminders_audience_permission_fkey";
+            columns: ["audience_permission"];
+            isOneToOne: false;
+            referencedRelation: "permissions";
+            referencedColumns: ["key"];
+          },
+          {
+            foreignKeyName: "reminders_household_id_fkey";
+            columns: ["household_id"];
+            isOneToOne: false;
+            referencedRelation: "households";
             referencedColumns: ["id"];
           },
         ];
@@ -3117,6 +3371,7 @@ export type Database = {
       accept_household_invitation: { Args: { p_token: string }; Returns: string };
       accept_organization_invitation: { Args: { p_token: string }; Returns: string };
       accept_project_quotation: { Args: { p_project: string; p_quotation: string }; Returns: undefined };
+      assign_calendar_item: { Args: { p_household: string; p_item_key: string; p_user: string }; Returns: undefined };
       assign_work_order: { Args: { p_work_order: string; p_worker: string }; Returns: undefined };
       booking_location: {
         Args: { p_booking: string };
@@ -3144,6 +3399,23 @@ export type Database = {
       };
       change_household_member_role: { Args: { p_member: string; p_role: string }; Returns: undefined };
       change_organization_member_role: { Args: { p_member: string; p_role: string }; Returns: undefined };
+      claim_notification_deliveries: {
+        Args: { p_batch?: number; p_channel: string; p_visibility_seconds?: number };
+        Returns: {
+          attempt: number;
+          body: string;
+          delivery_id: string;
+          email: string;
+          kind: string;
+          link: string;
+          msg_id: number;
+          title: string;
+        }[];
+      };
+      complete_notification_delivery: {
+        Args: { p_delivery: string; p_msg_id: number; p_provider: string; p_provider_message_id?: string };
+        Returns: undefined;
+      };
       confirm_booking_completion: {
         Args: { p_booking: string; p_note?: string; p_outcome: string };
         Returns: undefined;
@@ -3176,6 +3448,10 @@ export type Database = {
         Returns: undefined;
       };
       edit_review: { Args: { p_comment: string; p_rating: number; p_review: string }; Returns: undefined };
+      fail_notification_delivery: {
+        Args: { p_delivery: string; p_error: string; p_msg_id: number; p_retryable?: boolean };
+        Returns: string;
+      };
       get_household_invitation: {
         Args: { p_token: string };
         Returns: {
@@ -3195,6 +3471,23 @@ export type Database = {
           organization_name: string;
           role_key: string;
           status: string;
+        }[];
+      };
+      household_calendar: {
+        Args: { p_from: string; p_households: string[]; p_to: string };
+        Returns: {
+          all_day_on: string;
+          assignee_id: string;
+          category: string;
+          ends_at: string;
+          household_id: string;
+          item_key: string;
+          kind: string;
+          link: string;
+          property_id: string;
+          starts_at: string;
+          status: string;
+          title: string;
         }[];
       };
       invite_household_member: {
@@ -3287,6 +3580,7 @@ export type Database = {
       revoke_organization_invitation: { Args: { p_invitation: string }; Returns: undefined };
       revoke_verification: { Args: { p_reason: string; p_request: string }; Returns: undefined };
       run_daily_bill_jobs: { Args: { p_today?: string }; Returns: Json };
+      run_reminder_worker: { Args: Record<PropertyKey, never>; Returns: Json };
       search_providers: {
         Args: {
           p_barangay?: string;
@@ -3314,9 +3608,30 @@ export type Database = {
           verified_items: string[];
         }[];
       };
+      search_urgent_providers: {
+        Args: { p_barangay?: string; p_category: string; p_city?: string; p_province: string; p_stale_hours?: number };
+        Returns: {
+          area_label: string;
+          availability_status: string;
+          availability_updated_at: string;
+          is_stale: boolean;
+          messenger_url: string;
+          name: string;
+          organization_id: string;
+          phone: string;
+          service_titles: string[];
+          slug: string;
+          tagline: string;
+          verified_items: string[];
+        }[];
+      };
       send_quotation: { Args: { p_quotation: string; p_valid_until: string }; Returns: undefined };
       set_household_member_status: { Args: { p_member: string; p_status: string }; Returns: undefined };
       set_organization_member_status: { Args: { p_member: string; p_status: string }; Returns: undefined };
+      skip_notification_delivery: {
+        Args: { p_delivery: string; p_msg_id: number; p_reason: string };
+        Returns: undefined;
+      };
       start_project_quotation: { Args: { p_project: string }; Returns: string };
       start_verification_review: { Args: { p_request: string }; Returns: undefined };
       submit_review: { Args: { p_booking: string; p_comment: string; p_rating: number }; Returns: string };

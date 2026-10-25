@@ -1,8 +1,10 @@
 import type { ReactNode } from "react";
 import type { Portal } from "@/lib/config/routes";
-import { getMyContexts } from "@/lib/auth/context";
+import { countUnread } from "@bahayplus/modules/notifications";
+import { getMyContexts, getServiceContext } from "@/lib/auth/context";
 import { requireUser } from "@/lib/auth/session";
 import { AppShell } from "./app-shell";
+import { NotificationBell } from "./notification-bell";
 import { UserMenu, type PortalLink } from "./user-menu";
 
 const LAYOUT: Record<Portal, "mobile-first" | "desktop-first"> = {
@@ -34,13 +36,20 @@ export async function PortalShell({ portal, basePath, context, children }: Porta
   const user = await requireUser(basePath);
   const links = await portalLinks();
   const displayName = user.email?.split("@")[0] ?? "Account";
+  const ctx = await getServiceContext();
+  const unread = ctx ? await countUnread(ctx) : 0;
   return (
     <AppShell
       portal={portal}
       basePath={basePath}
       layout={LAYOUT[portal]}
       context={context}
-      actions={<UserMenu displayName={displayName} email={user.email} portals={links} />}
+      actions={
+        <>
+          <NotificationBell unread={unread} />
+          <UserMenu displayName={displayName} email={user.email} portals={links} />
+        </>
+      }
     >
       {children}
     </AppShell>

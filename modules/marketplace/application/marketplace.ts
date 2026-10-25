@@ -1,5 +1,6 @@
 import { SearchProvidersInput, type Division } from "@bahayplus/validation/marketplace/provider";
 import { EditReviewInput, SubmitReviewInput, type VerificationItemType } from "@bahayplus/validation/marketplace/trust";
+import { UrgentSearchInput } from "@bahayplus/validation/marketplace/urgent";
 import { appError, err, ok, type Result } from "@bahayplus/types/result";
 import { mapDbError, parseInput, type ServiceContext } from "@bahayplus/modules/authorization";
 import { averageRatingTenths } from "@bahayplus/modules/providers";
@@ -212,4 +213,57 @@ export async function editReview(ctx: ServiceContext, input: unknown): Promise<R
     p_comment: parsed.value.comment,
   });
   return error ? err(mapDbError(error)) : ok(true);
+}
+
+export type UrgentProviderView = {
+  organizationId: string;
+  name: string;
+  slug: string;
+  tagline: string;
+  availabilityStatus: "available" | "limited" | "unavailable";
+  availabilityUpdatedAt: string | null;
+  isStale: boolean;
+  phone: string;
+  messengerUrl: string;
+  verifiedItems: VerificationItemType[];
+  serviceTitles: string[];
+  areaLabel: string | null;
+};
+
+/**
+ * Urgent discovery: listed providers that opted into urgent calls and serve the area. Unavailable
+ * providers are returned separately; stale availability is flagged, never hidden.
+ */
+export async function searchUrgentProviders(
+  ctx: ServiceContext,
+  input: unknown,
+): Promise<Result<{ available: UrgentProviderView[]; unavailable: UrgentProviderView[] }>> {
+  const parsed = parseInput(UrgentSearchInput, input);
+  if (!parsed.ok) return parsed;
+  const v = parsed.value;
+  const { data, error } = await ctx.db.rpc("search_urgent_providers", {
+    p_category: v.category,
+    p_province: v.province,
+    p_city: v.city,
+    p_barangay: v.barangay,
+  });
+  if (error) return err(mapDbError(error));
+  const rows: UrgentProviderView[] = (data ?? []).map((r) => ({
+    organizationId: r.organization_id,
+    name: r.name,
+    slug: r.slug,
+    tagline: r.tagline,
+    availabilityStatus: r.availability_status as UrgentProviderView["availabilityStatus"],
+    availabilityUpdatedAt: r.availability_updated_at,
+    isStale: r.is_stale,
+    phone: r.phone,
+    messengerUrl: r.messenger_url,
+    verifiedItems: (r.verified_items ?? []) as VerificationItemType[],
+    serviceTitles: r.service_titles ?? [],
+    areaLabel: r.area_label,
+  }));
+  return ok({
+    available: rows.filter((r) => r.availabilityStatus !== "unavailable"),
+    unavailable: rows.filter((r) => r.availabilityStatus === "unavailable"),
+  });
 }

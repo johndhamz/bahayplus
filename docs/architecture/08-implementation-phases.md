@@ -11,7 +11,7 @@ Every phase follows the same loop: inspect repo → plan → implement → migra
 | 5     | Bills & utilities, household budgeting (+ daily bill job, reminders)                    | done     |
 | 6     | Provider marketplace & trust (registration, offerings, coverage, verification, reviews) | done     |
 | 7     | Bookings, quotations, projects, work orders                                             | done     |
-| 8     | Unified calendar, reminder engine & notifications, urgent provider discovery            | approved |
+| 8     | Unified calendar, reminder engine & notifications, urgent provider discovery            | done     |
 | 9     | Provider, supplier, worker & admin portals                                              | approved |
 | 10    | Payment architecture & future wallet design (no stored value)                           | approved |
 | 11    | Production readiness: PWA, performance, accessibility, QA, security, deployment, CI     | approved |
@@ -24,6 +24,21 @@ Every phase follows the same loop: inspect repo → plan → implement → migra
 - **Work orders:** created from a confirmed booking or an active project. A worker is assigned only if that worker holds `work_orders.perform`. Overlapping assignments for one worker are rejected by a `tstzrange` exclusion constraint. Checklists must be complete before a work order is completed. Completing a booking's last work order completes the booking.
 - **UI:** the customer portal has `/bookings` (list, plus new booking/quote via `?provider=&service=&mode=`), `/bookings/[id]`, `/bookings/requests/[id]` and `/projects`. The provider portal has `/bookings`, `/quotations`, `/work-orders` and `/projects`. The worker portal UI is Phase 9.
 - **Sign-out is per device** (`scope: "local"`, D-11).
+
+## Phase 8 implementation notes
+
+- **Durable jobs** (migration `…001000`, D-13): pgmq queues `reminders`, `notification_email`, `notification_sms` and `notification_push`. A message is archived only after it is handled. If a worker crashes, the message reappears after its visibility timeout. pg_cron only wakes the workers: `bahayplus-reminder-worker` runs every minute and `bahayplus-registry-reminders` runs daily at 00:15 PHT.
+- **Notification pipeline:** `private.create_notification` writes one notification per recipient and dedupe key (exactly once), plus one `notification_deliveries` row per channel, following the recipient's preferences. Defaults: in-app and email on, SMS and push off. In-app is delivered in the database. Email is queued and sent by the app worker `POST /api/internal/jobs/deliver` (bearer `JOB_RUNNER_SECRET`) through a `ChannelAdapter`: Resend in production, Mailpit locally (`modules/notifications`).
+- **Retries and failures:** retryable failures back off 30 s → 60 s → 120 s … up to 1 h, through `pgmq.set_vt`. A delivery fails after `max_attempts` (default 5) or on a non-retryable error. Every attempt is logged in `private.notification_delivery_attempts`. Reminder processing failures go to `private.job_failures`. Resend receives the delivery id as its idempotency key. A claim keeps reading past stale messages (deleted or already handled) until it has a full batch, and the endpoint drains in batches within a time budget, so a backlog can't starve new deliveries.
+- **Access is re-checked at send time:** a removed member's queued email is skipped (`access_revoked`). Reminder fan-out uses current memberships, filtered by each reminder's `audience_permission`.
+- **SMS and push are interfaces only.** Their queues exist, and `private.channel_settings` marks them disabled. A stored preference produces a `skipped / channel_not_configured` record, never "sent". Without `EMAIL_FROM` and a provider, email deliveries are skipped the same way.
+- **Reminder engine** (`public.reminders`):
+  - Sources: registry items (7 days before and on the due date, 08:00 PHT), confirmed bookings (24 h before) and project milestones (the day before). Bills keep their Phase 5 schedule but now go through the same pipeline.
+  - Reminders are unique per `(household, dedupe_key)`. A source change cancels stale reminders (`source_changed`).
+  - Cancelling or declining a booking cancels its reminders (`booking_cancelled`), including emails not yet sent.
+- **Calendar:** `public.household_calendar(households[], from, to)` is security-invoker, so each source table's RLS applies. It combines bills, registry due items, bookings, milestones and site visits. Timed items are bucketed by their Manila date. Filters: household (this one or all of mine), category, property and assigned member. Assignments live in `calendar_assignments` (`calendar.assign` for owner, manager and member). Bookings default to the person who booked.
+- **Urgent discovery:** `/app/h/[id]/services/urgent` uses `public.search_urgent_providers`. It returns listed providers that opted in (`provider_profiles.accepts_urgent`), offer an urgent-eligible category and serve the area. Results show service area, availability, freshness (stale after 24 h, flagged and sorted lower, never hidden), contact methods and verification. Unavailable providers are counted separately. The page always shows a 911 notice and makes no dispatch or response-time promise.
+- **UI:** a header bell shows the unread count. `/account/notifications` is the inbox (all/unread, per-channel delivery status, mark read). `/account/notifications/settings` holds preferences, with SMS and push shown as not available. The household calendar has a month grid (tablet and up) and an agenda (all sizes).
 
 ## Phase details
 

@@ -53,6 +53,7 @@ export const UpdateProviderProfileInput = z.object({
   acceptsBookNow: z.boolean().default(false),
   acceptsQuoteRequests: z.boolean().default(true),
   acceptsContact: z.boolean().default(true),
+  acceptsUrgent: z.boolean().default(false),
   isPublished: z.boolean().default(false),
 });
 export type UpdateProviderProfileInput = z.input<typeof UpdateProviderProfileInput>;

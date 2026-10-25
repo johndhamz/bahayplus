@@ -37,6 +37,7 @@ export type ProviderProfileView = {
   acceptsBookNow: boolean;
   acceptsQuoteRequests: boolean;
   acceptsContact: boolean;
+  acceptsUrgent: boolean;
   availabilityStatus: "available" | "limited" | "unavailable";
   availabilityUpdatedAt: string | null;
   isPublished: boolean;
@@ -113,6 +114,7 @@ export async function getProviderProfile(
     acceptsBookNow: data.accepts_book_now,
     acceptsQuoteRequests: data.accepts_quote_requests,
     acceptsContact: data.accepts_contact,
+    acceptsUrgent: data.accepts_urgent,
     availabilityStatus: data.availability_status as ProviderProfileView["availabilityStatus"],
     availabilityUpdatedAt: data.availability_updated_at,
     isPublished: data.is_published,
@@ -140,6 +142,7 @@ export async function updateProviderProfile(ctx: ServiceContext, input: unknown)
       accepts_book_now: v.acceptsBookNow,
       accepts_quote_requests: v.acceptsQuoteRequests,
       accepts_contact: v.acceptsContact,
+      accepts_urgent: v.acceptsUrgent,
       is_published: v.isPublished,
     })
     .eq("organization_id", v.organizationId)

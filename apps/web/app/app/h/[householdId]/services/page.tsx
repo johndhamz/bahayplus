@@ -17,7 +17,6 @@ import { AVAILABILITY_LABELS, DIVISION_LABELS, verifiedItemLabel } from "@/compo
 import { ReviewForm } from "@/components/marketplace/review-form";
 import { PageHeader } from "@/components/layout/page-header";
 import { requireHouseholdAccess, requireServiceContext } from "@/lib/auth/context";
-import { SITE } from "@/lib/config/site";
 
 export const metadata = { title: "Services" };
 
@@ -69,19 +68,13 @@ export default async function ServicesPage({ params, searchParams }: PageProps<"
         breadcrumbs={[{ label: "Home", href: base }, { label: "Services" }]}
       />
 
-      {sp.urgent === "1" && (
-        <div
-          role="note"
-          className="mb-4 flex items-start gap-3 rounded-2xl border border-destructive/30 bg-danger-soft p-4 text-sm"
-        >
-          <Siren aria-hidden="true" className="mt-0.5 size-5 shrink-0 text-destructive" />
-          <p>
-            <strong>Life-threatening emergency, fire or crime? Call {SITE.emergencyHotline} now.</strong> Urgent
-            provider matching arrives in a later release; meanwhile, filter below and check each provider&apos;s
-            availability. Bahay+ doesn&apos;t guarantee response times.
-          </p>
-        </div>
-      )}
+      <Link
+        href={`${base}/services/urgent`}
+        className="mb-4 flex items-center gap-3 rounded-2xl border border-destructive/30 bg-danger-soft p-3 text-sm font-medium hover:underline"
+      >
+        <Siren aria-hidden="true" className="size-5 shrink-0 text-destructive" />
+        Need help urgently? Find providers taking urgent calls now
+      </Link>
 
       <form
         method="get"

@@ -90,6 +90,7 @@ export function ProviderProfileForm({ profile }: { profile: ProviderProfileView 
       acceptsBookNow: profile.acceptsBookNow,
       acceptsQuoteRequests: profile.acceptsQuoteRequests,
       acceptsContact: profile.acceptsContact,
+      acceptsUrgent: profile.acceptsUrgent,
       isPublished: profile.isPublished,
     },
     action: (values) =>
@@ -178,6 +179,7 @@ export function ProviderProfileForm({ profile }: { profile: ProviderProfileView 
           ["acceptsBookNow", "Book Now (fixed-price services)"],
           ["acceptsQuoteRequests", "Request a quote"],
           ["acceptsContact", "Show my contact details"],
+          ["acceptsUrgent", "List me for urgent requests (plumbing, electrical, locksmith, roadside…)"],
           ["isPublished", "Publish my profile (listed once verification is approved)"],
         ].map(([name, label]) => (
           <label key={name} className="flex min-h-10 items-center gap-3 text-sm">

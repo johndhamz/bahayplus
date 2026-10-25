@@ -123,7 +123,7 @@ export default async function HouseholdHomePage({ params }: PageProps<"/app/h/[h
           </SectionCard>
         )}
 
-        <UrgentHelpCard href={`${base}/services?urgent=1`} className={properties ? "" : "lg:col-span-3"} />
+        <UrgentHelpCard href={`${base}/services/urgent`} className={properties ? "" : "lg:col-span-3"} />
 
         {members && members.ok && (
           <SectionCard title="Members" id="members" action={{ href: `${base}/members`, label: "Manage" }}>

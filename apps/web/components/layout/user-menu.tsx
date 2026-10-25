@@ -1,6 +1,6 @@
 "use client";
 
-import { CircleUser, LogOut, UserCog } from "lucide-react";
+import { BellRing, CircleUser, LogOut, UserCog } from "lucide-react";
 import Link from "next/link";
 import { Button } from "@bahayplus/ui/components/ui/button";
 import {
@@ -40,6 +40,12 @@ export function UserMenu({ displayName, email, portals = [] }: UserMenuProps) {
           <Link href="/account">
             <UserCog aria-hidden="true" />
             Profile & security
+          </Link>
+        </DropdownMenuItem>
+        <DropdownMenuItem asChild>
+          <Link href="/account/notifications/settings">
+            <BellRing aria-hidden="true" />
+            Notification settings
           </Link>
         </DropdownMenuItem>
         {portals.length > 0 && (

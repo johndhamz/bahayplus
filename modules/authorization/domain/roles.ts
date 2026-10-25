@@ -50,6 +50,7 @@ export const HOUSEHOLD_PERMISSIONS = [
   "budget.manage",
   "services.view",
   "services.book",
+  "calendar.assign",
 ] as const;
 export type HouseholdPermission = (typeof HOUSEHOLD_PERMISSIONS)[number];
 
@@ -107,6 +108,7 @@ export const ROLE_PERMISSIONS: {
       "budget.manage",
       "services.view",
       "services.book",
+      "calendar.assign",
     ],
     member: [
       "household.view",
@@ -120,6 +122,7 @@ export const ROLE_PERMISSIONS: {
       "budget.view",
       "services.view",
       "services.book",
+      "calendar.assign",
     ],
     limited: ["household.view", "property.view", "registry.view"],
     guest: ["household.view"],

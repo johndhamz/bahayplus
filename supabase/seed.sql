@@ -78,7 +78,7 @@ update public.provider_profiles set
   description = 'Licensed technicians serving Quezon City, Pasig and Taguig. This is demo data for local development.',
   phone = '+63 917 000 0000', email = 'hello@mabuhay.example',
   accepts_book_now = true, accepts_quote_requests = true, accepts_contact = true,
-  availability_status = 'available', is_published = true,
+  availability_status = 'available', is_published = true, accepts_urgent = true,
   business_hours = '{"mon":[["08:00","18:00"]],"tue":[["08:00","18:00"]],"wed":[["08:00","18:00"]],"thu":[["08:00","18:00"]],"fri":[["08:00","18:00"]],"sat":[["09:00","15:00"]]}'
 where organization_id = '30000000-0000-4000-8000-000000000001';
 
