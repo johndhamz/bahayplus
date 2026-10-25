@@ -2,6 +2,7 @@ import { BellRing, Building2, Car, MailPlus, Package, PawPrint, Plus, Receipt, U
 import Link from "next/link";
 import { getHouseholdOverview, listHouseholdActivity, listHouseholdMembers } from "@bahayplus/modules/households";
 import { listProperties } from "@bahayplus/modules/properties";
+import { listDueItems } from "@bahayplus/modules/scheduling";
 import { SectionCard } from "@bahayplus/ui/components/data/section-card";
 import { StatCard } from "@bahayplus/ui/components/data/stat-card";
 import { ServiceCard } from "@bahayplus/ui/components/domain/service-card";
@@ -10,6 +11,7 @@ import { ErrorState } from "@bahayplus/ui/components/feedback/error-state";
 import { Button } from "@bahayplus/ui/components/ui/button";
 import { UrgentHelpCard } from "@/components/domain/urgent-help-card";
 import { ActivityList } from "@/components/households/activity-list";
+import { DueList } from "@/components/registry/due-list";
 import { PropertyCard } from "@/components/households/property-card";
 import { PageHeader } from "@/components/layout/page-header";
 import { requireHouseholdAccess, requireServiceContext } from "@/lib/auth/context";
@@ -33,12 +35,15 @@ export default async function HouseholdHomePage({ params }: PageProps<"/app/h/[h
   const base = `/app/h/${householdId}`;
   const can = (p: Parameters<typeof access.permissions.has>[0]) => access.permissions.has(p);
 
-  const [overview, properties, members, activity] = await Promise.all([
+  const [overview, properties, members, activity, due] = await Promise.all([
     getHouseholdOverview(ctx, access),
     can("property.view") ? listProperties(ctx, householdId) : null,
     can("household.members.view") ? listHouseholdMembers(ctx, householdId) : null,
     listHouseholdActivity(ctx, householdId, { limit: 6 }),
+    can("registry.view") ? listDueItems(ctx, householdId, { horizonDays: 60 }) : null,
   ]);
+  const dueItems = due?.ok ? due.value : [];
+  const attention = dueItems.filter((d) => d.status !== "upcoming").length;
 
   if (!overview.ok) return <ErrorState description="We couldn't load your household overview." />;
   const o = overview.value;
@@ -69,12 +74,15 @@ export default async function HouseholdHomePage({ params }: PageProps<"/app/h/[h
         {o.pendingInvitations !== null && (
           <StatCard label="Pending invites" value={o.pendingInvitations} icon={MailPlus} href={`${base}/members`} />
         )}
-        <StatCard
-          label="Reminders"
-          value="—"
-          icon={BellRing}
-          hint="Available when assets, pets, vehicles and bills are added"
-        />
+        {due && (
+          <StatCard
+            label="Due in 60 days"
+            value={dueItems.length}
+            icon={BellRing}
+            tone={attention ? "terracotta" : "default"}
+            hint={attention ? `${attention} need attention` : undefined}
+          />
+        )}
       </section>
 
       <div className="grid gap-4 lg:grid-cols-3">
@@ -136,14 +144,11 @@ export default async function HouseholdHomePage({ params }: PageProps<"/app/h/[h
           </SectionCard>
         )}
 
-        <SectionCard title="Upcoming reminders" id="reminders">
-          <EmptyState
-            size="compact"
-            icon={BellRing}
-            title="No reminders yet"
-            description="Warranty, vaccination, registration and bill reminders will appear here as you add them."
-          />
-        </SectionCard>
+        {due && (
+          <SectionCard title="Upcoming reminders" id="reminders">
+            <DueList items={dueItems.slice(0, 6)} basePath={base} />
+          </SectionCard>
+        )}
 
         <SectionCard title="Recent activity" id="activity">
           {activity.ok ? (

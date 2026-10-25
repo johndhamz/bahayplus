@@ -3,6 +3,145 @@ export type Json = string | number | boolean | null | { [key: string]: Json | un
 export type Database = {
   public: {
     Tables: {
+      asset_service_records: {
+        Row: {
+          asset_id: string;
+          booking_id: string | null;
+          cost_centavos: number | null;
+          created_at: string;
+          created_by: string | null;
+          currency: string;
+          description: string;
+          household_id: string;
+          id: string;
+          kind: string;
+          provider_name: string;
+          serviced_on: string;
+          updated_at: string;
+        };
+        ComputedFields: never;
+        Insert: {
+          asset_id: string;
+          booking_id?: string | null;
+          cost_centavos?: number | null;
+          created_at?: string;
+          created_by?: string | null;
+          currency?: string;
+          description?: string;
+          household_id: string;
+          id?: string;
+          kind: string;
+          provider_name?: string;
+          serviced_on: string;
+          updated_at?: string;
+        };
+        Update: {
+          asset_id?: string;
+          booking_id?: string | null;
+          cost_centavos?: number | null;
+          created_at?: string;
+          created_by?: string | null;
+          currency?: string;
+          description?: string;
+          household_id?: string;
+          id?: string;
+          kind?: string;
+          provider_name?: string;
+          serviced_on?: string;
+          updated_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "asset_service_records_asset_id_household_id_fkey";
+            columns: ["asset_id", "household_id"];
+            isOneToOne: false;
+            referencedRelation: "assets";
+            referencedColumns: ["id", "household_id"];
+          },
+        ];
+      };
+      assets: {
+        Row: {
+          archived_at: string | null;
+          brand: string;
+          category: string;
+          created_at: string;
+          created_by: string | null;
+          currency: string;
+          household_id: string;
+          id: string;
+          last_maintained_on: string | null;
+          maintenance_interval_months: number | null;
+          model: string;
+          name: string;
+          notes: string;
+          property_id: string | null;
+          purchase_date: string | null;
+          purchase_price_centavos: number | null;
+          serial_number: string;
+          updated_at: string;
+          warranty_expires_on: string | null;
+        };
+        ComputedFields: never;
+        Insert: {
+          archived_at?: string | null;
+          brand?: string;
+          category: string;
+          created_at?: string;
+          created_by?: string | null;
+          currency?: string;
+          household_id: string;
+          id?: string;
+          last_maintained_on?: string | null;
+          maintenance_interval_months?: number | null;
+          model?: string;
+          name: string;
+          notes?: string;
+          property_id?: string | null;
+          purchase_date?: string | null;
+          purchase_price_centavos?: number | null;
+          serial_number?: string;
+          updated_at?: string;
+          warranty_expires_on?: string | null;
+        };
+        Update: {
+          archived_at?: string | null;
+          brand?: string;
+          category?: string;
+          created_at?: string;
+          created_by?: string | null;
+          currency?: string;
+          household_id?: string;
+          id?: string;
+          last_maintained_on?: string | null;
+          maintenance_interval_months?: number | null;
+          model?: string;
+          name?: string;
+          notes?: string;
+          property_id?: string | null;
+          purchase_date?: string | null;
+          purchase_price_centavos?: number | null;
+          serial_number?: string;
+          updated_at?: string;
+          warranty_expires_on?: string | null;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "assets_household_id_fkey";
+            columns: ["household_id"];
+            isOneToOne: false;
+            referencedRelation: "households";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "assets_property_id_household_id_fkey";
+            columns: ["property_id", "household_id"];
+            isOneToOne: false;
+            referencedRelation: "properties";
+            referencedColumns: ["id", "household_id"];
+          },
+        ];
+      };
       audit_logs: {
         Row: {
           action: string;
@@ -48,6 +187,63 @@ export type Database = {
           updated_at?: string;
         };
         Relationships: [];
+      };
+      files: {
+        Row: {
+          bucket: string;
+          content_type: string;
+          created_at: string;
+          entity_id: string;
+          entity_type: string;
+          file_name: string;
+          household_id: string;
+          id: string;
+          object_path: string;
+          purpose: string;
+          size_bytes: number;
+          updated_at: string;
+          uploaded_by: string | null;
+        };
+        ComputedFields: never;
+        Insert: {
+          bucket?: string;
+          content_type: string;
+          created_at?: string;
+          entity_id: string;
+          entity_type: string;
+          file_name: string;
+          household_id: string;
+          id?: string;
+          object_path: string;
+          purpose: string;
+          size_bytes: number;
+          updated_at?: string;
+          uploaded_by?: string | null;
+        };
+        Update: {
+          bucket?: string;
+          content_type?: string;
+          created_at?: string;
+          entity_id?: string;
+          entity_type?: string;
+          file_name?: string;
+          household_id?: string;
+          id?: string;
+          object_path?: string;
+          purpose?: string;
+          size_bytes?: number;
+          updated_at?: string;
+          uploaded_by?: string | null;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "files_household_id_fkey";
+            columns: ["household_id"];
+            isOneToOne: false;
+            referencedRelation: "households";
+            referencedColumns: ["id"];
+          },
+        ];
       };
       household_activity: {
         Row: {
@@ -456,6 +652,142 @@ export type Database = {
         };
         Relationships: [];
       };
+      pet_health_records: {
+        Row: {
+          booking_id: string | null;
+          clinic_or_provider: string;
+          cost_centavos: number | null;
+          created_at: string;
+          created_by: string | null;
+          currency: string;
+          household_id: string;
+          id: string;
+          kind: string;
+          next_due_on: string | null;
+          notes: string;
+          occurred_on: string;
+          pet_id: string;
+          title: string;
+          updated_at: string;
+        };
+        ComputedFields: never;
+        Insert: {
+          booking_id?: string | null;
+          clinic_or_provider?: string;
+          cost_centavos?: number | null;
+          created_at?: string;
+          created_by?: string | null;
+          currency?: string;
+          household_id: string;
+          id?: string;
+          kind: string;
+          next_due_on?: string | null;
+          notes?: string;
+          occurred_on: string;
+          pet_id: string;
+          title: string;
+          updated_at?: string;
+        };
+        Update: {
+          booking_id?: string | null;
+          clinic_or_provider?: string;
+          cost_centavos?: number | null;
+          created_at?: string;
+          created_by?: string | null;
+          currency?: string;
+          household_id?: string;
+          id?: string;
+          kind?: string;
+          next_due_on?: string | null;
+          notes?: string;
+          occurred_on?: string;
+          pet_id?: string;
+          title?: string;
+          updated_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "pet_health_records_pet_id_household_id_fkey";
+            columns: ["pet_id", "household_id"];
+            isOneToOne: false;
+            referencedRelation: "pets";
+            referencedColumns: ["id", "household_id"];
+          },
+        ];
+      };
+      pets: {
+        Row: {
+          archived_at: string | null;
+          birth_date: string | null;
+          breed: string;
+          care_preferences: string;
+          color_markings: string;
+          created_at: string;
+          created_by: string | null;
+          household_id: string;
+          id: string;
+          microchip_number: string;
+          name: string;
+          notes: string;
+          photo_file_id: string | null;
+          sex: string;
+          species: string;
+          updated_at: string;
+        };
+        ComputedFields: never;
+        Insert: {
+          archived_at?: string | null;
+          birth_date?: string | null;
+          breed?: string;
+          care_preferences?: string;
+          color_markings?: string;
+          created_at?: string;
+          created_by?: string | null;
+          household_id: string;
+          id?: string;
+          microchip_number?: string;
+          name: string;
+          notes?: string;
+          photo_file_id?: string | null;
+          sex?: string;
+          species: string;
+          updated_at?: string;
+        };
+        Update: {
+          archived_at?: string | null;
+          birth_date?: string | null;
+          breed?: string;
+          care_preferences?: string;
+          color_markings?: string;
+          created_at?: string;
+          created_by?: string | null;
+          household_id?: string;
+          id?: string;
+          microchip_number?: string;
+          name?: string;
+          notes?: string;
+          photo_file_id?: string | null;
+          sex?: string;
+          species?: string;
+          updated_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "pets_household_id_fkey";
+            columns: ["household_id"];
+            isOneToOne: false;
+            referencedRelation: "households";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "pets_photo_fk";
+            columns: ["photo_file_id"];
+            isOneToOne: false;
+            referencedRelation: "files";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
       platform_admins: {
         Row: {
           created_at: string;
@@ -663,9 +995,161 @@ export type Database = {
         };
         Relationships: [];
       };
+      vehicle_service_records: {
+        Row: {
+          booking_id: string | null;
+          cost_centavos: number | null;
+          created_at: string;
+          created_by: string | null;
+          currency: string;
+          description: string;
+          household_id: string;
+          id: string;
+          kind: string;
+          odometer_km: number | null;
+          provider_name: string;
+          serviced_on: string;
+          updated_at: string;
+          vehicle_id: string;
+        };
+        ComputedFields: never;
+        Insert: {
+          booking_id?: string | null;
+          cost_centavos?: number | null;
+          created_at?: string;
+          created_by?: string | null;
+          currency?: string;
+          description?: string;
+          household_id: string;
+          id?: string;
+          kind: string;
+          odometer_km?: number | null;
+          provider_name?: string;
+          serviced_on: string;
+          updated_at?: string;
+          vehicle_id: string;
+        };
+        Update: {
+          booking_id?: string | null;
+          cost_centavos?: number | null;
+          created_at?: string;
+          created_by?: string | null;
+          currency?: string;
+          description?: string;
+          household_id?: string;
+          id?: string;
+          kind?: string;
+          odometer_km?: number | null;
+          provider_name?: string;
+          serviced_on?: string;
+          updated_at?: string;
+          vehicle_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "vehicle_service_records_vehicle_id_household_id_fkey";
+            columns: ["vehicle_id", "household_id"];
+            isOneToOne: false;
+            referencedRelation: "vehicles";
+            referencedColumns: ["id", "household_id"];
+          },
+        ];
+      };
+      vehicles: {
+        Row: {
+          archived_at: string | null;
+          color: string;
+          created_at: string;
+          created_by: string | null;
+          household_id: string;
+          id: string;
+          insurance_expires_on: string | null;
+          insurance_provider: string;
+          last_maintained_km: number | null;
+          last_maintained_on: string | null;
+          maintenance_interval_km: number | null;
+          maintenance_interval_months: number | null;
+          make: string;
+          mileage_km: number | null;
+          model: string;
+          notes: string;
+          plate_number: string;
+          registration_expires_on: string | null;
+          updated_at: string;
+          vehicle_type: string;
+          year: number | null;
+        };
+        ComputedFields: never;
+        Insert: {
+          archived_at?: string | null;
+          color?: string;
+          created_at?: string;
+          created_by?: string | null;
+          household_id: string;
+          id?: string;
+          insurance_expires_on?: string | null;
+          insurance_provider?: string;
+          last_maintained_km?: number | null;
+          last_maintained_on?: string | null;
+          maintenance_interval_km?: number | null;
+          maintenance_interval_months?: number | null;
+          make: string;
+          mileage_km?: number | null;
+          model: string;
+          notes?: string;
+          plate_number?: string;
+          registration_expires_on?: string | null;
+          updated_at?: string;
+          vehicle_type: string;
+          year?: number | null;
+        };
+        Update: {
+          archived_at?: string | null;
+          color?: string;
+          created_at?: string;
+          created_by?: string | null;
+          household_id?: string;
+          id?: string;
+          insurance_expires_on?: string | null;
+          insurance_provider?: string;
+          last_maintained_km?: number | null;
+          last_maintained_on?: string | null;
+          maintenance_interval_km?: number | null;
+          maintenance_interval_months?: number | null;
+          make?: string;
+          mileage_km?: number | null;
+          model?: string;
+          notes?: string;
+          plate_number?: string;
+          registration_expires_on?: string | null;
+          updated_at?: string;
+          vehicle_type?: string;
+          year?: number | null;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "vehicles_household_id_fkey";
+            columns: ["household_id"];
+            isOneToOne: false;
+            referencedRelation: "households";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
     };
     Views: {
-      [_ in never]: never;
+      registry_due_items: {
+        Row: {
+          due_kind: string | null;
+          due_on: string | null;
+          household_id: string | null;
+          subject_id: string | null;
+          subject_name: string | null;
+          subject_type: string | null;
+        };
+        ComputedFields: never;
+        Relationships: [];
+      };
     };
     Functions: {
       accept_household_invitation: { Args: { p_token: string }; Returns: string };
