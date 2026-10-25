@@ -18,6 +18,8 @@
 
 ## Operations
 
+- **[Launch readiness report (2026-10-26)](./launch-readiness-report.md)**
+
 - [Deployment](./deployment/staging-and-production.md) · [Environment variables](./deployment/environment-variables.md) · [Migrations](./deployment/database-migrations.md) · [Production checklist](./deployment/production-checklist.md) · [Rollback](./deployment/rollback.md) · [Monitoring](./deployment/monitoring-and-alerting.md) · [Backup & recovery](./deployment/backup-and-recovery.md)
 - [Security audit (2026-10)](./security/audit-2026-10.md) · [QA test matrix](./qa/test-matrix.md) · [Performance](./operations/performance.md)
 
