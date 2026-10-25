@@ -2,6 +2,8 @@ import type { Metadata, Viewport } from "next";
 import { Inter, Plus_Jakarta_Sans } from "next/font/google";
 import { Toaster } from "@bahayplus/ui/components/ui/sonner";
 import { TooltipProvider } from "@bahayplus/ui/components/ui/tooltip";
+import { OfflineBanner } from "@/components/pwa/offline-banner";
+import { ServiceWorkerRegistration } from "@/components/pwa/service-worker";
 import { SITE } from "@/lib/config/site";
 import "./globals.css";
 
@@ -17,6 +19,8 @@ export const metadata: Metadata = {
   title: { default: `${SITE.name} — ${SITE.tagline}`, template: `%s · ${SITE.name}` },
   description: SITE.description,
   applicationName: SITE.name,
+  appleWebApp: { capable: true, title: SITE.name, statusBarStyle: "default" },
+  formatDetection: { telephone: false },
 };
 
 export const viewport: Viewport = {
@@ -32,6 +36,8 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       <body className="min-h-full">
         <TooltipProvider>{children}</TooltipProvider>
         <Toaster position="top-center" richColors closeButton />
+        <OfflineBanner />
+        <ServiceWorkerRegistration version={process.env.NEXT_PUBLIC_APP_VERSION ?? "dev"} />
       </body>
     </html>
   );

@@ -28,7 +28,10 @@ export default async function ProviderServicesPage({ params }: PageProps<"/provi
               {services.value.map((s) => (
                 <li key={s.id} className="flex items-center gap-3 py-3">
                   <div className="min-w-0 flex-1">
-                    <Link href={`${base}/services/${s.id}`} className="font-medium hover:underline">
+                    <Link
+                      href={`${base}/services/${s.id}`}
+                      className="inline-flex min-h-6 items-center font-medium hover:underline"
+                    >
                       {s.title}
                     </Link>
                     <p className="text-xs text-muted-foreground">

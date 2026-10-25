@@ -5,11 +5,22 @@ import { AUTH_ROUTES, safeNextPath } from "@/lib/config/routes";
 import { ForgotPasswordInput, LoginInput, ResetPasswordInput, SignupInput } from "@bahayplus/validation/identity/auth";
 import { validationFailed, type ActionResult } from "@bahayplus/types/action-result";
 import { publicEnv } from "@/lib/env/public";
+import { clientIp, TOO_MANY, withinRateLimits } from "@/lib/security/rate-limit";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
+
+const limited = (): ActionResult<never> => ({ ok: false, error: { code: "RATE_LIMITED", message: TOO_MANY } });
 
 export async function loginAction(input: unknown): Promise<ActionResult> {
   const parsed = LoginInput.safeParse(input);
   if (!parsed.success) return validationFailed(parsed.error);
+  const ip = await clientIp();
+  if (
+    !(await withinRateLimits([
+      { bucket: "loginByIp", key: ip },
+      { bucket: "loginByEmail", key: parsed.data.email },
+    ]))
+  )
+    return limited();
 
   const supabase = await createSupabaseServerClient();
   const { error } = await supabase.auth.signInWithPassword({
@@ -45,6 +56,7 @@ export async function loginAction(input: unknown): Promise<ActionResult> {
 export async function signupAction(input: unknown): Promise<ActionResult<{ email: string }>> {
   const parsed = SignupInput.safeParse(input);
   if (!parsed.success) return validationFailed(parsed.error);
+  if (!(await withinRateLimits([{ bucket: "signupByIp", key: await clientIp() }]))) return limited();
 
   const supabase = await createSupabaseServerClient();
   const site = publicEnv().NEXT_PUBLIC_SITE_URL;
@@ -82,6 +94,13 @@ export async function signupAction(input: unknown): Promise<ActionResult<{ email
 export async function requestPasswordResetAction(input: unknown): Promise<ActionResult> {
   const parsed = ForgotPasswordInput.safeParse(input);
   if (!parsed.success) return validationFailed(parsed.error);
+  if (
+    !(await withinRateLimits([
+      { bucket: "passwordResetByIp", key: await clientIp() },
+      { bucket: "passwordResetByEmail", key: parsed.data.email },
+    ]))
+  )
+    return limited();
   const supabase = await createSupabaseServerClient();
   const site = publicEnv().NEXT_PUBLIC_SITE_URL;
   const { error } = await supabase.auth.resetPasswordForEmail(parsed.data.email, {

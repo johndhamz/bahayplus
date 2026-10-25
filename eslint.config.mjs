@@ -38,6 +38,8 @@ const eslintConfig = defineConfig([
       "apps/web/lib/admin/**",
       // Payments: provider references and verified webhook events are written with the service role only.
       "apps/web/lib/payments/**",
+      // Rate limiting writes counters with the service role (the counter function is not exposed to clients).
+      "apps/web/lib/security/**",
       "apps/web/app/api/webhooks/payments/**",
     ],
     rules: { "no-restricted-imports": "off" },

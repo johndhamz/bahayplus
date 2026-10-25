@@ -8,7 +8,7 @@ test.beforeEach(({ page: _page }, testInfo) => {
   test.skip(!["desktop", "mobile-390"].includes(testInfo.project.name), "auth journeys run on two viewports");
 });
 
-test("sign up → verify email → create household → sign out", async ({ page, baseURL }) => {
+test("sign up → verify email → create household → sign out", { tag: "@smoke" }, async ({ page, baseURL }) => {
   const email = `e2e-${randomUUID().slice(0, 8)}@bahayplus.test`;
   await page.goto("/signup");
   await page.getByRole("textbox", { name: /full name/i }).fill("E2E Tester");
@@ -115,7 +115,7 @@ test("platform admin portal is invisible to non-admins and open to admins", asyn
   await expect(page.getByRole("heading", { name: "Platform overview" })).toBeVisible();
 });
 
-test("business portals are scoped to the organization and role", async ({ page }) => {
+test("business portals are scoped to the organization and role", { tag: "@smoke" }, async ({ page }) => {
   await login(page, DEMO.provider, undefined, "/provider");
   await expect(page).toHaveURL(new RegExp(`/provider/o/${DEMO_IDS.mabuhayProvider}$`));
   await expect(page.getByRole("button", { name: /Current: Mabuhay Home Services/ })).toBeVisible();

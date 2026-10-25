@@ -2,19 +2,19 @@
 
 Every phase follows the same loop: inspect repo → plan → implement → migrations → unit/integration tests → Playwright for critical flows → run lint/typecheck/tests/build → fix → summarize → list limitations. **No phase starts without explicit approval.**
 
-| Phase | Name                                                                                    | Status   |
-| ----- | --------------------------------------------------------------------------------------- | -------- |
-| 1     | Foundation & design system                                                              | done     |
-| 2     | Database foundation, auth, authorization, multi-tenant security                         | done     |
-| 3     | Household management (households, members, invitations, properties, dashboard)          | done     |
-| 4     | Asset registry, pets, vehicles (+ private attachments, due items)                       | done     |
-| 5     | Bills & utilities, household budgeting (+ daily bill job, reminders)                    | done     |
-| 6     | Provider marketplace & trust (registration, offerings, coverage, verification, reviews) | done     |
-| 7     | Bookings, quotations, projects, work orders                                             | done     |
-| 8     | Unified calendar, reminder engine & notifications, urgent provider discovery            | done     |
-| 9     | Provider, supplier, worker & admin portals                                              | done     |
-| 10    | Payment architecture & future wallet design (no stored value)                           | done     |
-| 11    | Production readiness: PWA, performance, accessibility, QA, security, deployment, CI     | approved |
+| Phase | Name                                                                                    | Status |
+| ----- | --------------------------------------------------------------------------------------- | ------ |
+| 1     | Foundation & design system                                                              | done   |
+| 2     | Database foundation, auth, authorization, multi-tenant security                         | done   |
+| 3     | Household management (households, members, invitations, properties, dashboard)          | done   |
+| 4     | Asset registry, pets, vehicles (+ private attachments, due items)                       | done   |
+| 5     | Bills & utilities, household budgeting (+ daily bill job, reminders)                    | done   |
+| 6     | Provider marketplace & trust (registration, offerings, coverage, verification, reviews) | done   |
+| 7     | Bookings, quotations, projects, work orders                                             | done   |
+| 8     | Unified calendar, reminder engine & notifications, urgent provider discovery            | done   |
+| 9     | Provider, supplier, worker & admin portals                                              | done   |
+| 10    | Payment architecture & future wallet design (no stored value)                           | done   |
+| 11    | Production readiness: PWA, performance, accessibility, QA, security, deployment, CI     | done   |
 
 ## Phase 7 implementation notes
 
@@ -71,6 +71,24 @@ See [10 · Payments architecture and future PHP wallet](./10-payments-and-wallet
 - **Refunds** are partial and capped under a row lock (`overrefund`), idempotent per key, and confirmed only by provider events. Owners and managers (`payments.refund`) or platform finance can request them.
 - **Commission** uses exact integer bps, frozen at success, with per-organization overrides that can't be backdated. **Settlements** charge commission on the net; refunds after settlement become negative adjustments, and each payment or refund is settled once. **Reconciliation** classifies provider report lines against the ledger.
 - **Pages:** a customer payment panel on bookings, the sandbox checkout, provider Payments (with refunds and settlements), and admin Payments (settlements, commission, reconciliation).
+
+## Phase 11 implementation notes
+
+- **PWA:**
+  - Manifest at `app/manifest.ts`; icons generated at build time (`app/icon.tsx`: 192, 512 and maskable; `apple-icon.tsx`).
+  - Hand-written `public/sw.js`, same origin and GET only. It caches content-hashed static assets cache-first, and icons and the manifest stale-while-revalidate. Navigations are always network, falling back to the static `/offline` page.
+  - It never intercepts Supabase and never stores HTML. Cache names carry the deploy version, and old caches are deleted on activation.
+  - Includes an offline banner and network-error handling in `useActionForm`, which keeps the user's input.
+- **Performance:** foreign-key index audit leading to migration `…001300`; mobile budgets in `tests/performance` (4× CPU, 150 ms, 1.6 Mbps). See [operations/performance](../operations/performance.md).
+- **Security:**
+  - CSP and the full set of security headers in production.
+  - Rate limiting for auth and invitations (migration `…001400`, finding S-01).
+  - pgTAP hardening suite `03_security_hardening`, and a client-bundle secret scan.
+  - Report: [security/audit-2026-10](../security/audit-2026-10.md).
+- **Accessibility:** keyboard-only login, dialog focus trap and return, and a WCAG 2.5.8 target-size audit. It fixed small targets on the "Forgot password?" link, breadcrumbs and list titles, plus header badge contrast.
+- **Deployment:** `apps/web/vercel.json` (`sin1`, crons), `/api/health`, and cron auth via `CRON_SECRET`. Docs are in [deployment/](../deployment/).
+- **CI:** static checks, a production build with placeholder config, migrations, pgTAP, integration and security, a bundle secret scan, E2E smoke on pull requests, and full E2E plus performance budgets on main and nightly.
+- **QA matrix:** [qa/test-matrix](../qa/test-matrix.md).
 
 ## Phase details
 

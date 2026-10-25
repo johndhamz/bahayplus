@@ -16,6 +16,11 @@
 | 09  | [Risks & open decisions](./architecture/09-risks-and-decisions.md)   | Technical risks, mitigations, decisions needing an owner         |
 | 10  | [Payments & future wallet](./architecture/10-payments-and-wallet.md) | Payment flow, refunds, settlements, wallet design, BSP decisions |
 
+## Operations
+
+- [Deployment](./deployment/staging-and-production.md) · [Environment variables](./deployment/environment-variables.md) · [Migrations](./deployment/database-migrations.md) · [Production checklist](./deployment/production-checklist.md) · [Rollback](./deployment/rollback.md) · [Monitoring](./deployment/monitoring-and-alerting.md) · [Backup & recovery](./deployment/backup-and-recovery.md)
+- [Security audit (2026-10)](./security/audit-2026-10.md) · [QA test matrix](./qa/test-matrix.md) · [Performance](./operations/performance.md)
+
 ## Scope guardrails
 
 **Approved domains (16):** authentication & authorization · household & property · household members & permissions · asset registry · pets · vehicles · bills & utilities · budgeting & expenses · calendar & reminders · home services marketplace · provider trust & verification · urgent provider discovery · bookings/quotations/appointments/work orders · renovation & custom projects · supplier/inventory/logistics · business & administrative operations.

@@ -35,7 +35,10 @@ export default async function ProviderPaymentsPage({ params }: PageProps<"/provi
               {payments.value.map((p) => (
                 <li key={p.id} className="flex flex-wrap items-center gap-3 py-3">
                   <div className="min-w-0 flex-1">
-                    <Link href={`${base}/payments/${p.id}`} className="font-medium hover:underline">
+                    <Link
+                      href={`${base}/payments/${p.id}`}
+                      className="inline-flex min-h-6 items-center font-medium hover:underline"
+                    >
                       {p.description}
                     </Link>
                     <p className="text-xs text-muted-foreground">

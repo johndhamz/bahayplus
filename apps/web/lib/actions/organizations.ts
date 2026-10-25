@@ -13,6 +13,7 @@ import {
 import { fromResult, type ActionResult } from "@bahayplus/types/action-result";
 import { publicEnv } from "@/lib/env/public";
 import { getServiceContext } from "@/lib/auth/context";
+import { TOO_MANY, withinRateLimits } from "@/lib/security/rate-limit";
 
 const UNAUTHENTICATED: ActionResult<never> = {
   ok: false,
@@ -35,6 +36,8 @@ export async function inviteOrganizationMemberAction(
 ): Promise<ActionResult<{ inviteUrl: string; expiresAt: string }>> {
   const ctx = await getServiceContext();
   if (!ctx) return UNAUTHENTICATED;
+  if (!(await withinRateLimits([{ bucket: "invitationsByUser", key: ctx.userId }])))
+    return { ok: false, error: { code: "RATE_LIMITED", message: TOO_MANY } };
   const result = await inviteOrganizationMember(ctx, input);
   if (!result.ok) return fromResult(result);
   const inviteUrl = `${publicEnv().NEXT_PUBLIC_SITE_URL}/invite/organization?token=${encodeURIComponent(result.value.token)}`;

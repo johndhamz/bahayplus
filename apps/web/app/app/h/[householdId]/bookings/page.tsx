@@ -146,7 +146,10 @@ export default async function BookingsPage({ params, searchParams }: PageProps<"
                 {openRequests.map((r) => (
                   <li key={r.id} className="flex items-center gap-2 py-2.5">
                     <div className="min-w-0 flex-1">
-                      <Link href={`${base}/bookings/requests/${r.id}`} className="text-sm font-medium hover:underline">
+                      <Link
+                        href={`${base}/bookings/requests/${r.id}`}
+                        className="inline-flex min-h-6 items-center text-sm font-medium hover:underline"
+                      >
                         {r.title}
                       </Link>
                       <p className="text-xs text-muted-foreground">

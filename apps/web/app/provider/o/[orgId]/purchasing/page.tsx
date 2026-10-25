@@ -43,7 +43,7 @@ export default async function PurchasingPage({ params }: PageProps<"/provider/o/
                 <li key={s.organizationId} className="py-2.5">
                   <Link
                     href={`${base}/purchasing/suppliers/${s.organizationId}`}
-                    className="font-medium hover:underline"
+                    className="inline-flex min-h-6 items-center font-medium hover:underline"
                   >
                     {s.name}
                   </Link>

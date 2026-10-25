@@ -33,7 +33,10 @@ export default async function ProductsPage({ params }: PageProps<"/supplier/o/[o
               {products.value.map((p) => (
                 <li key={p.id} className="flex items-center gap-3 py-2.5">
                   <div className="min-w-0 flex-1">
-                    <Link href={`${base}/products/${p.id}`} className="font-medium hover:underline">
+                    <Link
+                      href={`${base}/products/${p.id}`}
+                      className="inline-flex min-h-6 items-center font-medium hover:underline"
+                    >
                       {p.name}
                     </Link>
                     <p className="text-xs text-muted-foreground">{[p.sku, p.category].filter(Boolean).join(" · ")}</p>

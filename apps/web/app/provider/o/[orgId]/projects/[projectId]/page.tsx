@@ -147,7 +147,10 @@ export default async function ProviderProjectPage({ params }: PageProps<"/provid
               <ul className="flex flex-col gap-1 text-sm">
                 {workOrders.value.map((w) => (
                   <li key={w.id}>
-                    <Link href={`${base}/work-orders/${w.id}`} className="font-medium hover:underline">
+                    <Link
+                      href={`${base}/work-orders/${w.id}`}
+                      className="inline-flex min-h-6 items-center font-medium hover:underline"
+                    >
                       {w.title}
                     </Link>{" "}
                     <span className="text-xs text-muted-foreground">· {WORK_ORDER_STATUS_LABELS[w.status]}</span>

@@ -31,3 +31,6 @@ export async function POST(request: Request) {
   }
   return NextResponse.json({ data: { reminders: reminders.data ?? null, channels } });
 }
+
+/** Vercel Cron issues GET requests (with `Authorization: Bearer $CRON_SECRET`). */
+export const GET = POST;

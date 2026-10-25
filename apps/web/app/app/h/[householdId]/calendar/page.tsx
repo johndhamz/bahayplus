@@ -259,7 +259,10 @@ export default async function CalendarPage({ params, searchParams }: PageProps<"
                         {it.startsAt ? timeOf(it.startsAt) : "All day"}
                       </span>
                       <div className="min-w-0 flex-1">
-                        <Link href={it.link} className="text-sm font-medium hover:underline">
+                        <Link
+                          href={it.link}
+                          className="inline-flex min-h-6 items-center text-sm font-medium hover:underline"
+                        >
                           {it.title}
                         </Link>
                         <p className="flex flex-wrap items-center gap-1.5 text-xs text-muted-foreground">

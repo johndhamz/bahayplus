@@ -26,7 +26,10 @@ export function LoginForm({ next }: { next?: string }) {
         {(field, a11y) => <Input {...field} {...a11y} type="password" autoComplete="current-password" />}
       </FormField>
       <div className="-mt-2 text-right text-sm">
-        <Link href="/forgot-password" className="font-medium text-brand hover:underline">
+        <Link
+          href="/forgot-password"
+          className="inline-flex min-h-10 items-center font-medium text-brand hover:underline"
+        >
           Forgot password?
         </Link>
       </div>

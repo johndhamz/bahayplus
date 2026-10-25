@@ -52,54 +52,60 @@ test("purchase order: provider orders → supplier accepts, ships, delivers", as
   await expect(page.getByRole("region", { name: /Deliveries/ })).toContainText("Mabuhay Home Services (demo)");
 });
 
-test("worker: assigned job with address, checklist, evidence-gated completion", async ({ page }, testInfo) => {
-  test.skip(testInfo.project.name !== "desktop", "multi-account journey runs once");
-  test.setTimeout(240_000);
-  const title = `Leak check ${Date.now().toString(36)}`;
-  // Customer books a confirmed visit.
-  await login(page, DEMO.owner, undefined, `${HOUSEHOLD}/services/providers/mabuhay-home-services-demo`);
-  await page.getByRole("listitem").filter({ hasText: "Leak repair" }).getByRole("link", { name: "Book now" }).click();
-  await page.getByLabel("When").fill(randomSlot(7));
-  await page.getByRole("button", { name: "Book", exact: true }).click();
-  await expect(page).toHaveURL(/\/bookings\/[0-9a-f-]{36}$/, { timeout: 30_000 });
-  const bookingId = page.url().split("/").pop()!;
-  await logout(page);
+test(
+  "worker: assigned job with address, checklist, evidence-gated completion",
+  { tag: "@smoke" },
+  async ({ page }, testInfo) => {
+    test.skip(testInfo.project.name !== "desktop", "multi-account journey runs once");
+    test.setTimeout(240_000);
+    const title = `Leak check ${Date.now().toString(36)}`;
+    // Customer books a confirmed visit.
+    await login(page, DEMO.owner, undefined, `${HOUSEHOLD}/services/providers/mabuhay-home-services-demo`);
+    await page.getByRole("listitem").filter({ hasText: "Leak repair" }).getByRole("link", { name: "Book now" }).click();
+    await page.getByLabel("When").fill(randomSlot(7));
+    await page.getByRole("button", { name: "Book", exact: true }).click();
+    await expect(page).toHaveURL(/\/bookings\/[0-9a-f-]{36}$/, { timeout: 30_000 });
+    const bookingId = page.url().split("/").pop()!;
+    await logout(page);
 
-  // Dispatcher creates and assigns the work order.
-  await login(page, DEMO.provider, undefined, `${PROVIDER}/work-orders?source=${bookingId}`);
-  const form = page.getByRole("region", { name: "New work order" });
-  await form.getByRole("textbox", { name: "Title" }).fill(title);
-  await form.getByRole("textbox", { name: "New checklist item" }).fill("Check for leaks");
-  await form.getByRole("button", { name: "Add" }).click();
-  await form.getByRole("button", { name: "Create work order" }).click();
-  await expect(page).toHaveURL(/\/work-orders\/[0-9a-f-]{36}$/, { timeout: 30_000 });
-  const workOrderId = page.url().split("/").pop()!;
-  await page.getByRole("combobox", { name: "Worker" }).selectOption({ label: "Andres Bautista (demo)" });
-  await page.getByRole("button", { name: "Assign" }).click();
-  await expect(page.getByRole("region", { name: "Assigned worker" })).toContainText("Andres Bautista (demo)", {
-    timeout: 20_000,
-  });
-  await logout(page);
+    // Dispatcher creates and assigns the work order.
+    await login(page, DEMO.provider, undefined, `${PROVIDER}/work-orders?source=${bookingId}`);
+    const form = page.getByRole("region", { name: "New work order" });
+    await form.getByRole("textbox", { name: "Title" }).fill(title);
+    await form.getByRole("textbox", { name: "New checklist item" }).fill("Check for leaks");
+    await form.getByRole("button", { name: "Add" }).click();
+    await form.getByRole("button", { name: "Create work order" }).click();
+    await expect(page).toHaveURL(/\/work-orders\/[0-9a-f-]{36}$/, { timeout: 30_000 });
+    const workOrderId = page.url().split("/").pop()!;
+    await page.getByRole("combobox", { name: "Worker" }).selectOption({ label: "Andres Bautista (demo)" });
+    await page.getByRole("button", { name: "Assign" }).click();
+    await expect(page.getByRole("region", { name: "Assigned worker" })).toContainText("Andres Bautista (demo)", {
+      timeout: 20_000,
+    });
+    await logout(page);
 
-  // Worker sees only their job, with the address, and must provide evidence to complete.
-  await login(page, DEMO.worker, undefined, "/worker/jobs");
-  await page.getByRole("link", { name: new RegExp(title) }).click();
-  await expect(page).toHaveURL(new RegExp(`/worker/jobs/${workOrderId}$`));
-  await expect(page.getByRole("region", { name: "Where" })).toContainText("12 Sampaguita St.");
-  await page.getByRole("button", { name: "Mark in progress" }).click();
-  await expect(page.getByText("In progress", { exact: true }).first()).toBeVisible({ timeout: 20_000 });
-  await page.getByRole("checkbox", { name: "Check for leaks" }).click();
-  await expect(page.getByRole("checkbox", { name: "Check for leaks" })).toBeChecked({ timeout: 20_000 });
-  await page.getByRole("button", { name: "Mark completed" }).click();
-  await expect(page.getByText(/completion notes or an "after" photo/).first()).toBeVisible({ timeout: 20_000 });
-  await page.getByRole("textbox", { name: "Completion notes" }).fill("Replaced washer; no more leak.");
-  await page.getByRole("button", { name: "Mark completed" }).click();
-  await expect(page.getByRole("region", { name: "Completion" })).toContainText("Replaced washer", { timeout: 20_000 });
-  await expectNoSeriousAxe(page);
-  // The job stays in the worker's history; other workers' URLs 404.
-  await page.goto("/worker/jobs");
-  await expect(page.getByRole("region", { name: /Completed/ })).toContainText(title);
-});
+    // Worker sees only their job, with the address, and must provide evidence to complete.
+    await login(page, DEMO.worker, undefined, "/worker/jobs");
+    await page.getByRole("link", { name: new RegExp(title) }).click();
+    await expect(page).toHaveURL(new RegExp(`/worker/jobs/${workOrderId}$`));
+    await expect(page.getByRole("region", { name: "Where" })).toContainText("12 Sampaguita St.");
+    await page.getByRole("button", { name: "Mark in progress" }).click();
+    await expect(page.getByText("In progress", { exact: true }).first()).toBeVisible({ timeout: 20_000 });
+    await page.getByRole("checkbox", { name: "Check for leaks" }).click();
+    await expect(page.getByRole("checkbox", { name: "Check for leaks" })).toBeChecked({ timeout: 20_000 });
+    await page.getByRole("button", { name: "Mark completed" }).click();
+    await expect(page.getByText(/completion notes or an "after" photo/).first()).toBeVisible({ timeout: 20_000 });
+    await page.getByRole("textbox", { name: "Completion notes" }).fill("Replaced washer; no more leak.");
+    await page.getByRole("button", { name: "Mark completed" }).click();
+    await expect(page.getByRole("region", { name: "Completion" })).toContainText("Replaced washer", {
+      timeout: 20_000,
+    });
+    await expectNoSeriousAxe(page);
+    // The job stays in the worker's history; other workers' URLs 404.
+    await page.goto("/worker/jobs");
+    await expect(page.getByRole("region", { name: /Completed/ })).toContainText(title);
+  },
+);
 
 test("admin: overview, restricted tools, maintenance banner and audit trail; non-admins get 404", async ({
   page,

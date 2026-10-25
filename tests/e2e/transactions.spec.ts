@@ -18,64 +18,66 @@ async function fillLine(page: Page, i: number, description: string, qty: string,
   await page.getByRole("textbox", { name: `Item ${i} unit price` }).fill(price);
 }
 
-test("book now → provider completes → customer confirms; quote request → quotation → accepted booking", async ({
-  page,
-}, testInfo) => {
-  test.skip(testInfo.project.name !== "desktop", "multi-account journey runs once");
-  test.setTimeout(240_000);
-  const note = `E2E ${Date.now().toString(36)}`;
+test(
+  "book now → provider completes → customer confirms; quote request → quotation → accepted booking",
+  { tag: "@smoke" },
+  async ({ page }, testInfo) => {
+    test.skip(testInfo.project.name !== "desktop", "multi-account journey runs once");
+    test.setTimeout(240_000);
+    const note = `E2E ${Date.now().toString(36)}`;
 
-  // Customer books a Book Now service from the provider profile.
-  await login(page, DEMO.owner, undefined, `${HOUSEHOLD}/services/providers/mabuhay-home-services-demo`);
-  await page.getByRole("link", { name: "Book now" }).first().click();
-  await expect(page.getByRole("heading", { name: "Book a service" })).toBeVisible();
-  await page.getByLabel("When").fill(randomSlot());
-  await page.getByRole("textbox", { name: /notes for the provider/i }).fill(note);
-  await page.getByRole("button", { name: "Book", exact: true }).click();
-  await expect(page).toHaveURL(/\/bookings\/[0-9a-f-]{36}$/, { timeout: 30_000 });
-  await expect(page.getByText("Confirmed", { exact: true })).toBeVisible();
-  const bookingPath = new URL(page.url()).pathname.split("/bookings/")[1]!;
+    // Customer books a Book Now service from the provider profile.
+    await login(page, DEMO.owner, undefined, `${HOUSEHOLD}/services/providers/mabuhay-home-services-demo`);
+    await page.getByRole("link", { name: "Book now" }).first().click();
+    await expect(page.getByRole("heading", { name: "Book a service" })).toBeVisible();
+    await page.getByLabel("When").fill(randomSlot());
+    await page.getByRole("textbox", { name: /notes for the provider/i }).fill(note);
+    await page.getByRole("button", { name: "Book", exact: true }).click();
+    await expect(page).toHaveURL(/\/bookings\/[0-9a-f-]{36}$/, { timeout: 30_000 });
+    await expect(page.getByText("Confirmed", { exact: true })).toBeVisible();
+    const bookingPath = new URL(page.url()).pathname.split("/bookings/")[1]!;
 
-  // Quote request for a quote-only service.
-  await page.goto(`${HOUSEHOLD}/services/providers/mabuhay-home-services-demo`);
-  await page.getByRole("link", { name: "Request quote" }).last().click();
-  await page.getByRole("textbox", { name: /^details/i }).fill(`Panel check ${note}`);
-  await page.getByRole("button", { name: "Request quote" }).click();
-  await expect(page).toHaveURL(/\/bookings\/requests\/[0-9a-f-]{36}$/, { timeout: 30_000 });
-  await expect(page.getByText(/hasn.t sent a quotation yet/)).toBeVisible();
-  const requestId = page.url().split("/").pop()!;
-  await logout(page);
+    // Quote request for a quote-only service.
+    await page.goto(`${HOUSEHOLD}/services/providers/mabuhay-home-services-demo`);
+    await page.getByRole("link", { name: "Request quote" }).last().click();
+    await page.getByRole("textbox", { name: /^details/i }).fill(`Panel check ${note}`);
+    await page.getByRole("button", { name: "Request quote" }).click();
+    await expect(page).toHaveURL(/\/bookings\/requests\/[0-9a-f-]{36}$/, { timeout: 30_000 });
+    await expect(page.getByText(/hasn.t sent a quotation yet/)).toBeVisible();
+    const requestId = page.url().split("/").pop()!;
+    await logout(page);
 
-  // Provider: sees the address of the confirmed booking, starts and completes it.
-  await login(page, DEMO.provider, undefined, `${PROVIDER}/bookings/${bookingPath}`);
-  await expect(page.getByRole("region", { name: "Details" })).toContainText("12 Sampaguita St.");
-  await page.getByRole("button", { name: "Start job" }).click();
-  await expect(page.getByText("In progress", { exact: true }).first()).toBeVisible({ timeout: 20_000 });
-  await page.getByRole("button", { name: "Mark completed" }).click();
-  await expect(page.getByText("Completed", { exact: true }).first()).toBeVisible({ timeout: 20_000 });
+    // Provider: sees the address of the confirmed booking, starts and completes it.
+    await login(page, DEMO.provider, undefined, `${PROVIDER}/bookings/${bookingPath}`);
+    await expect(page.getByRole("region", { name: "Details" })).toContainText("12 Sampaguita St.");
+    await page.getByRole("button", { name: "Start job" }).click();
+    await expect(page.getByText("In progress", { exact: true }).first()).toBeVisible({ timeout: 20_000 });
+    await page.getByRole("button", { name: "Mark completed" }).click();
+    await expect(page.getByText("Completed", { exact: true }).first()).toBeVisible({ timeout: 20_000 });
 
-  // Provider prepares and sends a quotation with live totals.
-  await page.goto(`${PROVIDER}/quotations/${requestId}`);
-  await page.getByRole("button", { name: "Create quotation" }).click();
-  await fillLine(page, 1, "Panel inspection", "1", "1,200");
-  await page.getByRole("button", { name: "Add line" }).click();
-  await fillLine(page, 2, "Breaker replacement", "2", "450.50");
-  await expect(page.getByRole("table", { name: /line items/i })).toContainText("₱2,101.00");
-  await page.getByRole("button", { name: "Save & send to customer" }).click();
-  await expect(page.getByRole("region", { name: /^Sent/ })).toContainText("₱2,101.00", { timeout: 20_000 });
-  await logout(page);
+    // Provider prepares and sends a quotation with live totals.
+    await page.goto(`${PROVIDER}/quotations/${requestId}`);
+    await page.getByRole("button", { name: "Create quotation" }).click();
+    await fillLine(page, 1, "Panel inspection", "1", "1,200");
+    await page.getByRole("button", { name: "Add line" }).click();
+    await fillLine(page, 2, "Breaker replacement", "2", "450.50");
+    await expect(page.getByRole("table", { name: /line items/i })).toContainText("₱2,101.00");
+    await page.getByRole("button", { name: "Save & send to customer" }).click();
+    await expect(page.getByRole("region", { name: /^Sent/ })).toContainText("₱2,101.00", { timeout: 20_000 });
+    await logout(page);
 
-  // Customer confirms completion, sees the review form, and accepts the quotation.
-  await login(page, DEMO.owner, undefined, `${HOUSEHOLD}/bookings/${bookingPath}`);
-  await page.getByRole("button", { name: "Yes, the job is done" }).click();
-  await expect(page.getByText("You confirmed completion")).toBeVisible({ timeout: 20_000 });
-  await page.goto(`${HOUSEHOLD}/bookings/requests/${requestId}`);
-  await page.getByRole("button", { name: "Accept" }).click();
-  await page.getByRole("alertdialog").getByRole("button", { name: "Accept quotation" }).click();
-  await expect(page).toHaveURL(/\/bookings\/[0-9a-f-]{36}$/, { timeout: 30_000 });
-  await expect(page.getByText("Waiting for provider")).toBeVisible();
-  await expect(page.getByRole("region", { name: "Details" })).toContainText("₱2,101.00");
-});
+    // Customer confirms completion, sees the review form, and accepts the quotation.
+    await login(page, DEMO.owner, undefined, `${HOUSEHOLD}/bookings/${bookingPath}`);
+    await page.getByRole("button", { name: "Yes, the job is done" }).click();
+    await expect(page.getByText("You confirmed completion")).toBeVisible({ timeout: 20_000 });
+    await page.goto(`${HOUSEHOLD}/bookings/requests/${requestId}`);
+    await page.getByRole("button", { name: "Accept" }).click();
+    await page.getByRole("alertdialog").getByRole("button", { name: "Accept quotation" }).click();
+    await expect(page).toHaveURL(/\/bookings\/[0-9a-f-]{36}$/, { timeout: 30_000 });
+    await expect(page.getByText("Waiting for provider")).toBeVisible();
+    await expect(page.getByRole("region", { name: "Details" })).toContainText("₱2,101.00");
+  },
+);
 
 test("project: quotation contract → change order approval → work order dispatch", async ({ page }, testInfo) => {
   test.skip(testInfo.project.name !== "desktop", "multi-account journey runs once");

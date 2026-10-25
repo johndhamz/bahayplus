@@ -62,4 +62,13 @@ describe("useActionForm", () => {
     await userEvent.click(screen.getByRole("button", { name: "Save" }));
     expect(await screen.findByRole("status")).toHaveTextContent("Server says no.");
   });
+
+  it("keeps the input and explains network failures instead of crashing", async () => {
+    const action = vi.fn().mockRejectedValue(new TypeError("Failed to fetch"));
+    render(<Harness action={action} />);
+    await userEvent.type(screen.getByLabelText("name"), "Home");
+    await userEvent.click(screen.getByRole("button", { name: "Save" }));
+    expect(await screen.findByRole("status")).toHaveTextContent(/couldn.t reach Bahay\+|offline/);
+    expect(screen.getByLabelText("name")).toHaveValue("Home");
+  });
 });

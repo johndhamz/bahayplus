@@ -51,7 +51,10 @@ export default async function JobHistoryPage({ params }: PageProps<"/provider/o/
                 <ul className="flex flex-col divide-y divide-border text-sm">
                   {workOrders.value.map((w) => (
                     <li key={w.id} className="py-2.5">
-                      <Link href={`${base}/work-orders/${w.id}`} className="font-medium hover:underline">
+                      <Link
+                        href={`${base}/work-orders/${w.id}`}
+                        className="inline-flex min-h-6 items-center font-medium hover:underline"
+                      >
                         {w.title}
                       </Link>
                       <p className="text-xs text-muted-foreground">

@@ -30,7 +30,21 @@ export function useActionForm<TSchema extends z.ZodType<FieldValues, FieldValues
     setFormError(null);
     const raw = form.getValues();
     startTransition(async () => {
-      const result = await options.action(raw);
+      let result: ActionResult<TData> | undefined;
+      try {
+        result = await options.action(raw);
+      } catch (error) {
+        // Network failures (offline, flaky mobile data) keep the user's input so they can retry.
+        if (error instanceof TypeError || (typeof navigator !== "undefined" && !navigator.onLine)) {
+          setFormError(
+            typeof navigator !== "undefined" && !navigator.onLine
+              ? "You're offline. Your changes are still here — try again when you're connected."
+              : "We couldn't reach Bahay+. Check your connection and try again.",
+          );
+          return;
+        }
+        throw error;
+      }
       if (!result) return; // redirected
       if (result.ok) {
         options.onSuccess?.(result.data, result.message);

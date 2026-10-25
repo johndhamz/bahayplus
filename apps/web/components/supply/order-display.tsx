@@ -37,7 +37,7 @@ export function OrderList({
       {orders.map((o) => (
         <li key={o.id} className="flex items-center gap-3 py-3">
           <div className="min-w-0 flex-1">
-            <Link href={`${hrefBase}/${o.id}`} className="font-medium hover:underline">
+            <Link href={`${hrefBase}/${o.id}`} className="inline-flex min-h-6 items-center font-medium hover:underline">
               {formatPoNumber(o.number)} · {counterparty === "buyer" ? o.buyerName : o.supplierName}
             </Link>
             <p className="text-xs text-muted-foreground">

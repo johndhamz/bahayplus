@@ -37,7 +37,7 @@ export function BookingList({
       {bookings.map((b) => (
         <li key={b.id} className="flex items-center gap-3 py-3">
           <div className="min-w-0 flex-1">
-            <Link href={`${hrefBase}/${b.id}`} className="font-medium hover:underline">
+            <Link href={`${hrefBase}/${b.id}`} className="inline-flex min-h-6 items-center font-medium hover:underline">
               {b.title || "Service booking"}
             </Link>
             <p className="text-xs text-muted-foreground">
@@ -203,7 +203,7 @@ export function ProjectList({
       {projects.map((p) => (
         <li key={p.id} className="flex items-center gap-3 py-3">
           <div className="min-w-0 flex-1">
-            <Link href={`${hrefBase}/${p.id}`} className="font-medium hover:underline">
+            <Link href={`${hrefBase}/${p.id}`} className="inline-flex min-h-6 items-center font-medium hover:underline">
               {p.title}
             </Link>
             <p className="text-xs text-muted-foreground">

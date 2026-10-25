@@ -34,7 +34,10 @@ export function InventoryTable({ rows, productHref }: { rows: InventoryRow[]; pr
             return (
               <tr key={r.productId}>
                 <td className="py-2">
-                  <Link href={productHref(r.productId)} className="font-medium hover:underline">
+                  <Link
+                    href={productHref(r.productId)}
+                    className="inline-flex min-h-6 items-center font-medium hover:underline"
+                  >
                     {r.name}
                   </Link>
                   <span className="ml-1 text-xs text-muted-foreground">{r.sku}</span>

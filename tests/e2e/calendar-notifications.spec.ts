@@ -25,32 +25,36 @@ function randomSlot(): { local: string; month: string } {
   return { local: `${date}T${String(9 + Math.floor(Math.random() * 6)).padStart(2, "0")}:00`, month: date.slice(0, 7) };
 }
 
-test("urgent help: emergency notice, honest availability, and no-match state", async ({ page }, testInfo) => {
-  test.skip(!["desktop", "mobile-390"].includes(testInfo.project.name), "runs on desktop and one phone");
-  await login(page, DEMO.owner, undefined, HOUSEHOLD);
-  await page.getByRole("link", { name: "Find urgent help" }).click();
-  await expect(page).toHaveURL(/\/services\/urgent$/);
-  const notice = page.getByRole("note", { name: "Emergency notice" });
-  await expect(notice).toContainText("Call 911 now");
-  await expect(notice).toContainText("can't guarantee");
-  // Province/city come from the household's default property.
-  await expect(page.getByRole("textbox", { name: "Province" })).toHaveValue("Metro Manila");
-  await page.getByRole("combobox", { name: "What do you need?" }).selectOption("plumbing");
-  await page.getByRole("button", { name: "Find providers" }).click();
-  const results = page.getByRole("region", { name: /provider\(s\) available/ });
-  await expect(results).toContainText("Mabuhay Home Services (demo)");
-  await expect(results).toContainText("Availability updated");
-  await expect(results).toContainText("Serves Quezon City, Metro Manila");
-  await expect(results.getByRole("link", { name: /Call \+63 917 000 0000/ })).toHaveAttribute(
-    "href",
-    "tel:+639170000000",
-  );
-  await expectNoSeriousAxe(page);
+test(
+  "urgent help: emergency notice, honest availability, and no-match state",
+  { tag: "@smoke" },
+  async ({ page }, testInfo) => {
+    test.skip(!["desktop", "mobile-390"].includes(testInfo.project.name), "runs on desktop and one phone");
+    await login(page, DEMO.owner, undefined, HOUSEHOLD);
+    await page.getByRole("link", { name: "Find urgent help" }).click();
+    await expect(page).toHaveURL(/\/services\/urgent$/);
+    const notice = page.getByRole("note", { name: "Emergency notice" });
+    await expect(notice).toContainText("Call 911 now");
+    await expect(notice).toContainText("can't guarantee");
+    // Province/city come from the household's default property.
+    await expect(page.getByRole("textbox", { name: "Province" })).toHaveValue("Metro Manila");
+    await page.getByRole("combobox", { name: "What do you need?" }).selectOption("plumbing");
+    await page.getByRole("button", { name: "Find providers" }).click();
+    const results = page.getByRole("region", { name: /provider\(s\) available/ });
+    await expect(results).toContainText("Mabuhay Home Services (demo)");
+    await expect(results).toContainText("Availability updated");
+    await expect(results).toContainText("Serves Quezon City, Metro Manila");
+    await expect(results.getByRole("link", { name: /Call \+63 917 000 0000/ })).toHaveAttribute(
+      "href",
+      "tel:+639170000000",
+    );
+    await expectNoSeriousAxe(page);
 
-  await page.getByRole("combobox", { name: "What do you need?" }).selectOption("locksmith");
-  await page.getByRole("button", { name: "Find providers" }).click();
-  await expect(page.getByText("No available urgent providers found")).toBeVisible();
-});
+    await page.getByRole("combobox", { name: "What do you need?" }).selectOption("locksmith");
+    await page.getByRole("button", { name: "Find providers" }).click();
+    await expect(page.getByText("No available urgent providers found")).toBeVisible();
+  },
+);
 
 test("booking → provider is notified in-app and by email; inbox marks read", async ({ page, request }, testInfo) => {
   test.skip(testInfo.project.name !== "desktop", "multi-account journey runs once");

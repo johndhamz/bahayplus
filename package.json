@@ -21,7 +21,9 @@
     "db:status": "supabase status",
     "db:reset": "supabase db reset",
     "db:types": "supabase gen types typescript --local --schema public > packages/types/src/database.ts && prettier --write --ignore-path /dev/null packages/types/src/database.ts",
-    "db:lint": "supabase db lint --level warning"
+    "db:lint": "supabase db lint --level warning",
+    "test:e2e:smoke": "playwright test --grep @smoke --project=desktop --project=mobile-390",
+    "test:perf": "playwright test -c playwright.perf.config.ts"
   },
   "devDependencies": {
     "@axe-core/playwright": "^4.14.0",

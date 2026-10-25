@@ -4,20 +4,31 @@ on:
   push:
     branches: [main]
   pull_request:
+  schedule:
+    # Nightly full end-to-end + performance run (02:00 Asia/Manila).
+    - cron: "0 18 * * *"
+  workflow_dispatch:
 
 concurrency:
   group: ci-${{ github.ref }}
   cancel-in-progress: true
 
+permissions:
+  contents: read
+
+env:
+  NODE_VERSION: 24
+
 jobs:
   static:
     name: Format, lint, typecheck, unit tests
     runs-on: ubuntu-latest
+    timeout-minutes: 20
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
-          node-version: 24
+          node-version: ${{ env.NODE_VERSION }}
           cache: npm
       - run: npm ci
       - run: npm run format:check
@@ -29,15 +40,37 @@ jobs:
         env:
           TZ: Asia/Manila
 
-  database:
-    name: Migrations, pgTAP, integration & security, E2E
+  build:
+    name: Production build
     runs-on: ubuntu-latest
+    timeout-minutes: 20
     needs: static
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
-          node-version: 24
+          node-version: ${{ env.NODE_VERSION }}
+          cache: npm
+      - run: npm ci
+      - name: Build with placeholder public config (no secrets needed to compile)
+        run: npm run build
+        env:
+          NEXT_PUBLIC_SUPABASE_URL: https://example.supabase.co
+          NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY: sb_publishable_placeholder_for_ci_build
+          NEXT_PUBLIC_SITE_URL: https://staging.example.com
+          SUPABASE_SECRET_KEY: build-time-placeholder-not-a-secret
+          APP_ENV: staging
+
+  database:
+    name: Migrations, pgTAP, integration & security, E2E
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    needs: static
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
           cache: npm
       - run: npm ci
       - name: Start local Supabase (applies migrations + seed)
@@ -49,19 +82,44 @@ jobs:
                      -e 's/^PUBLISHABLE_KEY=/NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=/p' \
                      -e 's/^SECRET_KEY=/SUPABASE_SECRET_KEY=/p' \
             | tr -d '"' > apps/web/.env.local
-          echo "NEXT_PUBLIC_SITE_URL=http://localhost:3100" >> apps/web/.env.local
-          echo "JOB_RUNNER_SECRET=ci-job-runner-secret-0123456789abcdef0123" >> apps/web/.env.local
-          echo "APP_ENV=test" >> apps/web/.env.local
+          {
+            echo "NEXT_PUBLIC_SITE_URL=http://localhost:3100"
+            echo "JOB_RUNNER_SECRET=ci-job-runner-secret-0123456789abcdef0123"
+            echo "APP_ENV=test"
+            echo "EMAIL_FROM=Bahay+ CI <ci@bahayplus.test>"
+            echo "MAILPIT_URL=http://127.0.0.1:54724"
+            echo "PAYMENTS_PROVIDER=sandbox"
+            echo "PAYMENTS_WEBHOOK_SECRET=ci-sandbox-webhook-secret-0123456789abcdef"
+          } >> apps/web/.env.local
       - run: npm run db:lint
       - run: npm run test:db
-      - run: npm run test:integration
+      - name: Integration & security (RLS, tenant isolation, financial integrity)
+        run: npm run test:integration
       - run: npx playwright install --with-deps chromium
-      - run: npm run test:e2e
+      - name: Production build for E2E
+        run: npm run build
+      - name: Client bundles contain no server secrets
+        run: npx vitest run --project security tests/security/exposure.test.ts
+      - name: E2E smoke (pull requests)
+        if: github.event_name == 'pull_request'
+        run: npm run test:e2e:smoke
+        env:
+          CI: "true"
+      - name: E2E full suite (main, nightly, manual)
+        if: github.event_name != 'pull_request'
+        run: npm run test:e2e
+        env:
+          CI: "true"
+      - name: Mobile performance budgets (main, nightly, manual)
+        if: github.event_name != 'pull_request'
+        run: npm run test:perf
         env:
           CI: "true"
       - uses: actions/upload-artifact@v4
         if: failure()
         with:
           name: playwright-report
-          path: playwright-report
+          path: |
+            playwright-report
+            test-results
           retention-days: 7

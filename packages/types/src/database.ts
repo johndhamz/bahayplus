@@ -4501,6 +4501,10 @@ export type Database = {
         Args: { p_booking: string; p_note?: string; p_outcome: string };
         Returns: undefined;
       };
+      consume_rate_limit: {
+        Args: { p_bucket: string; p_key: string; p_limit: number; p_window_seconds: number };
+        Returns: boolean;
+      };
       create_bill: {
         Args: { p_account: string; p_amount_centavos: number; p_due_on: string; p_notes: string };
         Returns: string;

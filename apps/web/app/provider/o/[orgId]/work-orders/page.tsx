@@ -45,7 +45,10 @@ export default async function WorkOrdersPage({ params, searchParams }: PageProps
       {items.map((w) => (
         <li key={w.id} className="flex items-center gap-3 py-3">
           <div className="min-w-0 flex-1">
-            <Link href={`${base}/work-orders/${w.id}`} className="font-medium hover:underline">
+            <Link
+              href={`${base}/work-orders/${w.id}`}
+              className="inline-flex min-h-6 items-center font-medium hover:underline"
+            >
               {w.title}
             </Link>
             <p className="text-xs text-muted-foreground">

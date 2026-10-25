@@ -22,7 +22,10 @@ export default async function AdminDisputesPage() {
       {items.map((d) => (
         <li key={d.id} className="flex items-center gap-3 py-3">
           <div className="min-w-0 flex-1">
-            <Link href={`/admin/disputes/${d.id}`} className="font-medium hover:underline">
+            <Link
+              href={`/admin/disputes/${d.id}`}
+              className="inline-flex min-h-6 items-center font-medium hover:underline"
+            >
               {d.bookingTitle || "Service booking"} · {d.providerName}
             </Link>
             <p className="text-xs text-muted-foreground">

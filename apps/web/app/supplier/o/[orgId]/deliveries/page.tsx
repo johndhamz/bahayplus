@@ -32,7 +32,10 @@ export default async function DeliveriesPage({ params }: PageProps<"/supplier/o/
             {deliveries.value.map((d) => (
               <li key={d.purchaseOrderId} className="flex flex-wrap items-center gap-3 py-3">
                 <div className="min-w-0 flex-1">
-                  <Link href={`${base}/purchase-orders/${d.purchaseOrderId}`} className="font-medium hover:underline">
+                  <Link
+                    href={`${base}/purchase-orders/${d.purchaseOrderId}`}
+                    className="inline-flex min-h-6 items-center font-medium hover:underline"
+                  >
                     {formatPoNumber(d.number)} · {d.buyerName}
                   </Link>
                   <p className="text-xs text-muted-foreground">
