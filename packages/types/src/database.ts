@@ -848,6 +848,137 @@ export type Database = {
           },
         ];
       };
+      deliveries: {
+        Row: {
+          attempts: number;
+          buyer_org_id: string;
+          courier: string;
+          created_at: string;
+          delivered_at: string | null;
+          failure_reason: string | null;
+          id: string;
+          purchase_order_id: string;
+          received_by: string | null;
+          scheduled_for: string | null;
+          status: string;
+          supplier_org_id: string;
+          tracking_ref: string;
+          updated_at: string;
+        };
+        ComputedFields: never;
+        Insert: {
+          attempts?: number;
+          buyer_org_id: string;
+          courier?: string;
+          created_at?: string;
+          delivered_at?: string | null;
+          failure_reason?: string | null;
+          id?: string;
+          purchase_order_id: string;
+          received_by?: string | null;
+          scheduled_for?: string | null;
+          status?: string;
+          supplier_org_id: string;
+          tracking_ref?: string;
+          updated_at?: string;
+        };
+        Update: {
+          attempts?: number;
+          buyer_org_id?: string;
+          courier?: string;
+          created_at?: string;
+          delivered_at?: string | null;
+          failure_reason?: string | null;
+          id?: string;
+          purchase_order_id?: string;
+          received_by?: string | null;
+          scheduled_for?: string | null;
+          status?: string;
+          supplier_org_id?: string;
+          tracking_ref?: string;
+          updated_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "deliveries_purchase_order_id_fkey";
+            columns: ["purchase_order_id"];
+            isOneToOne: true;
+            referencedRelation: "purchase_orders";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
+      disputes: {
+        Row: {
+          assigned_to: string | null;
+          booking_id: string;
+          created_at: string;
+          household_id: string;
+          id: string;
+          organization_id: string;
+          raised_by: string | null;
+          reason: string;
+          resolution: string | null;
+          resolved_at: string | null;
+          resolved_by: string | null;
+          status: string;
+          updated_at: string;
+        };
+        ComputedFields: never;
+        Insert: {
+          assigned_to?: string | null;
+          booking_id: string;
+          created_at?: string;
+          household_id: string;
+          id?: string;
+          organization_id: string;
+          raised_by?: string | null;
+          reason?: string;
+          resolution?: string | null;
+          resolved_at?: string | null;
+          resolved_by?: string | null;
+          status?: string;
+          updated_at?: string;
+        };
+        Update: {
+          assigned_to?: string | null;
+          booking_id?: string;
+          created_at?: string;
+          household_id?: string;
+          id?: string;
+          organization_id?: string;
+          raised_by?: string | null;
+          reason?: string;
+          resolution?: string | null;
+          resolved_at?: string | null;
+          resolved_by?: string | null;
+          status?: string;
+          updated_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "disputes_booking_id_fkey";
+            columns: ["booking_id"];
+            isOneToOne: false;
+            referencedRelation: "bookings";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "disputes_household_id_fkey";
+            columns: ["household_id"];
+            isOneToOne: false;
+            referencedRelation: "households";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "disputes_organization_id_fkey";
+            columns: ["organization_id"];
+            isOneToOne: false;
+            referencedRelation: "organizations";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
       expense_categories: {
         Row: {
           archived_at: string | null;
@@ -1839,6 +1970,31 @@ export type Database = {
           },
         ];
       };
+      platform_settings: {
+        Row: {
+          description: string;
+          key: string;
+          updated_at: string;
+          updated_by: string | null;
+          value: NonNullable<Json>;
+        };
+        ComputedFields: never;
+        Insert: {
+          description?: string;
+          key: string;
+          updated_at?: string;
+          updated_by?: string | null;
+          value: NonNullable<Json>;
+        };
+        Update: {
+          description?: string;
+          key?: string;
+          updated_at?: string;
+          updated_by?: string | null;
+          value?: NonNullable<Json>;
+        };
+        Relationships: [];
+      };
       portfolio_items: {
         Row: {
           category_id: string | null;
@@ -1884,6 +2040,63 @@ export type Database = {
           },
           {
             foreignKeyName: "portfolio_items_organization_id_fkey";
+            columns: ["organization_id"];
+            isOneToOne: false;
+            referencedRelation: "organizations";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
+      products: {
+        Row: {
+          category: string;
+          created_at: string;
+          currency: string;
+          description: string;
+          id: string;
+          is_active: boolean;
+          name: string;
+          organization_id: string;
+          reorder_level: number;
+          sku: string;
+          unit: string;
+          unit_price_centavos: number;
+          updated_at: string;
+        };
+        ComputedFields: never;
+        Insert: {
+          category?: string;
+          created_at?: string;
+          currency?: string;
+          description?: string;
+          id?: string;
+          is_active?: boolean;
+          name: string;
+          organization_id: string;
+          reorder_level?: number;
+          sku: string;
+          unit?: string;
+          unit_price_centavos: number;
+          updated_at?: string;
+        };
+        Update: {
+          category?: string;
+          created_at?: string;
+          currency?: string;
+          description?: string;
+          id?: string;
+          is_active?: boolean;
+          name?: string;
+          organization_id?: string;
+          reorder_level?: number;
+          sku?: string;
+          unit?: string;
+          unit_price_centavos?: number;
+          updated_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "products_organization_id_fkey";
             columns: ["organization_id"];
             isOneToOne: false;
             referencedRelation: "organizations";
@@ -2338,6 +2551,168 @@ export type Database = {
           {
             foreignKeyName: "provider_services_organization_id_fkey";
             columns: ["organization_id"];
+            isOneToOne: false;
+            referencedRelation: "organizations";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
+      purchase_order_lines: {
+        Row: {
+          id: string;
+          line_total_centavos: number | null;
+          product_id: string;
+          product_name: string;
+          purchase_order_id: string;
+          quantity: number;
+          sku: string;
+          supplier_org_id: string;
+          unit: string;
+          unit_price_centavos: number;
+        };
+        ComputedFields: never;
+        Insert: {
+          id?: string;
+          line_total_centavos?: never;
+          product_id: string;
+          product_name: string;
+          purchase_order_id: string;
+          quantity: number;
+          sku: string;
+          supplier_org_id: string;
+          unit: string;
+          unit_price_centavos: number;
+        };
+        Update: {
+          id?: string;
+          line_total_centavos?: never;
+          product_id?: string;
+          product_name?: string;
+          purchase_order_id?: string;
+          quantity?: number;
+          sku?: string;
+          supplier_org_id?: string;
+          unit?: string;
+          unit_price_centavos?: number;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "purchase_order_lines_product_id_supplier_org_id_fkey";
+            columns: ["product_id", "supplier_org_id"];
+            isOneToOne: false;
+            referencedRelation: "product_inventory";
+            referencedColumns: ["product_id", "organization_id"];
+          },
+          {
+            foreignKeyName: "purchase_order_lines_product_id_supplier_org_id_fkey";
+            columns: ["product_id", "supplier_org_id"];
+            isOneToOne: false;
+            referencedRelation: "products";
+            referencedColumns: ["id", "organization_id"];
+          },
+          {
+            foreignKeyName: "purchase_order_lines_purchase_order_id_fkey";
+            columns: ["purchase_order_id"];
+            isOneToOne: false;
+            referencedRelation: "purchase_orders";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
+      purchase_orders: {
+        Row: {
+          accepted_at: string | null;
+          buyer_name: string;
+          buyer_notes: string;
+          buyer_org_id: string;
+          cancelled_by: string | null;
+          closed_at: string | null;
+          created_at: string;
+          created_by: string | null;
+          currency: string;
+          decision_reason: string | null;
+          delivered_at: string | null;
+          delivery_address: string;
+          delivery_contact: string;
+          id: string;
+          idempotency_key: string;
+          number: number;
+          requested_delivery_on: string | null;
+          shipped_at: string | null;
+          status: string;
+          submitted_at: string;
+          supplier_name: string;
+          supplier_notes: string;
+          supplier_org_id: string;
+          total_centavos: number;
+          updated_at: string;
+        };
+        ComputedFields: never;
+        Insert: {
+          accepted_at?: string | null;
+          buyer_name: string;
+          buyer_notes?: string;
+          buyer_org_id: string;
+          cancelled_by?: string | null;
+          closed_at?: string | null;
+          created_at?: string;
+          created_by?: string | null;
+          currency?: string;
+          decision_reason?: string | null;
+          delivered_at?: string | null;
+          delivery_address: string;
+          delivery_contact?: string;
+          id?: string;
+          idempotency_key: string;
+          number?: never;
+          requested_delivery_on?: string | null;
+          shipped_at?: string | null;
+          status?: string;
+          submitted_at?: string;
+          supplier_name: string;
+          supplier_notes?: string;
+          supplier_org_id: string;
+          total_centavos?: number;
+          updated_at?: string;
+        };
+        Update: {
+          accepted_at?: string | null;
+          buyer_name?: string;
+          buyer_notes?: string;
+          buyer_org_id?: string;
+          cancelled_by?: string | null;
+          closed_at?: string | null;
+          created_at?: string;
+          created_by?: string | null;
+          currency?: string;
+          decision_reason?: string | null;
+          delivered_at?: string | null;
+          delivery_address?: string;
+          delivery_contact?: string;
+          id?: string;
+          idempotency_key?: string;
+          number?: never;
+          requested_delivery_on?: string | null;
+          shipped_at?: string | null;
+          status?: string;
+          submitted_at?: string;
+          supplier_name?: string;
+          supplier_notes?: string;
+          supplier_org_id?: string;
+          total_centavos?: number;
+          updated_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "purchase_orders_buyer_org_id_fkey";
+            columns: ["buyer_org_id"];
+            isOneToOne: false;
+            referencedRelation: "organizations";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "purchase_orders_supplier_org_id_fkey";
+            columns: ["supplier_org_id"];
             isOneToOne: false;
             referencedRelation: "organizations";
             referencedColumns: ["id"];
@@ -2905,6 +3280,116 @@ export type Database = {
           },
         ];
       };
+      stock_movements: {
+        Row: {
+          created_at: string;
+          created_by: string | null;
+          id: string;
+          idempotency_key: string;
+          note: string;
+          organization_id: string;
+          product_id: string;
+          purchase_order_id: string | null;
+          quantity: number;
+          reason: string;
+        };
+        ComputedFields: never;
+        Insert: {
+          created_at?: string;
+          created_by?: string | null;
+          id?: string;
+          idempotency_key: string;
+          note?: string;
+          organization_id: string;
+          product_id: string;
+          purchase_order_id?: string | null;
+          quantity: number;
+          reason: string;
+        };
+        Update: {
+          created_at?: string;
+          created_by?: string | null;
+          id?: string;
+          idempotency_key?: string;
+          note?: string;
+          organization_id?: string;
+          product_id?: string;
+          purchase_order_id?: string | null;
+          quantity?: number;
+          reason?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "stock_movements_po_fk";
+            columns: ["purchase_order_id"];
+            isOneToOne: false;
+            referencedRelation: "purchase_orders";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "stock_movements_product_id_organization_id_fkey";
+            columns: ["product_id", "organization_id"];
+            isOneToOne: false;
+            referencedRelation: "product_inventory";
+            referencedColumns: ["product_id", "organization_id"];
+          },
+          {
+            foreignKeyName: "stock_movements_product_id_organization_id_fkey";
+            columns: ["product_id", "organization_id"];
+            isOneToOne: false;
+            referencedRelation: "products";
+            referencedColumns: ["id", "organization_id"];
+          },
+        ];
+      };
+      supplier_profiles: {
+        Row: {
+          address: string;
+          created_at: string;
+          delivery_areas: string;
+          description: string;
+          email: string;
+          is_published: boolean;
+          min_order_centavos: number;
+          organization_id: string;
+          phone: string;
+          updated_at: string;
+        };
+        ComputedFields: never;
+        Insert: {
+          address?: string;
+          created_at?: string;
+          delivery_areas?: string;
+          description?: string;
+          email?: string;
+          is_published?: boolean;
+          min_order_centavos?: number;
+          organization_id: string;
+          phone?: string;
+          updated_at?: string;
+        };
+        Update: {
+          address?: string;
+          created_at?: string;
+          delivery_areas?: string;
+          description?: string;
+          email?: string;
+          is_published?: boolean;
+          min_order_centavos?: number;
+          organization_id?: string;
+          phone?: string;
+          updated_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "supplier_profiles_organization_id_fkey";
+            columns: ["organization_id"];
+            isOneToOne: true;
+            referencedRelation: "organizations";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
       vehicle_service_records: {
         Row: {
           booking_id: string | null;
@@ -3354,6 +3839,51 @@ export type Database = {
       };
     };
     Views: {
+      product_inventory: {
+        Row: {
+          is_active: boolean;
+          name: string;
+          on_hand: number | null;
+          organization_id: string;
+          product_id: string;
+          reorder_level: number;
+          reserved: number | null;
+          sku: string;
+          unit: string;
+        };
+        ComputedFields: never;
+        Insert: {
+          is_active?: boolean | null;
+          name?: string | null;
+          on_hand?: never;
+          organization_id?: string | null;
+          product_id?: string | null;
+          reorder_level?: number | null;
+          reserved?: never;
+          sku?: string | null;
+          unit?: string | null;
+        };
+        Update: {
+          is_active?: boolean | null;
+          name?: string | null;
+          on_hand?: never;
+          organization_id?: string | null;
+          product_id?: string | null;
+          reorder_level?: number | null;
+          reserved?: never;
+          sku?: string | null;
+          unit?: string | null;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "products_organization_id_fkey";
+            columns: ["organization_id"];
+            isOneToOne: false;
+            referencedRelation: "organizations";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
       registry_due_items: {
         Row: {
           due_kind: string | null;
@@ -3371,6 +3901,63 @@ export type Database = {
       accept_household_invitation: { Args: { p_token: string }; Returns: string };
       accept_organization_invitation: { Args: { p_token: string }; Returns: string };
       accept_project_quotation: { Args: { p_project: string; p_quotation: string }; Returns: undefined };
+      admin_audit_log: {
+        Args: { p_action?: string; p_from?: string; p_limit?: number; p_offset?: number; p_to?: string };
+        Returns: {
+          action: string;
+          actor_id: string;
+          actor_name: string;
+          actor_type: string;
+          household_id: string;
+          id: string;
+          metadata: Json;
+          occurred_at: string;
+          organization_id: string;
+          target_id: string;
+          target_type: string;
+        }[];
+      };
+      admin_list_organizations: {
+        Args: { p_kind?: string; p_limit?: number; p_offset?: number; p_search?: string; p_status?: string };
+        Returns: {
+          created_at: string;
+          id: string;
+          kind: string;
+          listed: boolean;
+          member_count: number;
+          name: string;
+          slug: string;
+          status: string;
+          verification_status: string;
+          verified_until: string;
+        }[];
+      };
+      admin_list_users: {
+        Args: { p_limit?: number; p_offset?: number; p_search?: string };
+        Returns: {
+          created_at: string;
+          email: string;
+          full_name: string;
+          household_count: number;
+          id: string;
+          last_sign_in_at: string;
+          organization_count: number;
+          platform_role: string;
+          suspended: boolean;
+        }[];
+      };
+      admin_overview: { Args: Record<PropertyKey, never>; Returns: Json };
+      admin_save_service_category: { Args: { p_payload: Json }; Returns: string };
+      admin_set_organization_status: {
+        Args: { p_org: string; p_reason: string; p_status: string };
+        Returns: undefined;
+      };
+      admin_set_user_suspension: { Args: { p_reason: string; p_suspend: boolean; p_user: string }; Returns: undefined };
+      admin_update_dispute: {
+        Args: { p_action: string; p_dispute: string; p_resolution?: string };
+        Returns: undefined;
+      };
+      admin_update_setting: { Args: { p_key: string; p_value: Json }; Returns: undefined };
       assign_calendar_item: { Args: { p_household: string; p_item_key: string; p_user: string }; Returns: undefined };
       assign_work_order: { Args: { p_work_order: string; p_worker: string }; Returns: undefined };
       booking_location: {
@@ -3397,6 +3984,7 @@ export type Database = {
           spent_centavos: number;
         }[];
       };
+      cancel_purchase_order: { Args: { p_po: string; p_reason: string }; Returns: undefined };
       change_household_member_role: { Args: { p_member: string; p_role: string }; Returns: undefined };
       change_organization_member_role: { Args: { p_member: string; p_role: string }; Returns: undefined };
       claim_notification_deliveries: {
@@ -3428,6 +4016,7 @@ export type Database = {
       create_household: { Args: { p_name: string }; Returns: string };
       create_organization: { Args: { p_kind: string; p_name: string; p_slug: string }; Returns: string };
       create_project_request: { Args: { p_payload: Json }; Returns: string };
+      create_purchase_order: { Args: { p_payload: Json }; Returns: string };
       create_quotation_draft: { Args: { p_request: string }; Returns: string };
       create_service_request: { Args: { p_payload: Json }; Returns: string };
       create_work_order: { Args: { p_payload: Json }; Returns: string };
@@ -3435,6 +4024,7 @@ export type Database = {
         Args: { p_change_order: string; p_decision: string; p_note?: string };
         Returns: undefined;
       };
+      decide_purchase_order: { Args: { p_decision: string; p_note?: string; p_po: string }; Returns: undefined };
       decide_quotation: { Args: { p_decision: string; p_quotation: string; p_start?: string }; Returns: string };
       decide_verification: {
         Args: {
@@ -3535,6 +4125,17 @@ export type Database = {
         };
         Returns: string;
       };
+      provider_financial_summary: {
+        Args: { p_months?: number; p_org: string };
+        Returns: {
+          completed_jobs: number;
+          job_value_centavos: number;
+          month: string;
+          project_value_centavos: number;
+          projects_completed: number;
+          purchases_centavos: number;
+        }[];
+      };
       provider_serves: {
         Args: { p_barangay: string; p_city: string; p_org: string; p_province: string };
         Returns: boolean;
@@ -3556,6 +4157,10 @@ export type Database = {
           p_paid_on: string;
           p_reference: string;
         };
+        Returns: string;
+      };
+      record_stock_movement: {
+        Args: { p_idempotency_key: string; p_note: string; p_product: string; p_quantity: number; p_reason: string };
         Returns: string;
       };
       remove_household_member: { Args: { p_member: string }; Returns: undefined };
@@ -3628,6 +4233,10 @@ export type Database = {
       send_quotation: { Args: { p_quotation: string; p_valid_until: string }; Returns: undefined };
       set_household_member_status: { Args: { p_member: string; p_status: string }; Returns: undefined };
       set_organization_member_status: { Args: { p_member: string; p_status: string }; Returns: undefined };
+      ship_purchase_order: {
+        Args: { p_courier: string; p_po: string; p_scheduled_for: string; p_tracking: string };
+        Returns: undefined;
+      };
       skip_notification_delivery: {
         Args: { p_delivery: string; p_msg_id: number; p_reason: string };
         Returns: undefined;
@@ -3636,8 +4245,28 @@ export type Database = {
       start_verification_review: { Args: { p_request: string }; Returns: undefined };
       submit_review: { Args: { p_booking: string; p_comment: string; p_rating: number }; Returns: string };
       submit_verification_request: { Args: { p_items: Json; p_org: string }; Returns: string };
+      supplier_report: {
+        Args: { p_months?: number; p_org: string };
+        Returns: {
+          month: string;
+          orders_cancelled: number;
+          orders_delivered: number;
+          orders_received: number;
+          revenue_centavos: number;
+        }[];
+      };
+      supplier_top_products: {
+        Args: { p_limit?: number; p_org: string };
+        Returns: {
+          product_id: string;
+          product_name: string;
+          quantity: number;
+          revenue_centavos: number;
+        }[];
+      };
       toggle_checklist_item: { Args: { p_done: boolean; p_item: string }; Returns: undefined };
       transition_booking: { Args: { p_action: string; p_booking: string; p_reason?: string }; Returns: undefined };
+      update_delivery: { Args: { p_detail?: string; p_po: string; p_status: string }; Returns: undefined };
       update_project: { Args: { p_payload: Json; p_project: string }; Returns: undefined };
       update_work_order_status: {
         Args: { p_notes?: string; p_status: string; p_work_order: string };
@@ -3645,6 +4274,18 @@ export type Database = {
       };
       void_bill_payment: { Args: { p_payment: string; p_reason: string }; Returns: undefined };
       withdraw_quotation: { Args: { p_quotation: string }; Returns: undefined };
+      work_order_location: {
+        Args: { p_work_order: string };
+        Returns: {
+          address_line: string;
+          barangay: string;
+          city_municipality: string;
+          notes: string;
+          postal_code: string;
+          property_name: string;
+          province: string;
+        }[];
+      };
     };
     Enums: {
       [_ in never]: never;

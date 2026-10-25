@@ -12,7 +12,7 @@ Every phase follows the same loop: inspect repo → plan → implement → migra
 | 6     | Provider marketplace & trust (registration, offerings, coverage, verification, reviews) | done     |
 | 7     | Bookings, quotations, projects, work orders                                             | done     |
 | 8     | Unified calendar, reminder engine & notifications, urgent provider discovery            | done     |
-| 9     | Provider, supplier, worker & admin portals                                              | approved |
+| 9     | Provider, supplier, worker & admin portals                                              | done     |
 | 10    | Payment architecture & future wallet design (no stored value)                           | approved |
 | 11    | Production readiness: PWA, performance, accessibility, QA, security, deployment, CI     | approved |
 
@@ -39,6 +39,27 @@ Every phase follows the same loop: inspect repo → plan → implement → migra
 - **Calendar:** `public.household_calendar(households[], from, to)` is security-invoker, so each source table's RLS applies. It combines bills, registry due items, bookings, milestones and site visits. Timed items are bucketed by their Manila date. Filters: household (this one or all of mine), category, property and assigned member. Assignments live in `calendar_assignments` (`calendar.assign` for owner, manager and member). Bookings default to the person who booked.
 - **Urgent discovery:** `/app/h/[id]/services/urgent` uses `public.search_urgent_providers`. It returns listed providers that opted in (`provider_profiles.accepts_urgent`), offer an urgent-eligible category and serve the area. Results show service area, availability, freshness (stale after 24 h, flagged and sorted lower, never hidden), contact methods and verification. Unavailable providers are counted separately. The page always shows a 911 notice and makes no dispatch or response-time promise.
 - **UI:** a header bell shows the unread count. `/account/notifications` is the inbox (all/unread, per-channel delivery status, mark read). `/account/notifications/settings` holds preferences, with SMS and push shown as not available. The household calendar has a month grid (tablet and up) and an agenda (all sizes).
+
+## Phase 9 implementation notes
+
+- **No new identity:** all four portals use the same `organizations`, `organization_members`, roles and platform roles. New permissions: `catalog.manage`, `orders.view`, `orders.manage`, `purchasing.manage` and `finance.view` (organization); `platform.users.manage`, `platform.categories.manage` and `platform.disputes.manage` (platform). Staff management is one shared component used by both business portals.
+- **Provider portal:** adds an operations row on the dashboard, Staff, Job history, Financial summary, Settings (availability and Book Now capacity) and Purchasing. The financial summary shows only recorded values: agreed booking prices, completed project contracts and delivered purchases. No payments are processed.
+- **Supplier domain** (migration `…001100`):
+  - `supplier_profiles` (published = listed), `products`, and an append-only `stock_movements` ledger: on hand = sum of movements.
+  - `purchase_orders` with snapshotted names, so neither side needs read access to the other's organization; plus `purchase_order_lines` and `deliveries`.
+  - Order lifecycle: submitted → accepted, which reserves stock and is checked under product row locks so stock is never oversold → shipped, which writes fulfilment movements idempotently and creates a delivery → delivered (by the supplier, or confirmed by the buyer). Rejected and cancelled orders require a reason.
+  - Delivery failures can be re-attempted. Buyers are service-provider organizations.
+  - `product_inventory` returns rows only to the supplier's own catalog and order staff. Buyers see active products and prices, never stock.
+- **Worker portal:**
+  - Pages: Today, Jobs, Schedule, and job details. Job details show the address (`work_order_location`), checklist, before/after photos (shared `work_order` files; workers upload without being household members) and status updates.
+  - Completing a job requires the checklist plus evidence: completion notes or an after/evidence photo (`evidence_required`).
+  - Assignments stay active after completion so workers keep their history; cancellation releases them.
+- **Admin portal:**
+  - Pages: overview, organizations (suspend/reinstate), users (restricted directory), categories, disputes, audit log and settings.
+  - Every command is a definer function that checks a specific platform permission and writes `audit_logs` with the reason.
+  - Support sees masked emails and nothing inside households or businesses. Platform staff can read a booking only while it is under dispute.
+  - Settings `maintenance_banner` (shown in every portal) and `urgent_stale_hours` (used by urgent discovery) are live.
+- **Disputes** open automatically when a customer reports a problem with a completed job. Operations take a dispute and resolve or dismiss it, and both sides are notified.
 
 ## Phase details
 

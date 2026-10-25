@@ -106,3 +106,25 @@ insert into public.verification_items (request_id, organization_id, item_type, r
 -- A completed demo booking so the Dela Cruz household can leave a review.
 insert into public.bookings (id, household_id, organization_id, status, completed_at)
 values ('50000000-0000-4000-8000-000000000001', '20000000-0000-4000-8000-000000000001', '30000000-0000-4000-8000-000000000001', 'completed', now() - interval '2 days');
+
+-- -----------------------------------------------------------------------------
+-- Supplier demo (local only): a published supplier with products and opening stock.
+-- -----------------------------------------------------------------------------
+update public.supplier_profiles set
+  description = 'Plumbing, electrical and construction supplies for contractors in Metro Manila (demo).',
+  phone = '+63 2 8000 0000', email = 'orders@bayanihan.example', address = '45 Rizal Ave., Caloocan (demo)',
+  delivery_areas = 'Metro Manila', min_order_centavos = 50000, is_published = true
+where organization_id = '30000000-0000-4000-8000-000000000002';
+
+insert into public.products (id, organization_id, sku, name, description, category, unit, unit_price_centavos, reorder_level) values
+  ('60000000-0000-4000-8000-000000000001', '30000000-0000-4000-8000-000000000002', 'PVC-12', 'PVC pipe ½" × 3 m', 'Schedule 40', 'Plumbing', 'pc', 18500, 20),
+  ('60000000-0000-4000-8000-000000000002', '30000000-0000-4000-8000-000000000002', 'WASHER-KIT', 'Faucet washer kit', '24 assorted washers', 'Plumbing', 'kit', 9500, 10),
+  ('60000000-0000-4000-8000-000000000003', '30000000-0000-4000-8000-000000000002', 'BRK-20A', 'Circuit breaker 20A', 'Plug-in type', 'Electrical', 'pc', 42000, 5),
+  ('60000000-0000-4000-8000-000000000004', '30000000-0000-4000-8000-000000000002', 'TAPE-ELEC', 'Electrical tape', '19 mm × 10 m', 'Electrical', 'roll', 4500, 30),
+  ('60000000-0000-4000-8000-000000000005', '30000000-0000-4000-8000-000000000002', 'CEMENT-40', 'Portland cement 40 kg', '', 'Construction', 'bag', 26000, 15);
+
+insert into public.stock_movements (organization_id, product_id, quantity, reason, note, idempotency_key)
+select '30000000-0000-4000-8000-000000000002', id, q, 'receipt', 'Opening stock (demo)', 'seed-opening-' || sku
+from (values ('60000000-0000-4000-8000-000000000001'::uuid, 'PVC-12', 120), ('60000000-0000-4000-8000-000000000002'::uuid, 'WASHER-KIT', 40),
+             ('60000000-0000-4000-8000-000000000003'::uuid, 'BRK-20A', 8), ('60000000-0000-4000-8000-000000000004'::uuid, 'TAPE-ELEC', 200),
+             ('60000000-0000-4000-8000-000000000005'::uuid, 'CEMENT-40', 3)) as t(id, sku, q);

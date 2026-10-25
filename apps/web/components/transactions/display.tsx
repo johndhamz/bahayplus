@@ -107,7 +107,7 @@ export function QuotationSummary({ quotation, expired }: { quotation: QuotationV
           <span className="text-xs text-muted-foreground">Valid until {formatManilaDate(quotation.validUntil)}</span>
         )}
       </div>
-      <div className="overflow-x-auto">
+      <div className="overflow-x-auto" tabIndex={0} role="group" aria-label="Scrollable table">
         <table className="w-full min-w-[420px] text-sm">
           <caption className="sr-only">Quotation version {quotation.version} items</caption>
           <thead>

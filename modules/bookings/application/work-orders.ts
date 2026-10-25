@@ -185,3 +185,25 @@ export async function listFieldWorkers(ctx: ServiceContext, organizationId: stri
     })),
   );
 }
+
+export type WorkOrderLocation = { propertyName: string; address: string; notes: string } | null;
+
+/** Job address for the assigned worker or a dispatcher; null for anyone else. */
+export async function getWorkOrderLocation(
+  ctx: ServiceContext,
+  workOrderId: string,
+): Promise<Result<WorkOrderLocation>> {
+  const { data, error } = await ctx.db.rpc("work_order_location", { p_work_order: workOrderId });
+  if (error) return err(mapDbError(error));
+  const row = data?.[0];
+  if (!row) return ok(null);
+  const address = [
+    row.address_line,
+    row.barangay && `Brgy. ${row.barangay}`,
+    row.city_municipality,
+    [row.province, row.postal_code].filter(Boolean).join(" "),
+  ]
+    .filter(Boolean)
+    .join(", ");
+  return ok({ propertyName: row.property_name, address, notes: row.notes });
+}

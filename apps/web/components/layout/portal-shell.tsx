@@ -1,5 +1,6 @@
 import type { ReactNode } from "react";
 import type { Portal } from "@/lib/config/routes";
+import { getPlatformSettings } from "@bahayplus/modules/admin";
 import { countUnread } from "@bahayplus/modules/notifications";
 import { getMyContexts, getServiceContext } from "@/lib/auth/context";
 import { requireUser } from "@/lib/auth/session";
@@ -37,7 +38,8 @@ export async function PortalShell({ portal, basePath, context, children }: Porta
   const links = await portalLinks();
   const displayName = user.email?.split("@")[0] ?? "Account";
   const ctx = await getServiceContext();
-  const unread = ctx ? await countUnread(ctx) : 0;
+  const [unread, settings] = ctx ? await Promise.all([countUnread(ctx), getPlatformSettings(ctx)]) : [0, null];
+  const banner = settings?.ok ? settings.value.maintenanceBanner : "";
   return (
     <AppShell
       portal={portal}
@@ -51,6 +53,14 @@ export async function PortalShell({ portal, basePath, context, children }: Porta
         </>
       }
     >
+      {banner && (
+        <p
+          role="status"
+          className="mb-4 rounded-xl border border-warning/40 bg-warning-soft px-4 py-2 text-sm font-medium"
+        >
+          {banner}
+        </p>
+      )}
       {children}
     </AppShell>
   );

@@ -35,6 +35,9 @@ const CONFLICT = new Set([
   "change_order_pending",
   "worker_unavailable",
   "checklist_incomplete",
+  "insufficient_stock",
+  "evidence_required",
+  "conflict",
 ]);
 
 /**

@@ -196,10 +196,16 @@ export function AssignWorkerForm({
   );
 }
 
-export function WorkOrderStatusActions({ workOrder }: { workOrder: WorkOrderView }) {
+export function WorkOrderStatusActions({
+  workOrder,
+  canCancel = true,
+}: {
+  workOrder: WorkOrderView;
+  canCancel?: boolean;
+}) {
   const { pending, run } = useRun();
   const [notes, setNotes] = useState("");
-  const next = WORK_ORDER_NEXT[workOrder.status];
+  const next = WORK_ORDER_NEXT[workOrder.status].filter((st) => canCancel || st !== "cancelled");
   if (!next.length) return null;
   return (
     <div className="flex flex-col gap-2">

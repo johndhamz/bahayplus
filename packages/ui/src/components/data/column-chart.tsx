@@ -90,7 +90,8 @@ export function ColumnChart({ title, data, valueFormat, labelIndex, height = 200
           <svg
             viewBox={`0 0 ${width} ${height}`}
             className="h-auto w-full"
-            role="img"
+            // A group (not an image): each column is a focusable control with its own label.
+            role="group"
             aria-label={`${title}. Use “Show table” for exact values.`}
           >
             {ticks.map((t) => (

@@ -1,6 +1,8 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getWorkOrder, listFieldWorkers } from "@bahayplus/modules/bookings";
+import { listFiles } from "@bahayplus/modules/files";
+import { AttachmentList } from "@/components/registry/attachment-list";
 import { SectionCard } from "@bahayplus/ui/components/data/section-card";
 import { StatusBadge } from "@bahayplus/ui/components/feedback/status-badge";
 import { formatManilaDateTime } from "@bahayplus/types/dates";
@@ -22,7 +24,7 @@ export default async function WorkOrderPage({ params }: PageProps<"/provider/o/[
   const result = await getWorkOrder(ctx, workOrderId);
   if (!result.ok || result.value.organizationId !== orgId) notFound();
   const w = result.value;
-  const workers = await listFieldWorkers(ctx, orgId);
+  const [workers, files] = await Promise.all([listFieldWorkers(ctx, orgId), listFiles(ctx, "work_order", workOrderId)]);
   const open = !["completed", "cancelled"].includes(w.status);
 
   return (
@@ -55,6 +57,9 @@ export default async function WorkOrderPage({ params }: PageProps<"/provider/o/[
                 View project
               </Link>
             )}
+          </SectionCard>
+          <SectionCard title="Photos & evidence" id="photos">
+            <AttachmentList files={files.ok ? files.value : []} canManage={false} />
           </SectionCard>
           <SectionCard title="Checklist" id="checklist">
             <Checklist items={w.checklist} canToggle={open} />

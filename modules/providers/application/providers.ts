@@ -9,6 +9,7 @@ import {
   UpdateProviderProfileInput,
   UpdateProviderServiceInput,
   type BusinessHours,
+  SetCapacityInput,
 } from "@bahayplus/validation/marketplace/provider";
 import {
   DecideVerificationInput,
@@ -445,4 +446,55 @@ export async function replyToReview(ctx: ServiceContext, input: unknown): Promis
     p_reply: parsed.value.reply,
   });
   return error ? err(mapDbError(error)) : ok(true);
+}
+
+export type FinanceMonth = {
+  month: string;
+  completedJobs: number;
+  jobValueCentavos: number;
+  projectsCompleted: number;
+  projectValueCentavos: number;
+  purchasesCentavos: number;
+};
+
+/** Recorded values only: agreed booking prices, completed project contracts and delivered purchases. Bahay+ processes no payments. */
+export async function getFinancialSummary(
+  ctx: ServiceContext,
+  organizationId: string,
+  months = 6,
+): Promise<Result<FinanceMonth[]>> {
+  const { data, error } = await ctx.db.rpc("provider_financial_summary", { p_org: organizationId, p_months: months });
+  if (error) return err(mapDbError(error));
+  return ok(
+    (data ?? []).map((r) => ({
+      month: r.month,
+      completedJobs: r.completed_jobs,
+      jobValueCentavos: r.job_value_centavos,
+      projectsCompleted: r.projects_completed,
+      projectValueCentavos: r.project_value_centavos,
+      purchasesCentavos: r.purchases_centavos,
+    })),
+  );
+}
+
+/** How many confirmed bookings may overlap (Book Now capacity, D-12). */
+export async function setCapacity(ctx: ServiceContext, input: unknown): Promise<Result<true>> {
+  const parsed = parseInput(SetCapacityInput, input);
+  if (!parsed.ok) return parsed;
+  const { data, error } = await ctx.db
+    .from("provider_profiles")
+    .update({ concurrent_capacity: parsed.value.capacity })
+    .eq("organization_id", parsed.value.organizationId)
+    .select("organization_id");
+  if (error) return err(mapDbError(error));
+  return data?.length ? ok(true) : err(appError.forbidden("Only owners and managers can change capacity."));
+}
+
+export async function getCapacity(ctx: ServiceContext, organizationId: string): Promise<number> {
+  const { data } = await ctx.db
+    .from("provider_profiles")
+    .select("concurrent_capacity")
+    .eq("organization_id", organizationId)
+    .maybeSingle();
+  return data?.concurrent_capacity ?? 1;
 }

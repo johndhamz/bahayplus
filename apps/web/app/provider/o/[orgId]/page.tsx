@@ -1,4 +1,17 @@
-import { BadgeCheck, CircleCheck, CircleDashed, MapPin, Star, Store, Tags } from "lucide-react";
+import {
+  BadgeCheck,
+  CalendarClock,
+  CircleCheck,
+  CircleDashed,
+  ClipboardList,
+  FileText,
+  HardHat,
+  MapPin,
+  Star,
+  Store,
+  Tags,
+} from "lucide-react";
+import { listBookings, listServiceRequests, listWorkOrders } from "@bahayplus/modules/bookings";
 import Link from "next/link";
 import {
   averageRatingTenths,
@@ -29,6 +42,30 @@ export default async function ProviderDashboardPage({ params }: PageProps<"/prov
     canManage ? listVerificationRequests(ctx, { organizationId: orgId, limit: 1 }) : null,
   ]);
   if (!profile.ok) return <ErrorState description="We couldn't load your business." />;
+  const canSeeBookings = access.permissions.has("bookings.view");
+  const [openBookings, requestsOpen, workOrders] = await Promise.all([
+    canSeeBookings
+      ? listBookings(ctx, { organizationId: orgId }, { statuses: ["requested", "confirmed", "in_progress"] })
+      : null,
+    canSeeBookings ? listServiceRequests(ctx, { organizationId: orgId }) : null,
+    access.permissions.has("work_orders.manage")
+      ? listWorkOrders(
+          ctx,
+          { organizationId: orgId },
+          { statuses: ["scheduled", "assigned", "en_route", "in_progress"] },
+        )
+      : null,
+  ]);
+  const todayKey = manilaDateOf(new Date());
+  const ops = {
+    newRequests: openBookings?.ok ? openBookings.value.filter((b) => b.status === "requested").length : null,
+    today: openBookings?.ok
+      ? openBookings.value.filter((b) => b.scheduledStart && manilaDateOf(new Date(b.scheduledStart)) === todayKey)
+          .length
+      : null,
+    openQuotes: requestsOpen?.ok ? requestsOpen.value.filter((r) => r.status === "open").length : null,
+    unassigned: workOrders?.ok ? workOrders.value.filter((w) => w.status === "scheduled").length : null,
+  };
   const p = profile.value;
   const latest = requests?.ok ? requests.value[0] : undefined;
   const today = manilaDateOf(new Date());
@@ -61,6 +98,30 @@ export default async function ProviderDashboardPage({ params }: PageProps<"/prov
   return (
     <>
       <PageHeader title={access.organizationName} description="Your marketplace presence and day-to-day operations." />
+      {canSeeBookings && (
+        <section aria-label="Operations" className="mb-4 grid grid-cols-2 gap-3 xl:grid-cols-4">
+          <StatCard
+            label="New booking requests"
+            value={ops.newRequests ?? "—"}
+            icon={ClipboardList}
+            href={`${base}/bookings`}
+            tone={ops.newRequests ? "terracotta" : "default"}
+          />
+          <StatCard label="Jobs today" value={ops.today ?? "—"} icon={CalendarClock} href={`${base}/bookings`} />
+          <StatCard
+            label="Quotes to prepare"
+            value={ops.openQuotes ?? "—"}
+            icon={FileText}
+            href={`${base}/quotations`}
+          />
+          <StatCard
+            label="Unassigned work orders"
+            value={ops.unassigned ?? "—"}
+            icon={HardHat}
+            href={`${base}/work-orders`}
+          />
+        </section>
+      )}
       <section aria-label="Marketplace summary" className="mb-4 grid grid-cols-2 gap-3 xl:grid-cols-4">
         <StatCard
           label="Marketplace"

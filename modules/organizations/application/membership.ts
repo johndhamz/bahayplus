@@ -154,3 +154,34 @@ export async function listOrganizationMembers(
     })),
   );
 }
+
+export type OrganizationInvitationView = {
+  id: string;
+  email: string;
+  role: OrganizationRoleKey;
+  expiresAt: string;
+  createdAt: string;
+};
+
+export async function listOrganizationInvitations(
+  ctx: ServiceContext,
+  organizationId: string,
+): Promise<Result<OrganizationInvitationView[]>> {
+  const { data, error } = await ctx.db
+    .from("organization_invitations")
+    .select("id, email, expires_at, created_at, roles!inner(key)")
+    .eq("organization_id", organizationId)
+    .eq("status", "pending")
+    .gt("expires_at", new Date().toISOString())
+    .order("created_at", { ascending: false });
+  if (error) return err(mapDbError(error));
+  return ok(
+    (data ?? []).map((i) => ({
+      id: i.id,
+      email: i.email,
+      role: i.roles.key as OrganizationRoleKey,
+      expiresAt: i.expires_at,
+      createdAt: i.created_at,
+    })),
+  );
+}

@@ -21,6 +21,12 @@ const managePermission = (entity: FileEntityType) =>
       ? "bills.manage"
       : "registry.manage";
 
+const SHARED_ENTITIES: Partial<Record<FileEntityType, "service_requests" | "projects" | "work_orders">> = {
+  service_request: "service_requests",
+  project: "projects",
+  work_order: "work_orders",
+};
+
 export type FileView = {
   id: string;
   fileName: string;
@@ -37,10 +43,21 @@ export async function prepareUpload(ctx: ServiceContext, input: unknown): Promis
   const parsed = parseInput(PrepareUploadInput, input);
   if (!parsed.ok) return parsed;
   const v = parsed.value;
-  const access = await loadHouseholdAccess(ctx, v.householdId);
-  if (!access.ok) return access;
-  if (!access.value.permissions.has(managePermission(v.entityType)))
-    return err(appError.forbidden("You can't add files here."));
+  if (SHARED_ENTITIES[v.entityType]) {
+    // Shared records (requests, projects, work orders): the provider's team or an assigned worker may not be
+    // household members. Visibility (RLS) proves access to read; Storage and `files` RLS enforce write access.
+    const { data } = await ctx.db
+      .from(SHARED_ENTITIES[v.entityType]!)
+      .select("household_id")
+      .eq("id", v.entityId)
+      .maybeSingle();
+    if (!data || data.household_id !== v.householdId) return err(appError.forbidden("You can't add files here."));
+  } else {
+    const access = await loadHouseholdAccess(ctx, v.householdId);
+    if (!access.ok) return access;
+    if (!access.value.permissions.has(managePermission(v.entityType)))
+      return err(appError.forbidden("You can't add files here."));
+  }
   const ext = ALLOWED_FILE_TYPES[v.contentType];
   return ok({ objectPath: `${v.householdId}/${v.entityType}/${v.entityId}/${crypto.randomUUID()}.${ext}` });
 }

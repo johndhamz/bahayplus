@@ -67,7 +67,7 @@ export function QuotationDraftEditor({
   return (
     <form onSubmit={onSubmit} noValidate className="flex flex-col gap-4">
       <FormAlert message={formError} />
-      <div className="overflow-x-auto">
+      <div className="overflow-x-auto" tabIndex={0} role="group" aria-label="Scrollable table">
         <table className="w-full min-w-[560px] text-sm">
           <caption className="sr-only">Quotation line items</caption>
           <thead>

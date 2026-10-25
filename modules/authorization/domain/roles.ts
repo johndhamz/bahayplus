@@ -67,6 +67,11 @@ export const ORGANIZATION_PERMISSIONS = [
   "work_orders.manage",
   "work_orders.perform",
   "projects.manage",
+  "catalog.manage",
+  "orders.view",
+  "orders.manage",
+  "purchasing.manage",
+  "finance.view",
 ] as const;
 export type OrganizationPermission = (typeof ORGANIZATION_PERMISSIONS)[number];
 
@@ -78,6 +83,9 @@ export const PLATFORM_PERMISSIONS = [
   "platform.audit.view",
   "platform.settings.manage",
   "platform.admins.manage",
+  "platform.users.manage",
+  "platform.categories.manage",
+  "platform.disputes.manage",
 ] as const;
 export type PlatformPermission = (typeof PLATFORM_PERMISSIONS)[number];
 
@@ -140,6 +148,11 @@ export const ROLE_PERMISSIONS: {
       "work_orders.manage",
       "work_orders.perform",
       "projects.manage",
+      "catalog.manage",
+      "orders.view",
+      "orders.manage",
+      "purchasing.manage",
+      "finance.view",
     ],
     staff: [
       "organization.view",
@@ -148,6 +161,9 @@ export const ROLE_PERMISSIONS: {
       "bookings.manage",
       "work_orders.manage",
       "work_orders.perform",
+      "orders.view",
+      "orders.manage",
+      "purchasing.manage",
     ],
     worker: ["organization.view", "work_orders.perform"],
   },
@@ -159,6 +175,8 @@ export const ROLE_PERMISSIONS: {
       "platform.organizations.manage",
       "platform.verifications.decide",
       "platform.audit.view",
+      "platform.categories.manage",
+      "platform.disputes.manage",
     ],
     support: ["platform.access", "platform.users.view"],
   },

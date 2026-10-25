@@ -143,3 +143,8 @@ export const SearchProvidersInput = z.object({
 export type SearchProvidersInput = z.input<typeof SearchProvidersInput>;
 
 export { RequiredIsoDate };
+
+export const SetCapacityInput = z.object({
+  organizationId: z.uuid(),
+  capacity: z.coerce.number().int().min(1, "At least 1 job at a time.").max(50, "Up to 50 jobs at a time."),
+});

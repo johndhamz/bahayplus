@@ -1,6 +1,7 @@
 import { BadgeCheck, Clock, MapPin, MessageCircle, Phone, SearchX, Siren } from "lucide-react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { getPlatformSettings } from "@bahayplus/modules/admin";
 import { searchUrgentProviders, type UrgentProviderView } from "@bahayplus/modules/marketplace";
 import { listProperties } from "@bahayplus/modules/properties";
 import { SectionCard } from "@bahayplus/ui/components/data/section-card";
@@ -81,7 +82,7 @@ function ProviderResult({ p, base }: { p: UrgentProviderView; base: string }) {
           {p.availabilityUpdatedAt ? (
             <span>
               Availability updated {formatManilaDateTime(p.availabilityUpdatedAt)}
-              {p.isStale && <strong className="ml-1 text-warning">— over a day old, may be out of date</strong>}
+              {p.isStale && <strong className="ml-1 text-warning">— may be out of date</strong>}
             </span>
           ) : (
             <strong className="text-warning">Availability never updated — confirm before relying on it</strong>
@@ -141,9 +142,11 @@ export default async function UrgentPage({ params, searchParams }: PageProps<"/a
   const category = URGENT_CATEGORIES.includes(sp.category as UrgentCategory) ? (sp.category as UrgentCategory) : null;
   const province = str(sp.province) || home?.province || "";
   const city = str(sp.city) || (str(sp.province) ? "" : home?.cityMunicipality || "");
+  const settings = await getPlatformSettings(ctx);
+  const staleHours = settings.ok ? settings.value.urgentStaleHours : 24;
   const results =
     category && province
-      ? await searchUrgentProviders(ctx, { category, province, city, barangay: str(sp.barangay) })
+      ? await searchUrgentProviders(ctx, { category, province, city, barangay: str(sp.barangay) }, { staleHours })
       : null;
 
   return (

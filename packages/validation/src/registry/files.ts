@@ -11,7 +11,17 @@ export const ALLOWED_FILE_TYPES = {
 export type AllowedFileType = keyof typeof ALLOWED_FILE_TYPES;
 export const MAX_FILE_BYTES = 10 * 1024 * 1024;
 
-export const FILE_ENTITY_TYPES = ["asset", "pet", "pet_health", "vehicle", "bill", "bill_payment"] as const;
+export const FILE_ENTITY_TYPES = [
+  "asset",
+  "pet",
+  "pet_health",
+  "vehicle",
+  "bill",
+  "bill_payment",
+  "service_request",
+  "project",
+  "work_order",
+] as const;
 export type FileEntityType = (typeof FILE_ENTITY_TYPES)[number];
 export const FILE_PURPOSES = [
   "photo",
@@ -21,6 +31,9 @@ export const FILE_PURPOSES = [
   "vet_record",
   "document",
   "statement",
+  "before_photo",
+  "after_photo",
+  "evidence",
   "other",
 ] as const;
 

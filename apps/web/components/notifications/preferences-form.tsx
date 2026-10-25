@@ -38,7 +38,12 @@ export function PreferencesForm({ initial, emailAvailable }: { initial: Preferen
     });
   return (
     <div className="flex flex-col gap-4">
-      <div className="overflow-x-auto rounded-2xl border border-border bg-surface shadow-card">
+      <div
+        className="overflow-x-auto rounded-2xl border border-border bg-surface shadow-card"
+        tabIndex={0}
+        role="group"
+        aria-label="Scrollable table"
+      >
         <table className="w-full min-w-[480px] text-sm">
           <caption className="sr-only">Notification channels by category</caption>
           <thead>

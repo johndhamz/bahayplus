@@ -9,6 +9,7 @@ import {
   FileText,
   Gauge,
   Hammer,
+  History,
   HardHat,
   House,
   Images,
@@ -19,6 +20,7 @@ import {
   PawPrint,
   Receipt,
   ScrollText,
+  ShoppingCart,
   Settings,
   Star,
   Store,
@@ -82,6 +84,8 @@ export const PORTAL_NAV: Record<Portal, NavSection[]> = {
         { path: "quotations", label: "Quotations", icon: FileText },
         { path: "work-orders", label: "Work orders", icon: HardHat },
         { path: "projects", label: "Projects", icon: Hammer },
+        { path: "history", label: "Job history", icon: History },
+        { path: "purchasing", label: "Purchasing", icon: ShoppingCart },
       ],
     },
     {
@@ -119,7 +123,7 @@ export const PORTAL_NAV: Record<Portal, NavSection[]> = {
       items: [
         { path: "reports", label: "Reports", icon: Activity },
         { path: "profile", label: "Supplier profile", icon: Store },
-        { path: "settings", label: "Settings", icon: Settings },
+        { path: "staff", label: "Staff", icon: Users },
       ],
     },
   ],

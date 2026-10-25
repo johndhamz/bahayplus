@@ -237,6 +237,7 @@ export type UrgentProviderView = {
 export async function searchUrgentProviders(
   ctx: ServiceContext,
   input: unknown,
+  options: { staleHours?: number } = {},
 ): Promise<Result<{ available: UrgentProviderView[]; unavailable: UrgentProviderView[] }>> {
   const parsed = parseInput(UrgentSearchInput, input);
   if (!parsed.ok) return parsed;
@@ -246,6 +247,7 @@ export async function searchUrgentProviders(
     p_province: v.province,
     p_city: v.city,
     p_barangay: v.barangay,
+    p_stale_hours: options.staleHours ?? 24,
   });
   if (error) return err(mapDbError(error));
   const rows: UrgentProviderView[] = (data ?? []).map((r) => ({
