@@ -104,16 +104,14 @@ export async function saveBudget(ctx: ServiceContext, input: unknown): Promise<R
   }
   const toInsert = [...wanted].filter(([categoryId]) => !existingLines.has(categoryId));
   if (toInsert.length) {
-    const inserted = await ctx.db
-      .from("budget_lines")
-      .insert(
-        toInsert.map(([categoryId, limit]) => ({
-          budget_id: budgetId!,
-          household_id: v.householdId,
-          category_id: categoryId,
-          limit_centavos: limit,
-        })),
-      );
+    const inserted = await ctx.db.from("budget_lines").insert(
+      toInsert.map(([categoryId, limit]) => ({
+        budget_id: budgetId!,
+        household_id: v.householdId,
+        category_id: categoryId,
+        limit_centavos: limit,
+      })),
+    );
     if (inserted.error) return err(inserted.error.code === "42501" ? appError.forbidden() : mapDbError(inserted.error));
   }
   return ok({ budgetId });

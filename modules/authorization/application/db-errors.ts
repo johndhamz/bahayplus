@@ -21,6 +21,11 @@ const CONFLICT = new Set([
   "already_paid",
   "overpayment",
   "duplicate_bill",
+  "verification_open",
+  "invalid_transition",
+  "review_not_eligible",
+  "duplicate_review",
+  "review_locked",
 ]);
 
 /**

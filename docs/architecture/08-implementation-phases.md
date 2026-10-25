@@ -2,19 +2,19 @@
 
 Every phase follows the same loop: inspect repo → plan → implement → migrations → unit/integration tests → Playwright for critical flows → run lint/typecheck/tests/build → fix → summarize → list limitations. **No phase starts without explicit approval.**
 
-| Phase | Name | Status |
-|-------|------|--------|
-| 1 | Foundation & design system | done |
-| 2 | Database foundation, auth, authorization, multi-tenant security | done |
-| 3 | Household management (households, members, invitations, properties, dashboard) | done |
-| 4 | Asset registry, pets, vehicles (+ private attachments, due items) | done |
-| 5 | Bills & utilities, household budgeting (+ daily bill job, reminders) | done |
-| 6 | Provider marketplace & trust (registration, offerings, coverage, verification, reviews) | approved |
-| 7 | Bookings, quotations, projects, work orders | approved |
-| 8 | Unified calendar, reminder engine & notifications, urgent provider discovery | approved |
-| 9 | Provider, supplier, worker & admin portals | approved |
-| 10 | Payment architecture & future wallet design (no stored value) | approved |
-| 11 | Production readiness: PWA, performance, accessibility, QA, security, deployment, CI | approved |
+| Phase | Name                                                                                    | Status   |
+| ----- | --------------------------------------------------------------------------------------- | -------- |
+| 1     | Foundation & design system                                                              | done     |
+| 2     | Database foundation, auth, authorization, multi-tenant security                         | done     |
+| 3     | Household management (households, members, invitations, properties, dashboard)          | done     |
+| 4     | Asset registry, pets, vehicles (+ private attachments, due items)                       | done     |
+| 5     | Bills & utilities, household budgeting (+ daily bill job, reminders)                    | done     |
+| 6     | Provider marketplace & trust (registration, offerings, coverage, verification, reviews) | approved |
+| 7     | Bookings, quotations, projects, work orders                                             | approved |
+| 8     | Unified calendar, reminder engine & notifications, urgent provider discovery            | approved |
+| 9     | Provider, supplier, worker & admin portals                                              | approved |
+| 10    | Payment architecture & future wallet design (no stored value)                           | approved |
+| 11    | Production readiness: PWA, performance, accessibility, QA, security, deployment, CI     | approved |
 
 ## Phase details
 

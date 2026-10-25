@@ -454,6 +454,65 @@ export type Database = {
           },
         ];
       };
+      bookings: {
+        Row: {
+          completed_at: string | null;
+          created_at: string;
+          created_by: string | null;
+          household_id: string;
+          id: string;
+          organization_id: string;
+          provider_service_id: string | null;
+          status: string;
+          updated_at: string;
+        };
+        ComputedFields: never;
+        Insert: {
+          completed_at?: string | null;
+          created_at?: string;
+          created_by?: string | null;
+          household_id: string;
+          id?: string;
+          organization_id: string;
+          provider_service_id?: string | null;
+          status?: string;
+          updated_at?: string;
+        };
+        Update: {
+          completed_at?: string | null;
+          created_at?: string;
+          created_by?: string | null;
+          household_id?: string;
+          id?: string;
+          organization_id?: string;
+          provider_service_id?: string | null;
+          status?: string;
+          updated_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "bookings_household_id_fkey";
+            columns: ["household_id"];
+            isOneToOne: false;
+            referencedRelation: "households";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "bookings_organization_id_fkey";
+            columns: ["organization_id"];
+            isOneToOne: false;
+            referencedRelation: "organizations";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "bookings_provider_service_id_fkey";
+            columns: ["provider_service_id"];
+            isOneToOne: false;
+            referencedRelation: "provider_services";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
       budget_lines: {
         Row: {
           budget_id: string;
@@ -989,6 +1048,60 @@ export type Database = {
           },
         ];
       };
+      organization_files: {
+        Row: {
+          bucket: string;
+          content_type: string;
+          created_at: string;
+          entity_id: string;
+          entity_type: string;
+          file_name: string;
+          id: string;
+          object_path: string;
+          organization_id: string;
+          size_bytes: number;
+          updated_at: string;
+          uploaded_by: string | null;
+        };
+        ComputedFields: never;
+        Insert: {
+          bucket: string;
+          content_type: string;
+          created_at?: string;
+          entity_id: string;
+          entity_type: string;
+          file_name: string;
+          id?: string;
+          object_path: string;
+          organization_id: string;
+          size_bytes: number;
+          updated_at?: string;
+          uploaded_by?: string | null;
+        };
+        Update: {
+          bucket?: string;
+          content_type?: string;
+          created_at?: string;
+          entity_id?: string;
+          entity_type?: string;
+          file_name?: string;
+          id?: string;
+          object_path?: string;
+          organization_id?: string;
+          size_bytes?: number;
+          updated_at?: string;
+          uploaded_by?: string | null;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "organization_files_organization_id_fkey";
+            columns: ["organization_id"];
+            isOneToOne: false;
+            referencedRelation: "organizations";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
       organization_invitations: {
         Row: {
           accepted_at: string | null;
@@ -1345,6 +1458,58 @@ export type Database = {
           },
         ];
       };
+      portfolio_items: {
+        Row: {
+          category_id: string | null;
+          completed_on: string | null;
+          created_at: string;
+          description: string;
+          id: string;
+          organization_id: string;
+          sort_order: number;
+          title: string;
+          updated_at: string;
+        };
+        ComputedFields: never;
+        Insert: {
+          category_id?: string | null;
+          completed_on?: string | null;
+          created_at?: string;
+          description?: string;
+          id?: string;
+          organization_id: string;
+          sort_order?: number;
+          title: string;
+          updated_at?: string;
+        };
+        Update: {
+          category_id?: string | null;
+          completed_on?: string | null;
+          created_at?: string;
+          description?: string;
+          id?: string;
+          organization_id?: string;
+          sort_order?: number;
+          title?: string;
+          updated_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "portfolio_items_category_id_fkey";
+            columns: ["category_id"];
+            isOneToOne: false;
+            referencedRelation: "service_categories";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "portfolio_items_organization_id_fkey";
+            columns: ["organization_id"];
+            isOneToOne: false;
+            referencedRelation: "organizations";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
       profiles: {
         Row: {
           created_at: string;
@@ -1445,6 +1610,219 @@ export type Database = {
           },
         ];
       };
+      provider_profiles: {
+        Row: {
+          accepts_book_now: boolean;
+          accepts_contact: boolean;
+          accepts_quote_requests: boolean;
+          availability_status: string;
+          availability_updated_at: string | null;
+          business_hours: NonNullable<Json>;
+          created_at: string;
+          description: string;
+          email: string;
+          is_published: boolean;
+          messenger_url: string;
+          organization_id: string;
+          phone: string;
+          rating_count: number;
+          rating_sum: number;
+          tagline: string;
+          team_size: number | null;
+          updated_at: string;
+          website: string;
+          year_established: number | null;
+        };
+        ComputedFields: never;
+        Insert: {
+          accepts_book_now?: boolean;
+          accepts_contact?: boolean;
+          accepts_quote_requests?: boolean;
+          availability_status?: string;
+          availability_updated_at?: string | null;
+          business_hours?: NonNullable<Json>;
+          created_at?: string;
+          description?: string;
+          email?: string;
+          is_published?: boolean;
+          messenger_url?: string;
+          organization_id: string;
+          phone?: string;
+          rating_count?: number;
+          rating_sum?: number;
+          tagline?: string;
+          team_size?: number | null;
+          updated_at?: string;
+          website?: string;
+          year_established?: number | null;
+        };
+        Update: {
+          accepts_book_now?: boolean;
+          accepts_contact?: boolean;
+          accepts_quote_requests?: boolean;
+          availability_status?: string;
+          availability_updated_at?: string | null;
+          business_hours?: NonNullable<Json>;
+          created_at?: string;
+          description?: string;
+          email?: string;
+          is_published?: boolean;
+          messenger_url?: string;
+          organization_id?: string;
+          phone?: string;
+          rating_count?: number;
+          rating_sum?: number;
+          tagline?: string;
+          team_size?: number | null;
+          updated_at?: string;
+          website?: string;
+          year_established?: number | null;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "provider_profiles_organization_id_fkey";
+            columns: ["organization_id"];
+            isOneToOne: true;
+            referencedRelation: "organizations";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
+      provider_services: {
+        Row: {
+          allows_book_now: boolean;
+          allows_quote: boolean;
+          category_id: string;
+          created_at: string;
+          currency: string;
+          description: string;
+          duration_minutes: number | null;
+          id: string;
+          is_active: boolean;
+          organization_id: string;
+          price_centavos: number | null;
+          pricing_model: string;
+          title: string;
+          unit_label: string;
+          updated_at: string;
+        };
+        ComputedFields: never;
+        Insert: {
+          allows_book_now?: boolean;
+          allows_quote?: boolean;
+          category_id: string;
+          created_at?: string;
+          currency?: string;
+          description?: string;
+          duration_minutes?: number | null;
+          id?: string;
+          is_active?: boolean;
+          organization_id: string;
+          price_centavos?: number | null;
+          pricing_model: string;
+          title: string;
+          unit_label?: string;
+          updated_at?: string;
+        };
+        Update: {
+          allows_book_now?: boolean;
+          allows_quote?: boolean;
+          category_id?: string;
+          created_at?: string;
+          currency?: string;
+          description?: string;
+          duration_minutes?: number | null;
+          id?: string;
+          is_active?: boolean;
+          organization_id?: string;
+          price_centavos?: number | null;
+          pricing_model?: string;
+          title?: string;
+          unit_label?: string;
+          updated_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "provider_services_category_id_fkey";
+            columns: ["category_id"];
+            isOneToOne: false;
+            referencedRelation: "service_categories";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "provider_services_organization_id_fkey";
+            columns: ["organization_id"];
+            isOneToOne: false;
+            referencedRelation: "organizations";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
+      reviews: {
+        Row: {
+          booking_id: string;
+          comment: string;
+          created_at: string;
+          household_id: string;
+          id: string;
+          organization_id: string;
+          provider_replied_at: string | null;
+          provider_reply: string | null;
+          rating: number;
+          reviewer_id: string | null;
+          updated_at: string;
+        };
+        ComputedFields: never;
+        Insert: {
+          booking_id: string;
+          comment?: string;
+          created_at?: string;
+          household_id: string;
+          id?: string;
+          organization_id: string;
+          provider_replied_at?: string | null;
+          provider_reply?: string | null;
+          rating: number;
+          reviewer_id?: string | null;
+          updated_at?: string;
+        };
+        Update: {
+          booking_id?: string;
+          comment?: string;
+          created_at?: string;
+          household_id?: string;
+          id?: string;
+          organization_id?: string;
+          provider_replied_at?: string | null;
+          provider_reply?: string | null;
+          rating?: number;
+          reviewer_id?: string | null;
+          updated_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "reviews_booking_id_fkey";
+            columns: ["booking_id"];
+            isOneToOne: true;
+            referencedRelation: "bookings";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "reviews_household_id_fkey";
+            columns: ["household_id"];
+            isOneToOne: false;
+            referencedRelation: "households";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "reviews_organization_id_fkey";
+            columns: ["organization_id"];
+            isOneToOne: false;
+            referencedRelation: "organizations";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
       role_permissions: {
         Row: {
           created_at: string;
@@ -1513,6 +1891,94 @@ export type Database = {
           rank?: number;
           scope?: string;
           updated_at?: string;
+        };
+        Relationships: [];
+      };
+      service_areas: {
+        Row: {
+          barangay: string | null;
+          barangay_norm: string | null;
+          city_municipality: string | null;
+          city_norm: string | null;
+          created_at: string;
+          id: string;
+          organization_id: string;
+          province: string;
+          province_norm: string | null;
+          updated_at: string;
+        };
+        ComputedFields: never;
+        Insert: {
+          barangay?: string | null;
+          barangay_norm?: never;
+          city_municipality?: string | null;
+          city_norm?: never;
+          created_at?: string;
+          id?: string;
+          organization_id: string;
+          province: string;
+          province_norm?: never;
+          updated_at?: string;
+        };
+        Update: {
+          barangay?: string | null;
+          barangay_norm?: never;
+          city_municipality?: string | null;
+          city_norm?: never;
+          created_at?: string;
+          id?: string;
+          organization_id?: string;
+          province?: string;
+          province_norm?: never;
+          updated_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "service_areas_organization_id_fkey";
+            columns: ["organization_id"];
+            isOneToOne: false;
+            referencedRelation: "organizations";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
+      service_categories: {
+        Row: {
+          created_at: string;
+          description: string;
+          division: string;
+          id: string;
+          is_active: boolean;
+          name: string;
+          slug: string;
+          sort_order: number;
+          updated_at: string;
+          urgent_eligible: boolean;
+        };
+        ComputedFields: never;
+        Insert: {
+          created_at?: string;
+          description?: string;
+          division: string;
+          id?: string;
+          is_active?: boolean;
+          name: string;
+          slug: string;
+          sort_order?: number;
+          updated_at?: string;
+          urgent_eligible?: boolean;
+        };
+        Update: {
+          created_at?: string;
+          description?: string;
+          division?: string;
+          id?: string;
+          is_active?: boolean;
+          name?: string;
+          slug?: string;
+          sort_order?: number;
+          updated_at?: string;
+          urgent_eligible?: boolean;
         };
         Relationships: [];
       };
@@ -1657,6 +2123,121 @@ export type Database = {
           },
         ];
       };
+      verification_items: {
+        Row: {
+          created_at: string;
+          id: string;
+          item_type: string;
+          organization_id: string;
+          reference_number: string;
+          request_id: string;
+          reviewer_note: string;
+          status: string;
+          updated_at: string;
+          valid_until: string | null;
+        };
+        ComputedFields: never;
+        Insert: {
+          created_at?: string;
+          id?: string;
+          item_type: string;
+          organization_id: string;
+          reference_number?: string;
+          request_id: string;
+          reviewer_note?: string;
+          status?: string;
+          updated_at?: string;
+          valid_until?: string | null;
+        };
+        Update: {
+          created_at?: string;
+          id?: string;
+          item_type?: string;
+          organization_id?: string;
+          reference_number?: string;
+          request_id?: string;
+          reviewer_note?: string;
+          status?: string;
+          updated_at?: string;
+          valid_until?: string | null;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "verification_items_organization_id_fkey";
+            columns: ["organization_id"];
+            isOneToOne: false;
+            referencedRelation: "organizations";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "verification_items_request_id_fkey";
+            columns: ["request_id"];
+            isOneToOne: false;
+            referencedRelation: "verification_requests";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
+      verification_requests: {
+        Row: {
+          created_at: string;
+          decided_at: string | null;
+          decision_notes: string;
+          expires_on: string | null;
+          id: string;
+          internal_notes: string;
+          organization_id: string;
+          review_started_at: string | null;
+          reviewer_id: string | null;
+          revoked_reason: string | null;
+          status: string;
+          submitted_at: string;
+          submitted_by: string | null;
+          updated_at: string;
+        };
+        ComputedFields: never;
+        Insert: {
+          created_at?: string;
+          decided_at?: string | null;
+          decision_notes?: string;
+          expires_on?: string | null;
+          id?: string;
+          internal_notes?: string;
+          organization_id: string;
+          review_started_at?: string | null;
+          reviewer_id?: string | null;
+          revoked_reason?: string | null;
+          status?: string;
+          submitted_at?: string;
+          submitted_by?: string | null;
+          updated_at?: string;
+        };
+        Update: {
+          created_at?: string;
+          decided_at?: string | null;
+          decision_notes?: string;
+          expires_on?: string | null;
+          id?: string;
+          internal_notes?: string;
+          organization_id?: string;
+          review_started_at?: string | null;
+          reviewer_id?: string | null;
+          revoked_reason?: string | null;
+          status?: string;
+          submitted_at?: string;
+          submitted_by?: string | null;
+          updated_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "verification_requests_organization_id_fkey";
+            columns: ["organization_id"];
+            isOneToOne: false;
+            referencedRelation: "organizations";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
     };
     Views: {
       registry_due_items: {
@@ -1694,6 +2275,18 @@ export type Database = {
       create_bill_account: { Args: { p_payload: Json }; Returns: string };
       create_household: { Args: { p_name: string }; Returns: string };
       create_organization: { Args: { p_kind: string; p_name: string; p_slug: string }; Returns: string };
+      decide_verification: {
+        Args: {
+          p_decision: string;
+          p_decision_notes: string;
+          p_expires_on: string;
+          p_internal_notes: string;
+          p_item_decisions: Json;
+          p_request: string;
+        };
+        Returns: undefined;
+      };
+      edit_review: { Args: { p_comment: string; p_rating: number; p_review: string }; Returns: undefined };
       get_household_invitation: {
         Args: { p_token: string };
         Returns: {
@@ -1748,6 +2341,19 @@ export type Database = {
           role_key: string;
         }[];
       };
+      normalize_locality: { Args: { p_value: string }; Returns: string };
+      provider_serves: {
+        Args: { p_barangay: string; p_city: string; p_org: string; p_province: string };
+        Returns: boolean;
+      };
+      provider_verified_items: {
+        Args: { p_org: string };
+        Returns: {
+          item_type: string;
+          valid_until: string;
+          verified_until: string;
+        }[];
+      };
       record_bill_payment: {
         Args: {
           p_amount_centavos: number;
@@ -1761,11 +2367,43 @@ export type Database = {
       };
       remove_household_member: { Args: { p_member: string }; Returns: undefined };
       remove_organization_member: { Args: { p_member: string }; Returns: undefined };
+      reply_to_review: { Args: { p_reply: string; p_review: string }; Returns: undefined };
       revoke_household_invitation: { Args: { p_invitation: string }; Returns: undefined };
       revoke_organization_invitation: { Args: { p_invitation: string }; Returns: undefined };
+      revoke_verification: { Args: { p_reason: string; p_request: string }; Returns: undefined };
       run_daily_bill_jobs: { Args: { p_today?: string }; Returns: Json };
+      search_providers: {
+        Args: {
+          p_barangay?: string;
+          p_category?: string;
+          p_city?: string;
+          p_division?: string;
+          p_limit?: number;
+          p_offset?: number;
+          p_province?: string;
+          p_query?: string;
+        };
+        Returns: {
+          accepts_book_now: boolean;
+          accepts_quote_requests: boolean;
+          availability_status: string;
+          availability_updated_at: string;
+          categories: string[];
+          min_price_centavos: number;
+          name: string;
+          organization_id: string;
+          rating_count: number;
+          rating_sum: number;
+          slug: string;
+          tagline: string;
+          verified_items: string[];
+        }[];
+      };
       set_household_member_status: { Args: { p_member: string; p_status: string }; Returns: undefined };
       set_organization_member_status: { Args: { p_member: string; p_status: string }; Returns: undefined };
+      start_verification_review: { Args: { p_request: string }; Returns: undefined };
+      submit_review: { Args: { p_booking: string; p_comment: string; p_rating: number }; Returns: string };
+      submit_verification_request: { Args: { p_items: Json; p_org: string }; Returns: string };
       void_bill_payment: { Args: { p_payment: string; p_reason: string }; Returns: undefined };
     };
     Enums: {

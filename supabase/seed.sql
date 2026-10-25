@@ -69,3 +69,40 @@ insert into public.organization_members (organization_id, user_id, role_id) valu
 -- Platform admin (granted directly in SQL — the only way admin roles are assigned).
 insert into public.platform_admins (user_id, role_id) values
   ('10000000-0000-4000-8000-000000000006', (select id from public.roles where scope = 'platform' and key = 'super_admin'));
+
+-- -----------------------------------------------------------------------------
+-- Marketplace demo (local only): a verified, published provider with services and coverage.
+-- -----------------------------------------------------------------------------
+update public.provider_profiles set
+  tagline = 'Plumbing, electrical and aircon care in Metro Manila (demo)',
+  description = 'Licensed technicians serving Quezon City, Pasig and Taguig. This is demo data for local development.',
+  phone = '+63 917 000 0000', email = 'hello@mabuhay.example',
+  accepts_book_now = true, accepts_quote_requests = true, accepts_contact = true,
+  availability_status = 'available', is_published = true,
+  business_hours = '{"mon":[["08:00","18:00"]],"tue":[["08:00","18:00"]],"wed":[["08:00","18:00"]],"thu":[["08:00","18:00"]],"fri":[["08:00","18:00"]],"sat":[["09:00","15:00"]]}'
+where organization_id = '30000000-0000-4000-8000-000000000001';
+
+insert into public.provider_services (organization_id, category_id, title, description, pricing_model, price_centavos, unit_label, duration_minutes, allows_book_now)
+select '30000000-0000-4000-8000-000000000001', id, t.title, t.descr, t.model, t.price, t.unit, t.minutes, t.book
+from (values
+  ('plumbing', 'Leak repair', 'Faucets, pipes and fixtures', 'starting_at', 80000::bigint, '', 60, true),
+  ('aircon', 'Aircon cleaning (split type)', 'Indoor and outdoor unit cleaning', 'fixed', 150000::bigint, 'per unit', 90, true),
+  ('electrical', 'Electrical inspection', 'Safety check of wiring and panel', 'quote_only', null::bigint, '', null::int, false)
+) as t(slug, title, descr, model, price, unit, minutes, book)
+join public.service_categories c on c.slug = t.slug;
+
+insert into public.service_areas (organization_id, province, city_municipality) values
+  ('30000000-0000-4000-8000-000000000001', 'Metro Manila', 'Quezon City'),
+  ('30000000-0000-4000-8000-000000000001', 'Metro Manila', 'Pasig'),
+  ('30000000-0000-4000-8000-000000000001', 'Metro Manila', 'Taguig');
+
+insert into public.verification_requests (id, organization_id, status, submitted_by, decided_at, expires_on, decision_notes)
+values ('40000000-0000-4000-8000-000000000001', '30000000-0000-4000-8000-000000000001', 'approved',
+        '10000000-0000-4000-8000-000000000003', now(), (now() + interval '1 year')::date, 'Demo approval');
+insert into public.verification_items (request_id, organization_id, item_type, reference_number, valid_until, status) values
+  ('40000000-0000-4000-8000-000000000001', '30000000-0000-4000-8000-000000000001', 'business_registration', 'DTI-DEMO-0001', (now() + interval '3 years')::date, 'verified'),
+  ('40000000-0000-4000-8000-000000000001', '30000000-0000-4000-8000-000000000001', 'mayors_permit', 'MP-DEMO-2026', (now() + interval '1 year')::date, 'verified');
+
+-- A completed demo booking so the Dela Cruz household can leave a review.
+insert into public.bookings (id, household_id, organization_id, status, completed_at)
+values ('50000000-0000-4000-8000-000000000001', '20000000-0000-4000-8000-000000000001', '30000000-0000-4000-8000-000000000001', 'completed', now() - interval '2 days');

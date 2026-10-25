@@ -8,12 +8,14 @@ import { zodResolver } from "@bahayplus/ui/lib/zod-resolver";
 
 /**
  * Binds a Zod contract + React Hook Form to a Server Action. Client validation is for UX only;
- * the action re-validates with the same contract. Server field errors are mapped back onto fields.
+ * the action re-validates with the same contract. The action receives the RAW form input (not the
+ * client-parsed output) so the server parses exactly what the user entered — transforms such as
+ * "" → null never run twice. Server field errors are mapped back onto fields.
  */
 export function useActionForm<TSchema extends z.ZodType<FieldValues, FieldValues>, TData>(options: {
   schema: TSchema;
   defaultValues: DefaultValues<z.input<TSchema>>;
-  action: (values: z.output<TSchema>) => Promise<ActionResult<TData>>;
+  action: (values: z.input<TSchema>) => Promise<ActionResult<TData>>;
   onSuccess?: (data: TData, message?: string) => void;
 }) {
   const form = useForm<z.input<TSchema>, unknown, z.output<TSchema>>({
@@ -24,10 +26,11 @@ export function useActionForm<TSchema extends z.ZodType<FieldValues, FieldValues
   const [pending, startTransition] = useTransition();
   const [formError, setFormError] = useState<string | null>(null);
 
-  const onSubmit = form.handleSubmit((values) => {
+  const onSubmit = form.handleSubmit(() => {
     setFormError(null);
+    const raw = form.getValues();
     startTransition(async () => {
-      const result = await options.action(values);
+      const result = await options.action(raw);
       if (!result) return; // redirected
       if (result.ok) {
         options.onSuccess?.(result.data, result.message);

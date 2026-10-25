@@ -212,17 +212,15 @@ describe("recording payments", () => {
     expect(unwrap(await listBills(outsider.ctx, household))).toEqual([]);
     const outsiderPay = await pay(outsider, billId, "1");
     expect(outsiderPay.ok || outsiderPay.error.code).toBe("NOT_FOUND");
-    const direct = await owner.client
-      .from("bill_payments")
-      .insert({
-        household_id: household,
-        bill_id: billId,
-        amount_centavos: 1,
-        paid_on: today,
-        method: "cash",
-        idempotency_key: randomUUID(),
-        request_hash: "x",
-      });
+    const direct = await owner.client.from("bill_payments").insert({
+      household_id: household,
+      bill_id: billId,
+      amount_centavos: 1,
+      paid_on: today,
+      method: "cash",
+      idempotency_key: randomUUID(),
+      request_hash: "x",
+    });
     expect(direct.error).not.toBeNull(); // payments only through record_bill_payment
   });
 
@@ -315,16 +313,14 @@ describe("budgets and expenses (no double counting)", () => {
       });
     expect(duplicate.error?.code).toBe("23505");
     // Users cannot fake a bill-payment expense or void one directly.
-    const fake = await owner.client
-      .from("expenses")
-      .insert({
-        household_id: household,
-        category_id: linked![0]!.id,
-        amount_centavos: 1,
-        spent_on: today,
-        source_type: "bill_payment",
-        source_id: payment.paymentId,
-      } as never);
+    const fake = await owner.client.from("expenses").insert({
+      household_id: household,
+      category_id: linked![0]!.id,
+      amount_centavos: 1,
+      spent_on: today,
+      source_type: "bill_payment",
+      source_id: payment.paymentId,
+    } as never);
     expect(fake.error).not.toBeNull();
     expect((await voidExpense(owner.ctx, { expenseId: linked![0]!.id })).ok).toBe(false);
     unwrap(await voidBillPayment(owner.ctx, { paymentId: payment.paymentId, reason: "Wrong bill" }));
