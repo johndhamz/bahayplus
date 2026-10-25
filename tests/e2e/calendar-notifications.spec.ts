@@ -88,6 +88,10 @@ test("booking → provider is notified in-app and by email; inbox marks read", a
     /New booking: Leak repair/,
     `/bookings/${bookingId}`,
     testInfo.project.use.baseURL!,
+    () =>
+      request.post("/api/internal/jobs/deliver", {
+        headers: { Authorization: `Bearer ${process.env.JOB_RUNNER_SECRET}` },
+      }),
   );
   expect(link).toContain(`/provider/o/${DEMO_IDS.mabuhayProvider}/bookings/${bookingId}`);
 
