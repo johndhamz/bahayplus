@@ -11,9 +11,18 @@ export const ALLOWED_FILE_TYPES = {
 export type AllowedFileType = keyof typeof ALLOWED_FILE_TYPES;
 export const MAX_FILE_BYTES = 10 * 1024 * 1024;
 
-export const FILE_ENTITY_TYPES = ["asset", "pet", "pet_health", "vehicle"] as const;
+export const FILE_ENTITY_TYPES = ["asset", "pet", "pet_health", "vehicle", "bill", "bill_payment"] as const;
 export type FileEntityType = (typeof FILE_ENTITY_TYPES)[number];
-export const FILE_PURPOSES = ["photo", "receipt", "manual", "warranty", "vet_record", "document", "other"] as const;
+export const FILE_PURPOSES = [
+  "photo",
+  "receipt",
+  "manual",
+  "warranty",
+  "vet_record",
+  "document",
+  "statement",
+  "other",
+] as const;
 
 export const PrepareUploadInput = z.object({
   householdId: Uuid,

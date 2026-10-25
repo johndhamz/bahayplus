@@ -15,7 +15,11 @@ export const HOUSEHOLD_BUCKET = "household-files";
 const SIGNED_URL_SECONDS = 600;
 
 const managePermission = (entity: FileEntityType) =>
-  entity === "pet_health" ? "pet.health.manage" : "registry.manage";
+  entity === "pet_health"
+    ? "pet.health.manage"
+    : entity === "bill" || entity === "bill_payment"
+      ? "bills.manage"
+      : "registry.manage";
 
 export type FileView = {
   id: string;

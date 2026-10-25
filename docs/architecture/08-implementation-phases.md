@@ -2,21 +2,19 @@
 
 Every phase follows the same loop: inspect repo → plan → implement → migrations → unit/integration tests → Playwright for critical flows → run lint/typecheck/tests/build → fix → summarize → list limitations. **No phase starts without explicit approval.**
 
-| Phase | Name                                                                           | Domains           | Status   |
-| ----- | ------------------------------------------------------------------------------ | ----------------- | -------- |
-| 1     | Foundation & design system                                                     | — (platform)      | approved |
-| 2     | Database foundation, auth, authorization, multi-tenant security                | 1                 | approved |
-| 3     | Household management (households, members, invitations, properties, dashboard) | 2, 3              | approved |
-| 4     | Asset registry, pets, vehicles (+ attachments, basic reminders)                | 4, 5, 6           | approved |
-| 5     | Calendar & reminders engine, notifications, durable jobs                       | 9                 | proposed |
-| 6     | Bills & budgeting                                                              | 7, 8              | proposed |
-| 7     | Organizations & provider trust                                                 | 16 (org side), 11 | proposed |
-| 8     | Marketplace & service orders (+ payments port, manual adapter)                 | 10, 13            | proposed |
-| 9     | Field worker operations                                                        | 13 (work orders)  | proposed |
-| 10    | Urgent provider discovery                                                      | 12                | proposed |
-| 11    | Renovation & custom projects                                                   | 14                | proposed |
-| 12    | Supplier, inventory & logistics                                                | 15                | proposed |
-| 13    | Business & admin operations, launch hardening                                  | 16                | proposed |
+| Phase | Name | Status |
+|-------|------|--------|
+| 1 | Foundation & design system | done |
+| 2 | Database foundation, auth, authorization, multi-tenant security | done |
+| 3 | Household management (households, members, invitations, properties, dashboard) | done |
+| 4 | Asset registry, pets, vehicles (+ private attachments, due items) | done |
+| 5 | Bills & utilities, household budgeting (+ daily bill job, reminders) | done |
+| 6 | Provider marketplace & trust (registration, offerings, coverage, verification, reviews) | approved |
+| 7 | Bookings, quotations, projects, work orders | approved |
+| 8 | Unified calendar, reminder engine & notifications, urgent provider discovery | approved |
+| 9 | Provider, supplier, worker & admin portals | approved |
+| 10 | Payment architecture & future wallet design (no stored value) | approved |
+| 11 | Production readiness: PWA, performance, accessibility, QA, security, deployment, CI | approved |
 
 ## Phase details
 

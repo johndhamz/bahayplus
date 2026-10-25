@@ -44,6 +44,10 @@ export const HOUSEHOLD_PERMISSIONS = [
   "registry.manage",
   "pet.health.view",
   "pet.health.manage",
+  "bills.view",
+  "bills.manage",
+  "budget.view",
+  "budget.manage",
 ] as const;
 export type HouseholdPermission = (typeof HOUSEHOLD_PERMISSIONS)[number];
 
@@ -90,6 +94,10 @@ export const ROLE_PERMISSIONS: {
       "registry.manage",
       "pet.health.view",
       "pet.health.manage",
+      "bills.view",
+      "bills.manage",
+      "budget.view",
+      "budget.manage",
     ],
     member: [
       "household.view",
@@ -99,6 +107,8 @@ export const ROLE_PERMISSIONS: {
       "registry.manage",
       "pet.health.view",
       "pet.health.manage",
+      "bills.view",
+      "budget.view",
     ],
     limited: ["household.view", "property.view", "registry.view"],
     guest: ["household.view"],

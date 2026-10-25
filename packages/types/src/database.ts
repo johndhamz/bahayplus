@@ -188,6 +188,476 @@ export type Database = {
         };
         Relationships: [];
       };
+      bill_accounts: {
+        Row: {
+          account_number_last4: string;
+          amount_type: string;
+          archived_at: string | null;
+          bill_type: string;
+          category_id: string;
+          created_at: string;
+          created_by: string | null;
+          currency: string;
+          due_day: number | null;
+          ends_on: string | null;
+          fixed_amount_centavos: number | null;
+          household_id: string;
+          id: string;
+          is_recurring: boolean;
+          nickname: string;
+          property_id: string | null;
+          provider_name: string;
+          reminder_offsets: number[];
+          starts_on: string;
+          updated_at: string;
+        };
+        ComputedFields: never;
+        Insert: {
+          account_number_last4?: string;
+          amount_type: string;
+          archived_at?: string | null;
+          bill_type: string;
+          category_id: string;
+          created_at?: string;
+          created_by?: string | null;
+          currency?: string;
+          due_day?: number | null;
+          ends_on?: string | null;
+          fixed_amount_centavos?: number | null;
+          household_id: string;
+          id?: string;
+          is_recurring?: boolean;
+          nickname?: string;
+          property_id?: string | null;
+          provider_name: string;
+          reminder_offsets?: number[];
+          starts_on?: string;
+          updated_at?: string;
+        };
+        Update: {
+          account_number_last4?: string;
+          amount_type?: string;
+          archived_at?: string | null;
+          bill_type?: string;
+          category_id?: string;
+          created_at?: string;
+          created_by?: string | null;
+          currency?: string;
+          due_day?: number | null;
+          ends_on?: string | null;
+          fixed_amount_centavos?: number | null;
+          household_id?: string;
+          id?: string;
+          is_recurring?: boolean;
+          nickname?: string;
+          property_id?: string | null;
+          provider_name?: string;
+          reminder_offsets?: number[];
+          starts_on?: string;
+          updated_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "bill_accounts_category_id_fkey";
+            columns: ["category_id"];
+            isOneToOne: false;
+            referencedRelation: "expense_categories";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "bill_accounts_household_id_fkey";
+            columns: ["household_id"];
+            isOneToOne: false;
+            referencedRelation: "households";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "bill_accounts_property_id_household_id_fkey";
+            columns: ["property_id", "household_id"];
+            isOneToOne: false;
+            referencedRelation: "properties";
+            referencedColumns: ["id", "household_id"];
+          },
+        ];
+      };
+      bill_payments: {
+        Row: {
+          amount_centavos: number;
+          bill_id: string;
+          created_at: string;
+          currency: string;
+          household_id: string;
+          id: string;
+          idempotency_key: string;
+          method: string;
+          paid_on: string;
+          recorded_by: string | null;
+          reference: string;
+          request_hash: string;
+          updated_at: string;
+          void_reason: string | null;
+          voided_at: string | null;
+        };
+        ComputedFields: never;
+        Insert: {
+          amount_centavos: number;
+          bill_id: string;
+          created_at?: string;
+          currency?: string;
+          household_id: string;
+          id?: string;
+          idempotency_key: string;
+          method: string;
+          paid_on: string;
+          recorded_by?: string | null;
+          reference?: string;
+          request_hash: string;
+          updated_at?: string;
+          void_reason?: string | null;
+          voided_at?: string | null;
+        };
+        Update: {
+          amount_centavos?: number;
+          bill_id?: string;
+          created_at?: string;
+          currency?: string;
+          household_id?: string;
+          id?: string;
+          idempotency_key?: string;
+          method?: string;
+          paid_on?: string;
+          recorded_by?: string | null;
+          reference?: string;
+          request_hash?: string;
+          updated_at?: string;
+          void_reason?: string | null;
+          voided_at?: string | null;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "bill_payments_bill_id_household_id_fkey";
+            columns: ["bill_id", "household_id"];
+            isOneToOne: false;
+            referencedRelation: "bills";
+            referencedColumns: ["id", "household_id"];
+          },
+        ];
+      };
+      bill_reminders: {
+        Row: {
+          bill_id: string;
+          cancel_reason: string | null;
+          created_at: string;
+          household_id: string;
+          id: string;
+          offset_days: number;
+          processed_at: string | null;
+          remind_on: string;
+          status: string;
+          updated_at: string;
+        };
+        ComputedFields: never;
+        Insert: {
+          bill_id: string;
+          cancel_reason?: string | null;
+          created_at?: string;
+          household_id: string;
+          id?: string;
+          offset_days: number;
+          processed_at?: string | null;
+          remind_on: string;
+          status?: string;
+          updated_at?: string;
+        };
+        Update: {
+          bill_id?: string;
+          cancel_reason?: string | null;
+          created_at?: string;
+          household_id?: string;
+          id?: string;
+          offset_days?: number;
+          processed_at?: string | null;
+          remind_on?: string;
+          status?: string;
+          updated_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "bill_reminders_bill_id_household_id_fkey";
+            columns: ["bill_id", "household_id"];
+            isOneToOne: false;
+            referencedRelation: "bills";
+            referencedColumns: ["id", "household_id"];
+          },
+        ];
+      };
+      bills: {
+        Row: {
+          amount_due_centavos: number | null;
+          amount_paid_centavos: number;
+          bill_account_id: string;
+          created_at: string;
+          currency: string;
+          due_on: string;
+          household_id: string;
+          id: string;
+          notes: string;
+          paid_at: string | null;
+          period_end: string;
+          period_key: string;
+          period_start: string;
+          status: string;
+          updated_at: string;
+        };
+        ComputedFields: never;
+        Insert: {
+          amount_due_centavos?: number | null;
+          amount_paid_centavos?: number;
+          bill_account_id: string;
+          created_at?: string;
+          currency?: string;
+          due_on: string;
+          household_id: string;
+          id?: string;
+          notes?: string;
+          paid_at?: string | null;
+          period_end: string;
+          period_key: string;
+          period_start: string;
+          status?: string;
+          updated_at?: string;
+        };
+        Update: {
+          amount_due_centavos?: number | null;
+          amount_paid_centavos?: number;
+          bill_account_id?: string;
+          created_at?: string;
+          currency?: string;
+          due_on?: string;
+          household_id?: string;
+          id?: string;
+          notes?: string;
+          paid_at?: string | null;
+          period_end?: string;
+          period_key?: string;
+          period_start?: string;
+          status?: string;
+          updated_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "bills_bill_account_id_household_id_fkey";
+            columns: ["bill_account_id", "household_id"];
+            isOneToOne: false;
+            referencedRelation: "bill_accounts";
+            referencedColumns: ["id", "household_id"];
+          },
+        ];
+      };
+      budget_lines: {
+        Row: {
+          budget_id: string;
+          category_id: string;
+          created_at: string;
+          currency: string;
+          household_id: string;
+          id: string;
+          limit_centavos: number;
+          updated_at: string;
+        };
+        ComputedFields: never;
+        Insert: {
+          budget_id: string;
+          category_id: string;
+          created_at?: string;
+          currency?: string;
+          household_id: string;
+          id?: string;
+          limit_centavos: number;
+          updated_at?: string;
+        };
+        Update: {
+          budget_id?: string;
+          category_id?: string;
+          created_at?: string;
+          currency?: string;
+          household_id?: string;
+          id?: string;
+          limit_centavos?: number;
+          updated_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "budget_lines_budget_id_household_id_fkey";
+            columns: ["budget_id", "household_id"];
+            isOneToOne: false;
+            referencedRelation: "budgets";
+            referencedColumns: ["id", "household_id"];
+          },
+          {
+            foreignKeyName: "budget_lines_category_id_fkey";
+            columns: ["category_id"];
+            isOneToOne: false;
+            referencedRelation: "expense_categories";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
+      budgets: {
+        Row: {
+          created_at: string;
+          household_id: string;
+          id: string;
+          month: string;
+          notes: string;
+          updated_at: string;
+        };
+        ComputedFields: never;
+        Insert: {
+          created_at?: string;
+          household_id: string;
+          id?: string;
+          month: string;
+          notes?: string;
+          updated_at?: string;
+        };
+        Update: {
+          created_at?: string;
+          household_id?: string;
+          id?: string;
+          month?: string;
+          notes?: string;
+          updated_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "budgets_household_id_fkey";
+            columns: ["household_id"];
+            isOneToOne: false;
+            referencedRelation: "households";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
+      expense_categories: {
+        Row: {
+          archived_at: string | null;
+          created_at: string;
+          household_id: string | null;
+          id: string;
+          key: string | null;
+          name: string;
+          sort_order: number;
+          updated_at: string;
+        };
+        ComputedFields: never;
+        Insert: {
+          archived_at?: string | null;
+          created_at?: string;
+          household_id?: string | null;
+          id?: string;
+          key?: string | null;
+          name: string;
+          sort_order?: number;
+          updated_at?: string;
+        };
+        Update: {
+          archived_at?: string | null;
+          created_at?: string;
+          household_id?: string | null;
+          id?: string;
+          key?: string | null;
+          name?: string;
+          sort_order?: number;
+          updated_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "expense_categories_household_id_fkey";
+            columns: ["household_id"];
+            isOneToOne: false;
+            referencedRelation: "households";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
+      expenses: {
+        Row: {
+          amount_centavos: number;
+          category_id: string;
+          created_at: string;
+          created_by: string | null;
+          currency: string;
+          description: string;
+          household_id: string;
+          id: string;
+          payment_method: string;
+          property_id: string | null;
+          source_id: string | null;
+          source_type: string;
+          spent_on: string;
+          updated_at: string;
+          voided_at: string | null;
+        };
+        ComputedFields: never;
+        Insert: {
+          amount_centavos: number;
+          category_id: string;
+          created_at?: string;
+          created_by?: string | null;
+          currency?: string;
+          description?: string;
+          household_id: string;
+          id?: string;
+          payment_method?: string;
+          property_id?: string | null;
+          source_id?: string | null;
+          source_type?: string;
+          spent_on: string;
+          updated_at?: string;
+          voided_at?: string | null;
+        };
+        Update: {
+          amount_centavos?: number;
+          category_id?: string;
+          created_at?: string;
+          created_by?: string | null;
+          currency?: string;
+          description?: string;
+          household_id?: string;
+          id?: string;
+          payment_method?: string;
+          property_id?: string | null;
+          source_id?: string | null;
+          source_type?: string;
+          spent_on?: string;
+          updated_at?: string;
+          voided_at?: string | null;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "expenses_category_id_fkey";
+            columns: ["category_id"];
+            isOneToOne: false;
+            referencedRelation: "expense_categories";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "expenses_household_id_fkey";
+            columns: ["household_id"];
+            isOneToOne: false;
+            referencedRelation: "households";
+            referencedColumns: ["id"];
+          },
+          {
+            foreignKeyName: "expenses_property_id_household_id_fkey";
+            columns: ["property_id", "household_id"];
+            isOneToOne: false;
+            referencedRelation: "properties";
+            referencedColumns: ["id", "household_id"];
+          },
+        ];
+      };
       files: {
         Row: {
           bucket: string;
@@ -465,6 +935,57 @@ export type Database = {
             isOneToOne: false;
             referencedRelation: "properties";
             referencedColumns: ["id", "household_id"];
+          },
+        ];
+      };
+      notifications: {
+        Row: {
+          body: string;
+          created_at: string;
+          dedupe_key: string;
+          household_id: string | null;
+          id: string;
+          kind: string;
+          link: string | null;
+          read_at: string | null;
+          recipient_id: string;
+          title: string;
+          updated_at: string;
+        };
+        ComputedFields: never;
+        Insert: {
+          body?: string;
+          created_at?: string;
+          dedupe_key: string;
+          household_id?: string | null;
+          id?: string;
+          kind: string;
+          link?: string | null;
+          read_at?: string | null;
+          recipient_id: string;
+          title: string;
+          updated_at?: string;
+        };
+        Update: {
+          body?: string;
+          created_at?: string;
+          dedupe_key?: string;
+          household_id?: string | null;
+          id?: string;
+          kind?: string;
+          link?: string | null;
+          read_at?: string | null;
+          recipient_id?: string;
+          title?: string;
+          updated_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "notifications_household_id_fkey";
+            columns: ["household_id"];
+            isOneToOne: false;
+            referencedRelation: "households";
+            referencedColumns: ["id"];
           },
         ];
       };
@@ -1154,8 +1675,23 @@ export type Database = {
     Functions: {
       accept_household_invitation: { Args: { p_token: string }; Returns: string };
       accept_organization_invitation: { Args: { p_token: string }; Returns: string };
+      budget_vs_actual: {
+        Args: { p_household: string; p_month: string; p_property?: string };
+        Returns: {
+          category_id: string;
+          category_name: string;
+          limit_centavos: number;
+          sort_order: number;
+          spent_centavos: number;
+        }[];
+      };
       change_household_member_role: { Args: { p_member: string; p_role: string }; Returns: undefined };
       change_organization_member_role: { Args: { p_member: string; p_role: string }; Returns: undefined };
+      create_bill: {
+        Args: { p_account: string; p_amount_centavos: number; p_due_on: string; p_notes: string };
+        Returns: string;
+      };
+      create_bill_account: { Args: { p_payload: Json }; Returns: string };
       create_household: { Args: { p_name: string }; Returns: string };
       create_organization: { Args: { p_kind: string; p_name: string; p_slug: string }; Returns: string };
       get_household_invitation: {
@@ -1195,6 +1731,13 @@ export type Database = {
           token: string;
         }[];
       };
+      monthly_spending: {
+        Args: { p_household: string; p_months?: number; p_property?: string };
+        Returns: {
+          month: string;
+          spent_centavos: number;
+        }[];
+      };
       my_contexts: {
         Args: Record<PropertyKey, never>;
         Returns: {
@@ -1205,12 +1748,25 @@ export type Database = {
           role_key: string;
         }[];
       };
+      record_bill_payment: {
+        Args: {
+          p_amount_centavos: number;
+          p_bill: string;
+          p_idempotency_key: string;
+          p_method: string;
+          p_paid_on: string;
+          p_reference: string;
+        };
+        Returns: string;
+      };
       remove_household_member: { Args: { p_member: string }; Returns: undefined };
       remove_organization_member: { Args: { p_member: string }; Returns: undefined };
       revoke_household_invitation: { Args: { p_invitation: string }; Returns: undefined };
       revoke_organization_invitation: { Args: { p_invitation: string }; Returns: undefined };
+      run_daily_bill_jobs: { Args: { p_today?: string }; Returns: Json };
       set_household_member_status: { Args: { p_member: string; p_status: string }; Returns: undefined };
       set_organization_member_status: { Args: { p_member: string; p_status: string }; Returns: undefined };
+      void_bill_payment: { Args: { p_payment: string; p_reason: string }; Returns: undefined };
     };
     Enums: {
       [_ in never]: never;

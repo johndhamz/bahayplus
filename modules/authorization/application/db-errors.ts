@@ -17,6 +17,10 @@ const CONFLICT = new Set([
   "slug_taken",
   "limit_reached",
   "property_archived",
+  "amount_required",
+  "already_paid",
+  "overpayment",
+  "duplicate_bill",
 ]);
 
 /**
@@ -28,6 +32,12 @@ export function mapDbError(error: PostgrestLikeError): AppError {
   const human = error.details ?? undefined;
   if (error.code === "P0001") {
     if (key === "unauthenticated") return appError.unauthenticated(human);
+    if (key === "idempotency_mismatch")
+      return {
+        code: "IDEMPOTENCY_MISMATCH",
+        message: human ?? "This request was already submitted with different details.",
+        reason: key,
+      };
     if (key === "not_found") return appError.notFound(human, key);
     if (FORBIDDEN.has(key)) return appError.forbidden(human, key);
     if (VALIDATION.has(key))

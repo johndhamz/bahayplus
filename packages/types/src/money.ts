@@ -109,3 +109,17 @@ export function formatPeso(m: Money | number): string {
   const formatted = pesoFormatter.format(pesos).replace(/\.00$/, `.${String(cents).padStart(2, "0")}`);
   return negative ? `-${formatted}` : formatted;
 }
+
+/** Compact axis label from centavos: ₱950, ₱1.5K, ₱12K, ₱2.4M (display only). */
+export function formatPesoCompact(centavos: number): string {
+  assertCentavos(centavos);
+  const pesos = Math.trunc(Math.abs(centavos) / 100);
+  const sign = centavos < 0 ? "-" : "";
+  if (pesos >= 1_000_000) return `${sign}₱${trimDecimal(pesos / 1_000_000)}M`;
+  if (pesos >= 1_000) return `${sign}₱${trimDecimal(pesos / 1_000)}K`;
+  return `${sign}₱${pesos}`;
+}
+
+function trimDecimal(n: number): string {
+  return n >= 10 ? String(Math.round(n)) : String(Math.round(n * 10) / 10);
+}

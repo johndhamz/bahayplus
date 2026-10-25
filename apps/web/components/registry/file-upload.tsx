@@ -6,7 +6,12 @@ import { useId, useRef, useState, useTransition } from "react";
 import { toast } from "sonner";
 import { FormAlert } from "@bahayplus/ui/components/forms/form-alert";
 import { Button } from "@bahayplus/ui/components/ui/button";
-import { ALLOWED_FILE_TYPES, MAX_FILE_BYTES, type FileEntityType } from "@bahayplus/validation/registry/files";
+import {
+  ALLOWED_FILE_TYPES,
+  FILE_PURPOSES,
+  MAX_FILE_BYTES,
+  type FileEntityType,
+} from "@bahayplus/validation/registry/files";
 import { getSupabaseBrowserClient } from "@/lib/supabase/browser";
 import { prepareUploadAction, registerFileAction, setPetPhotoAction } from "@/lib/actions/registry";
 
@@ -14,7 +19,7 @@ type Props = {
   householdId: string;
   entityType: FileEntityType;
   entityId: string;
-  purpose: "photo" | "receipt" | "manual" | "warranty" | "vet_record" | "document" | "other";
+  purpose: (typeof FILE_PURPOSES)[number];
   label?: string;
   imagesOnly?: boolean;
   /** When set, the uploaded image becomes this pet's photo. */

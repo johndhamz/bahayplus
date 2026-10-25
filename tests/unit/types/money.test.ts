@@ -5,6 +5,7 @@ import {
   applyBasisPoints,
   compare,
   formatPeso,
+  formatPesoCompact,
   money,
   MoneyError,
   parsePesoInput,
@@ -44,6 +45,14 @@ describe("money", () => {
     expect(formatPeso(5)).toBe("₱0.05");
     expect(formatPeso(-150)).toBe("-₱1.50");
     expect(formatPeso(100_000_000_00)).toBe("₱100,000,000.00");
+  });
+
+  it("formats compact axis labels", () => {
+    expect(formatPesoCompact(95_000)).toBe("₱950");
+    expect(formatPesoCompact(150_000)).toBe("₱1.5K");
+    expect(formatPesoCompact(1_234_500)).toBe("₱12K");
+    expect(formatPesoCompact(240_000_000)).toBe("₱2.4M");
+    expect(formatPesoCompact(0)).toBe("₱0");
   });
 
   it("applies basis points with half-away-from-zero rounding", () => {

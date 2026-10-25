@@ -183,6 +183,12 @@
     @apply font-sans;
     -webkit-tap-highlight-color: transparent;
   }
+  /* Keep focused/scrolled-to elements clear of the fixed mobile bottom navigation (WCAG 2.4.11). */
+  @media (max-width: 1023px) {
+    html:has([aria-label$="quick navigation"]) {
+      scroll-padding-bottom: 6rem;
+    }
+  }
   body {
     @apply bg-background text-foreground antialiased;
   }
