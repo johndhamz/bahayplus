@@ -13,6 +13,7 @@ export const RATE_LIMITS = {
   passwordResetByIp: { limit: 5, windowSeconds: 3600 },
   passwordResetByEmail: { limit: 3, windowSeconds: 3600 },
   invitationsByUser: { limit: 30, windowSeconds: 3600 },
+  mfaVerifyByUser: { limit: 10, windowSeconds: 900 },
 } satisfies Record<string, Rule>;
 
 /** Client IP as seen by Vercel's edge (first X-Forwarded-For hop), or "unknown". */

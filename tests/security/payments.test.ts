@@ -21,7 +21,7 @@ import { createProperty } from "@bahayplus/modules/properties";
 import { manilaDateOf } from "@bahayplus/types/dates";
 import { withDb } from "../support/db";
 import { createListedProvider, futureSlot, toManilaLocal } from "../support/marketplace";
-import { adminClient, cleanupTestUsers, createTestUser, type TestUser } from "../support/supabase";
+import { adminClient, cleanupTestUsers, createTestUser, verifySecondFactor, type TestUser } from "../support/supabase";
 
 function unwrap<T>(r: { ok: true; value: T } | { ok: false; error: unknown }): T {
   if (!r.ok) throw new Error(JSON.stringify(r.error));
@@ -145,6 +145,7 @@ beforeAll(async () => {
       [support.id],
     );
   });
+  await Promise.all([verifySecondFactor(finance), verifySecondFactor(support)]);
 });
 afterAll(async () => {
   await withDb((c) =>

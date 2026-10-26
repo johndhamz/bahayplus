@@ -74,14 +74,14 @@ E2E detail:
 
 Full report: [`docs/security/audit-2026-10.md`](./security/audit-2026-10.md). This is an internal review, not a third-party penetration test.
 
-| ID   | Severity          | Finding                                                                            | Status                                                                                                                     |
-| ---- | ----------------- | ---------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------- |
-| S-01 | Medium (was High) | Auth runs in server actions, so Supabase sees the server IP for rate limiting      | **Mitigated in app:** per-IP and per-account limits for auth and invitations. **Add Vercel Firewall rules before launch.** |
-| S-02 | Medium            | No MFA enforcement for platform admins                                             | **Open, fix before launch** (Supabase TOTP + require AAL2 on `/admin`)                                                     |
-| S-03 | Medium            | Session cookies readable by JavaScript; CSP still allows `'unsafe-inline'` scripts | Open. Mitigated by React escaping and CSP; move to nonce-based CSP                                                         |
-| S-04 | Low               | Abandoned (unregistered) uploads remain in private storage                         | Open. Add cleanup job                                                                                                      |
-| S-05 | Low               | Invitation links are shared manually (no invitation email)                         | Open                                                                                                                       |
-| S-06 | Low               | Webhook 400 responses reveal the rejection category                                | Accepted                                                                                                                   |
+| ID   | Severity          | Finding                                                                            | Status                                                                                                                             |
+| ---- | ----------------- | ---------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------- |
+| S-01 | Medium (was High) | Auth runs in server actions, so Supabase sees the server IP for rate limiting      | **Mitigated in app:** per-IP and per-account limits for auth and invitations. **Add Vercel Firewall rules before launch.**         |
+| S-02 | Medium            | No MFA enforcement for platform admins                                             | **Fixed:** TOTP required for admins, enforced in the database (`aal2`) and at `/admin`. See [admin MFA](./operations/admin-mfa.md) |
+| S-03 | Medium            | Session cookies readable by JavaScript; CSP still allows `'unsafe-inline'` scripts | Open. Mitigated by React escaping and CSP; move to nonce-based CSP                                                                 |
+| S-04 | Low               | Abandoned (unregistered) uploads remain in private storage                         | Open. Add cleanup job                                                                                                              |
+| S-05 | Low               | Invitation links are shared manually (no invitation email)                         | Open                                                                                                                               |
+| S-06 | Low               | Webhook 400 responses reveal the rejection category                                | Accepted                                                                                                                           |
 
 Positive controls verified by tests:
 
@@ -148,7 +148,7 @@ Detailed guides are in [`docs/deployment/`](./deployment/). In short:
 ### Blockers for a public production launch
 
 1. A green CI run on a clean runner, including the **full** Playwright suite.
-2. Admin MFA (S-02) and Vercel Firewall rate limits (S-01 edge layer).
+2. Vercel Firewall rate limits (S-01 edge layer). Admin MFA (S-02) is done.
 3. Production Supabase with PITR and verified backups, production Auth SMTP, and a scheduled delivery worker.
 4. Legal: Terms of Service, Privacy Notice, Data Privacy Act/NPC registration, and an emergency-disclaimer review.
 5. A third-party penetration test (recommended before handling real customer data at scale).

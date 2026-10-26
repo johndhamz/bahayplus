@@ -48,3 +48,16 @@ export const UpdateProfileInput = z.object({
 export type UpdateProfileInput = z.input<typeof UpdateProfileInput>;
 
 export const ChangePasswordInput = ResetPasswordInput;
+
+/** A 6-digit code from an authenticator app (TOTP). Spaces are allowed when pasting "123 456". */
+export const MfaCode = z
+  .string()
+  .transform((v) => v.replace(/\s/g, ""))
+  .pipe(z.string().regex(/^\d{6}$/, "Enter the 6-digit code from your authenticator app."));
+
+export const VerifyMfaInput = z.object({
+  factorId: z.uuid({ message: "Invalid identifier." }),
+  code: MfaCode,
+  next: z.string().optional(),
+});
+export type VerifyMfaInput = z.input<typeof VerifyMfaInput>;

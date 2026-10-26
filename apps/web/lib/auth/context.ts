@@ -13,7 +13,7 @@ import {
   type PlatformAccess,
   type ServiceContext,
 } from "@bahayplus/modules/authorization";
-import { loginRedirectPath } from "@/lib/config/routes";
+import { AUTH_ROUTES, loginRedirectPath } from "@/lib/config/routes";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { getCurrentUser } from "./session";
 
@@ -64,10 +64,16 @@ export const requireOrganizationAccess = cache(
   },
 );
 
-/** Platform admin gate. Non-admins get 404, not 403, so the admin surface isn't advertised. */
+/**
+ * Platform admin gate. Non-admins get 404, not 403, so the admin surface isn't advertised.
+ * Admins must also have verified a second factor this session (aal2); the database enforces the
+ * same rule, so this redirect is for the user's benefit, not the security boundary.
+ */
 export const requirePlatformAccess = cache(async (): Promise<PlatformAccess> => {
   const ctx = await requireServiceContext("/admin");
   const access = await loadPlatformAccess(ctx);
   if (!access.ok || !access.value.permissions.has("platform.access")) notFound();
+  const { data: aal } = await ctx.db.auth.mfa.getAuthenticatorAssuranceLevel();
+  if (aal?.currentLevel !== "aal2") redirect(`${AUTH_ROUTES.mfa}?next=${encodeURIComponent("/admin")}`);
   return access.value;
 });

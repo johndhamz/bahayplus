@@ -11,6 +11,7 @@ Do not launch with any unchecked item in **Blockers**.
 - [ ] Notification email: `EMAIL_FROM` and `RESEND_API_KEY` set, a test email received, or email deliberately disabled (recorded as not configured).
 - [ ] Delivery worker scheduled: a Vercel per-minute cron (Pro) or pg_net calling `/api/internal/jobs/deliver`.
 - [ ] Platform admins granted in SQL to named people only (`platform_admins`). Seed or demo accounts **do not exist** in production.
+- [ ] Each admin has enrolled an authenticator app (first `/admin` visit) and knows the [lost-phone procedure](../operations/admin-mfa.md#an-admin-lost-their-phone). `auth.mfa_factors` holds no seeded factors.
 - [ ] Legal: Terms of Service, Privacy Notice (Data Privacy Act), NPC registration and DPO decision, emergency disclaimer reviewed.
 - [ ] Security findings marked "fix before launch" in [the audit](../security/audit-2026-10.md) resolved.
 - [ ] Uptime monitor on `/api/health` and error alerting configured.

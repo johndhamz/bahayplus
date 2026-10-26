@@ -16,6 +16,7 @@ export const AUTH_ROUTES = {
   resetPassword: "/reset-password",
   callback: "/auth/callback",
   confirm: "/auth/confirm",
+  mfa: "/mfa",
 } as const;
 
 /** Returns the portal a pathname belongs to, or null for public paths. Matches whole segments only. */
@@ -24,7 +25,7 @@ export function portalOf(pathname: string): Portal | null {
   return (PORTALS as readonly string[]).includes(first) ? (first as Portal) : null;
 }
 
-const PROTECTED_PREFIXES = ["/account", "/invite"];
+const PROTECTED_PREFIXES = ["/account", "/invite", "/mfa"];
 
 export function isProtectedPath(pathname: string): boolean {
   return portalOf(pathname) !== null || PROTECTED_PREFIXES.some((p) => pathname === p || pathname.startsWith(`${p}/`));

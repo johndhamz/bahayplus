@@ -27,7 +27,7 @@ import {
   submitReview,
 } from "@bahayplus/modules/marketplace";
 import { listOrgFiles, prepareOrgUpload, registerOrgFile } from "@bahayplus/modules/files";
-import { adminClient, cleanupTestUsers, createTestUser, type TestUser } from "../support/supabase";
+import { adminClient, cleanupTestUsers, createTestUser, verifySecondFactor, type TestUser } from "../support/supabase";
 
 function unwrap<T>(r: { ok: true; value: T } | { ok: false; error: unknown }): T {
   if (!r.ok) throw new Error(`Expected ok, got ${JSON.stringify(r.error)}`);
@@ -91,6 +91,7 @@ beforeAll(async () => {
   ]);
   const ops = await adminClient().from("roles").select("id").eq("scope", "platform").eq("key", "operations").single();
   await adminClient().from("platform_admins").insert({ user_id: verifier.id, role_id: ops.data!.id });
+  await verifySecondFactor(verifier);
   org = unwrap(
     await createOrganization(owner.ctx, {
       kind: "service_provider",

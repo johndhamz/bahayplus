@@ -3,6 +3,7 @@ import { createClient, type SupabaseClient } from "@supabase/supabase-js";
 import type { Database } from "@bahayplus/types/database";
 import type { ServiceContext } from "@bahayplus/modules/authorization";
 import { requireEnv } from "./env";
+import { totp } from "./totp";
 
 export type TestClient = SupabaseClient<Database>;
 export type TestUser = { id: string; email: string; password: string; client: TestClient; ctx: ServiceContext };
@@ -60,4 +61,19 @@ export async function cleanupTestUsers(): Promise<void> {
   await admin.from("households").delete().in("created_by", ids);
   await admin.from("organizations").delete().in("created_by", ids);
   for (const id of ids) await admin.auth.admin.deleteUser(id);
+}
+
+/**
+ * Enrolls an authenticator (TOTP) factor for the user and verifies it, upgrading their session to
+ * aal2 — required for platform admin permissions. Returns the factor's secret.
+ */
+export async function verifySecondFactor(user: TestUser): Promise<string> {
+  const { data, error } = await user.client.auth.mfa.enroll({
+    factorType: "totp",
+    friendlyName: `test-${randomUUID()}`,
+  });
+  if (error) throw new Error(`mfa enroll failed: ${error.message}`);
+  const verify = await user.client.auth.mfa.challengeAndVerify({ factorId: data.id, code: totp(data.totp.secret) });
+  if (verify.error) throw new Error(`mfa verify failed: ${verify.error.message}`);
+  return data.totp.secret;
 }

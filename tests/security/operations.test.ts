@@ -46,7 +46,14 @@ import {
 import { listInventory, listStockMovements, recordStockMovement } from "@bahayplus/modules/inventory";
 import { withDb } from "../support/db";
 import { createListedProvider, futureSlot, toManilaLocal } from "../support/marketplace";
-import { adminClient, anonClient, cleanupTestUsers, createTestUser, type TestUser } from "../support/supabase";
+import {
+  adminClient,
+  anonClient,
+  cleanupTestUsers,
+  createTestUser,
+  verifySecondFactor,
+  type TestUser,
+} from "../support/supabase";
 
 function unwrap<T>(r: { ok: true; value: T } | { ok: false; error: unknown }): T {
   if (!r.ok) throw new Error(JSON.stringify(r.error));
@@ -87,6 +94,7 @@ async function grantPlatform(user: TestUser, role: "super_admin" | "operations" 
       [user.id, role],
     ),
   );
+  await verifySecondFactor(user);
 }
 
 async function auditCount(action: string, targetId: string) {

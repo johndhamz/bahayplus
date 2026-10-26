@@ -1,7 +1,7 @@
 import { expect, test, type Page } from "@playwright/test";
 import { loadLocalEnv } from "../support/env";
 import { adminClient } from "../support/supabase";
-import { createConfirmedUser, DEMO, DEMO_IDS, login, logout } from "./support/auth";
+import { createConfirmedUser, DEMO, DEMO_IDS, login, loginAsAdmin, logout } from "./support/auth";
 
 const PDF = Buffer.from("%PDF-1.7\n1 0 obj<<>>endobj\ntrailer<<>>\n");
 
@@ -57,7 +57,7 @@ test("provider onboarding → admin approval → customer discovery", async ({ p
   await logout(page);
 
   // Admin approves (DTI verified, Mayor's permit not).
-  await login(page, DEMO.admin, undefined, "/admin/verifications");
+  await loginAsAdmin(page, "/admin/verifications");
   await page
     .getByRole("region", { name: "Waiting for review" })
     .getByRole("link", { name: new RegExp(name) })

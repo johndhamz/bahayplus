@@ -1,6 +1,18 @@
 import { randomUUID } from "node:crypto";
 import { expect, test } from "@playwright/test";
-import { createConfirmedUser, DEMO, DEMO_IDS, DEMO_PASSWORD, login, logout } from "./support/auth";
+import AxeBuilder from "@axe-core/playwright";
+import { adminClient } from "../support/supabase";
+import { DEMO_ADMIN_TOTP_SECRET } from "../support/totp";
+import {
+  createConfirmedAdmin,
+  createConfirmedUser,
+  DEMO,
+  DEMO_IDS,
+  DEMO_PASSWORD,
+  login,
+  logout,
+  passMfa,
+} from "./support/auth";
 import { latestLink } from "./support/mailpit";
 
 // Auth journeys hit the real local Supabase; run them once (desktop + one phone).
@@ -106,13 +118,55 @@ test("a user with multiple households can switch context", async ({ page }) => {
   await expect(page).toHaveURL(new RegExp(`/app/h/${DEMO_IDS.santosHousehold}$`));
 });
 
-test("platform admin portal is invisible to non-admins and open to admins", async ({ page }) => {
+test("platform admin portal is invisible to non-admins and needs two-step verification for admins", async ({
+  page,
+}) => {
   await login(page, DEMO.owner);
   expect((await page.goto("/admin"))?.status()).toBe(404);
+  expect((await page.goto("/mfa"))?.status()).toBe(404);
   await page.goto("/app");
   await logout(page);
+
+  // A correct password alone only reaches the code prompt.
   await login(page, DEMO.admin, undefined, "/admin");
+  await expect(page).toHaveURL(/\/mfa\?next=%2Fadmin$/);
+  await expect(page.getByRole("heading", { name: "Two-step verification" })).toBeVisible();
+  await page.getByLabel("Authentication code").fill("000000");
+  await page.getByRole("button", { name: "Verify" }).click();
+  await expect(page.getByText(/That code didn.t work/).first()).toBeVisible();
+  await expect(page).toHaveURL(/\/mfa/);
+
+  await passMfa(page, DEMO_ADMIN_TOTP_SECRET);
+  await expect(page).toHaveURL(/\/admin$/);
   await expect(page.getByRole("heading", { name: "Platform overview" })).toBeVisible();
+});
+
+test("a new admin sets up an authenticator app before opening the admin portal", async ({ page }) => {
+  const admin = await createConfirmedAdmin("mfa-enroll");
+  try {
+    await login(page, admin.email, undefined, "/admin");
+    await expect(page).toHaveURL(/\/mfa/);
+    await page.getByRole("button", { name: "Set up authenticator app" }).click();
+    await expect(page.getByRole("img", { name: /QR code/ })).toBeVisible();
+    const secret = (await page.getByTestId("mfa-secret").textContent())!.trim();
+    const axe = await new AxeBuilder({ page })
+      .withTags(["wcag2a", "wcag2aa", "wcag21a", "wcag21aa", "wcag22aa"])
+      .analyze();
+    expect(axe.violations.filter((v) => v.impact === "serious" || v.impact === "critical").map((v) => v.id)).toEqual(
+      [],
+    );
+    await passMfa(page, secret);
+    await expect(page.getByRole("heading", { name: "Platform overview" })).toBeVisible();
+
+    // The next sign-in asks for a code instead of offering enrollment again.
+    await logout(page);
+    await login(page, admin.email, undefined, "/admin");
+    await expect(page.getByRole("button", { name: "Set up authenticator app" })).toHaveCount(0);
+    await passMfa(page, secret);
+    await expect(page).toHaveURL(/\/admin$/);
+  } finally {
+    await adminClient().auth.admin.deleteUser(admin.id);
+  }
 });
 
 test("business portals are scoped to the organization and role", { tag: "@smoke" }, async ({ page }) => {

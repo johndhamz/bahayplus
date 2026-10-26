@@ -1,6 +1,6 @@
 import AxeBuilder from "@axe-core/playwright";
 import { expect, test, type Page } from "@playwright/test";
-import { DEMO, DEMO_IDS, login, logout } from "./support/auth";
+import { DEMO, DEMO_IDS, login, loginAsAdmin, logout } from "./support/auth";
 
 const PROVIDER = `/provider/o/${DEMO_IDS.mabuhayProvider}`;
 const SUPPLIER = `/supplier/o/${DEMO_IDS.bayanihanSupplier}`;
@@ -118,7 +118,7 @@ test("admin: overview, restricted tools, maintenance banner and audit trail; non
   await page.goto(HOUSEHOLD);
   await logout(page);
 
-  await login(page, DEMO.admin, undefined, "/admin");
+  await loginAsAdmin(page);
   await expect(page.getByRole("region", { name: "Platform summary" })).toContainText("Organizations");
   await page.goto("/admin/organizations?kind=supplier");
   await expect(page.getByRole("region", { name: /organization\(s\)/ })).toContainText("Bayanihan Hardware (demo)");
@@ -189,7 +189,7 @@ test("Phase 9 pages have no serious axe violations", async ({ page }, testInfo) 
     await expectNoSeriousAxe(page);
   }
   await logout(page);
-  await login(page, DEMO.admin, undefined, "/admin");
+  await loginAsAdmin(page);
   for (const p of [
     "/admin",
     "/admin/organizations",

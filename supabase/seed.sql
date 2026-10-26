@@ -70,6 +70,13 @@ insert into public.organization_members (organization_id, user_id, role_id) valu
 insert into public.platform_admins (user_id, role_id) values
   ('10000000-0000-4000-8000-000000000006', (select id from public.roles where scope = 'platform' and key = 'super_admin'));
 
+-- Admins must pass TOTP two-step verification (migration 20261025001500). The demo admin's
+-- authenticator uses this PUBLIC, local-only secret: add it to an authenticator app as a setup key
+-- (or let the E2E helper compute codes). Never seed a factor anywhere but local/CI databases.
+insert into auth.mfa_factors (id, user_id, friendly_name, factor_type, status, secret, created_at, updated_at) values
+  ('10000000-0000-4000-8000-0000000000f6', '10000000-0000-4000-8000-000000000006', 'Demo authenticator', 'totp', 'verified',
+   'JBSWY3DPEHPK3PXPJBSWY3DPEHPK3PXP', now(), now());
+
 -- -----------------------------------------------------------------------------
 -- Marketplace demo (local only): a verified, published provider with services and coverage.
 -- -----------------------------------------------------------------------------

@@ -1,6 +1,6 @@
 import AxeBuilder from "@axe-core/playwright";
 import { expect, test, type Page } from "@playwright/test";
-import { DEMO, DEMO_IDS, login, logout } from "./support/auth";
+import { DEMO, DEMO_IDS, login, loginAsAdmin, logout } from "./support/auth";
 
 const HOUSEHOLD = `/app/h/${DEMO_IDS.delaCruzHousehold}`;
 const PROVIDER = `/provider/o/${DEMO_IDS.mabuhayProvider}`;
@@ -63,7 +63,7 @@ test(
     await expectNoSeriousAxe(page);
     await logout(page);
 
-    await login(page, DEMO.admin, undefined, "/admin/payments");
+    await loginAsAdmin(page, "/admin/payments");
     await expectNoSeriousAxe(page);
     await page.getByRole("combobox", { name: "Business" }).selectOption({ label: "Mabuhay Home Services (demo)" });
     await page.getByRole("button", { name: "Create settlement" }).click();

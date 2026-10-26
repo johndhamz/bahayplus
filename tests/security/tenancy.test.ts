@@ -19,7 +19,14 @@ import {
   listOrganizationMembers,
 } from "@bahayplus/modules/organizations";
 import { listMyContexts, loadHouseholdAccess, loadOrganizationAccess } from "@bahayplus/modules/authorization";
-import { adminClient, anonClient, cleanupTestUsers, createTestUser, type TestUser } from "../support/supabase";
+import {
+  adminClient,
+  anonClient,
+  cleanupTestUsers,
+  createTestUser,
+  verifySecondFactor,
+  type TestUser,
+} from "../support/supabase";
 
 function unwrap<T>(result: { ok: true; value: T } | { ok: false; error: unknown }): T {
   if (!result.ok) throw new Error(`Expected ok, got ${JSON.stringify(result.error)}`);
@@ -465,11 +472,12 @@ describe("audit trail", () => {
     expect(wipe.error).not.toBeNull();
   });
 
-  it("platform admins (granted server-side) can read the audit log", async () => {
+  it("platform admins (granted server-side, verified with MFA) can read the audit log", async () => {
     const ivy = await createTestUser("ivy");
     const admin = adminClient();
     const ops = await admin.from("roles").select("id").eq("scope", "platform").eq("key", "operations").single();
     expect((await admin.from("platform_admins").insert({ user_id: ivy.id, role_id: ops.data!.id })).error).toBeNull();
+    await verifySecondFactor(ivy);
     const { data } = await ivy.client.from("audit_logs").select("action").eq("target_id", ivy.id);
     expect(data?.map((d) => d.action)).toContain("platform.admin_granted");
   });

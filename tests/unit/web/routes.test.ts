@@ -3,7 +3,7 @@ import { isNavActive, navHref, PORTAL_NAV } from "@/lib/config/navigation";
 import { isProtectedPath, loginRedirectPath, portalOf, safeNextPath } from "@/lib/config/routes";
 
 describe("route protection", () => {
-  it.each(["/app", "/app/bills", "/provider", "/supplier/x", "/worker", "/admin/users", "/account"])(
+  it.each(["/app", "/app/bills", "/provider", "/supplier/x", "/worker", "/admin/users", "/account", "/mfa"])(
     "%s is protected",
     (path) => expect(isProtectedPath(path)).toBe(true),
   );
