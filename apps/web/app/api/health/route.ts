@@ -21,7 +21,8 @@ export async function GET() {
   const base = env.NEXT_PUBLIC_SUPABASE_URL.replace(/\/$/, "");
   const [auth, database] = await Promise.all([
     probe(`${base}/auth/v1/health`, env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY),
-    probe(`${base}/rest/v1/`, env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY),
+    // A real (RLS-protected) table query: hosted Supabase refuses the API root to publishable keys.
+    probe(`${base}/rest/v1/service_categories?select=slug&limit=1`, env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY),
   ]);
   const healthy = auth === "ok" && database === "ok";
   return NextResponse.json(
