@@ -10,7 +10,7 @@ import { ComponentGallery } from "./component-gallery";
 const SWATCHES = [
   { name: "Primary", value: "#153D35", className: "bg-brand text-brand-foreground" },
   { name: "Background", value: "#F6F3EB", className: "bg-background text-foreground border border-border" },
-  { name: "Accent", value: "#E5C58A", className: "bg-gold text-gold-foreground" },
+  { name: "Accent", value: "#E5C584", className: "bg-gold text-gold-foreground" },
   { name: "Terracotta", value: "#C57A59", className: "bg-terracotta text-terracotta-foreground" },
   { name: "Sage", value: "#E0E9E2", className: "bg-sage text-sage-foreground" },
   { name: "Surface", value: "#FFFFFF", className: "bg-surface text-foreground border border-border" },

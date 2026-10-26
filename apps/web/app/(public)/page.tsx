@@ -1,5 +1,6 @@
 import { BadgeCheck, CalendarDays, Car, PawPrint, Receipt, ShieldCheck, Wrench } from "lucide-react";
 import Link from "next/link";
+import { Logo } from "@/components/brand/logo";
 import { BrandMark } from "@/components/layout/brand-mark";
 import { Button } from "@bahayplus/ui/components/ui/button";
 import { SERVICE_DIVISIONS } from "@/lib/config/service-catalog";
@@ -42,6 +43,7 @@ export default function LandingPage() {
       <main id="main-content">
         <section className="mx-auto grid max-w-6xl gap-10 px-4 py-10 sm:px-6 lg:grid-cols-2 lg:items-center lg:py-20">
           <div className="flex flex-col gap-5">
+            <Logo layout="stacked" size="lg" className="items-start self-start [&>span]:items-start" />
             <p className="w-fit rounded-full bg-sage px-3 py-1 text-sm font-semibold text-brand">
               Made for Filipino homes
             </p>

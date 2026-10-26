@@ -6,7 +6,7 @@
  * Brand palette (source of truth):
  *   Primary    #153D35  deep narra green
  *   Background #F6F3EB  warm capiz white
- *   Accent     #E5C58A  gold
+ *   Accent     #E5C584  gold
  *   Terracotta #C57A59  clay
  *   Sage       #E0E9E2
  *   Surface    #FFFFFF
@@ -82,7 +82,7 @@
 :root {
   --brand: #153d35;
   --brand-foreground: #f6f3eb;
-  --gold: #e5c58a;
+  --gold: #e5c584;
   --gold-foreground: #3d2f12;
   --terracotta: #c57a59;
   --terracotta-strong: #9a5236;
@@ -119,18 +119,18 @@
   --ring: #153d35;
   --chart-1: #153d35;
   --chart-2: #c57a59;
-  --chart-3: #e5c58a;
+  --chart-3: #e5c584;
   --chart-4: #5f8f7d;
   --chart-5: #8c6d4f;
   --radius: 0.75rem;
   --sidebar: #153d35;
   --sidebar-foreground: #e9efe9;
-  --sidebar-primary: #e5c58a;
+  --sidebar-primary: #e5c584;
   --sidebar-primary-foreground: #153d35;
   --sidebar-accent: #1f4d43;
   --sidebar-accent-foreground: #ffffff;
   --sidebar-border: #24524a;
-  --sidebar-ring: #e5c58a;
+  --sidebar-ring: #e5c584;
 }
 
 .dark {
@@ -167,12 +167,12 @@
   --ring: #8cc5b2;
   --sidebar: #0c1613;
   --sidebar-foreground: #dfe7e2;
-  --sidebar-primary: #e5c58a;
+  --sidebar-primary: #e5c584;
   --sidebar-primary-foreground: #153d35;
   --sidebar-accent: #1b2b26;
   --sidebar-accent-foreground: #ffffff;
   --sidebar-border: #22322d;
-  --sidebar-ring: #e5c58a;
+  --sidebar-ring: #e5c584;
 }
 
 @layer base {
