@@ -9,6 +9,7 @@ export default async function LoginPage({ searchParams }: PageProps<"/login">) {
   const params = await searchParams;
   const next = typeof params.next === "string" ? safeNextPath(params.next) : undefined;
   const linkError = params.error === "link_invalid";
+  const verified = params.verified === "1";
   return (
     <div className="flex flex-col gap-6">
       <div>
@@ -16,6 +17,11 @@ export default async function LoginPage({ searchParams }: PageProps<"/login">) {
         <p className="mt-1 text-muted-foreground">Log in to manage your home.</p>
       </div>
       {linkError && <FormAlert message="That link is invalid or has expired. Log in, or request a new link." />}
+      {verified && (
+        <p role="status" className="rounded-lg bg-success-soft p-3 text-sm text-success">
+          Your email is confirmed. Log in to continue.
+        </p>
+      )}
       <LoginForm next={next} />
       <p className="text-center text-sm text-muted-foreground">
         New to Bahay+?{" "}

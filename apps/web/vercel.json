@@ -5,7 +5,13 @@
   "buildCommand": "cd ../.. && npm run build",
   "regions": ["sin1"],
   "crons": [
-    { "path": "/api/internal/jobs/deliver", "schedule": "* * * * *" },
-    { "path": "/api/internal/jobs/daily-bills", "schedule": "20 16 * * *" }
+    {
+      "path": "/api/internal/jobs/deliver",
+      "schedule": "0 16 * * *"
+    },
+    {
+      "path": "/api/internal/jobs/daily-bills",
+      "schedule": "20 16 * * *"
+    }
   ]
 }
