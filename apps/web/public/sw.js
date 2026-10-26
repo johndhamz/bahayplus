@@ -13,7 +13,7 @@ const VERSION = new URL(self.location.href).searchParams.get("v") || "dev";
 const STATIC_CACHE = `bahayplus-static-${VERSION}`;
 const SHELL_CACHE = `bahayplus-shell-${VERSION}`;
 const OFFLINE_URL = "/offline";
-const SHELL_ASSETS = [OFFLINE_URL, "/icon/192", "/manifest.webmanifest"];
+const SHELL_ASSETS = [OFFLINE_URL, "/icons/icon-192.png", "/manifest.webmanifest"];
 
 self.addEventListener("install", (event) => {
   event.waitUntil(
@@ -58,7 +58,12 @@ self.addEventListener("fetch", (event) => {
     return;
   }
 
-  if (url.pathname.startsWith("/icon/") || url.pathname === "/apple-icon" || url.pathname === "/manifest.webmanifest") {
+  if (
+    url.pathname.startsWith("/icons/") ||
+    url.pathname.startsWith("/icon") ||
+    url.pathname.startsWith("/apple-icon") ||
+    url.pathname === "/manifest.webmanifest"
+  ) {
     event.respondWith(
       caches.open(SHELL_CACHE).then(async (cache) => {
         const hit = await cache.match(request);

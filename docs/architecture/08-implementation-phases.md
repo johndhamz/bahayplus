@@ -75,7 +75,7 @@ See [10 · Payments architecture and future PHP wallet](./10-payments-and-wallet
 ## Phase 11 implementation notes
 
 - **PWA:**
-  - Manifest at `app/manifest.ts`; icons generated at build time (`app/icon.tsx`: 192, 512 and maskable; `apple-icon.tsx`).
+  - Manifest at `app/manifest.ts`; icons generated from `logo/bahayplusicon.png` by `scripts/generate-icons.py` (`public/icons/*`, `app/icon.png`, `app/apple-icon.png`, `app/favicon.ico`).
   - Hand-written `public/sw.js`, same origin and GET only. It caches content-hashed static assets cache-first, and icons and the manifest stale-while-revalidate. Navigations are always network, falling back to the static `/offline` page.
   - It never intercepts Supabase and never stores HTML. Cache names carry the deploy version, and old caches are deleted on activation.
   - Includes an offline banner and network-error handling in `useActionForm`, which keeps the user's input.

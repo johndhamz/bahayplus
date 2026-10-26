@@ -57,10 +57,11 @@ test("offline: navigation shows the offline page; caches never hold private page
     (p) =>
       !(
         p.startsWith("/_next/static/") ||
-        p.startsWith("/icon/") ||
+        p.startsWith("/icons/") ||
+        p.startsWith("/icon") ||
         p === "/offline" ||
         p === "/manifest.webmanifest" ||
-        p === "/apple-icon"
+        p.startsWith("/apple-icon")
       ),
   );
   expect(disallowed).toEqual([]);
